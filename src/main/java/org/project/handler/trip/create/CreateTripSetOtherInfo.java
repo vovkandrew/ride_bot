@@ -1,0 +1,60 @@
+package org.project.handler.trip.create;
+
+import org.project.handler.UpdateHandler;
+import org.project.model.Trip;
+import org.project.model.UserPhase;
+import org.project.service.TripService;
+import org.springframework.stereotype.Component;
+import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+
+import static java.lang.String.format;
+import static org.project.util.Keyboards.getDriverTripMenuKeyboard;
+import static org.project.util.UpdateHelper.getUserIdFromUpdate;
+import static org.project.util.UpdateHelper.getUserInputFromUpdate;
+import static org.project.util.constants.Messages.*;
+import static org.project.util.constants.Patterns.GENERAL_MESSAGE;
+import static org.project.util.enums.HandlerName.CREATE_TRIP_PROVIDE_OTHER_INFO;
+import static org.project.util.enums.HandlerName.CREATE_TRIP_REVIEW_DETAILS;
+import static org.project.util.enums.Status.CREATED;
+
+@Component
+public class CreateTripSetOtherInfo extends UpdateHandler {
+    private final TripService tripService;
+
+    public CreateTripSetOtherInfo(TripService tripService) {
+        this.tripService = tripService;
+    }
+
+    @Override
+    public void handle(UserPhase userPhase, Update update) throws TelegramApiException {
+        long userId = getUserIdFromUpdate(update);
+
+        Trip trip = tripService.getNewTrip(userId);
+
+        String userInput = getUserInputFromUpdate(update);
+
+        if (isUserInputMatchesPattern(userInput, GENERAL_MESSAGE)) {
+            trip = tripService.updateTripOtherInfo(trip, userInput);
+
+            editMessage(userId, format(DRIVER_TRIP_OTHER_INFO_PROVIDED, trip.getOtherInfo()));
+            deleteRemovableMessagesAndEraseAllFromRepo(userId);
+
+            trip = tripService.updateTripStatus(trip, CREATED);
+
+            sendRemovableMessage(userId, joinMessages(TRIP_CREATED, format(TRIP_DETAILS, trip.getFormattedData())),
+                    getDriverTripMenuKeyboard(trip.getId()));
+
+            updateUserPhase(userPhase, CREATE_TRIP_REVIEW_DETAILS);
+
+            return;
+        }
+
+        sendRemovableMessage(userId, DRIVER_TRIP_WRONG_OTHER_INFO);
+    }
+
+    @Override
+    public void initHandler() {
+        handlerPhase = getPhaseService().getPhaseByHandlerName(CREATE_TRIP_PROVIDE_OTHER_INFO);
+    }
+}
