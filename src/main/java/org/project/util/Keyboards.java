@@ -29,7 +29,6 @@ import static org.project.util.enums.Currency.EUR;
 import static org.project.util.enums.Currency.UA;
 import static org.project.util.enums.HandlerName.*;
 
-
 public class Keyboards {
     public static List<List<InlineKeyboardButton>> getEditDriverInfoKeyboard() {
         List<InlineKeyboardButton> firstRow = new ArrayList<>();

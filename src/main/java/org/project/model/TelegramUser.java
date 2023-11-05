@@ -1,9 +1,12 @@
 package org.project.model;
 
 import lombok.*;
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
 
 import javax.persistence.*;
 
+import static java.util.Optional.ofNullable;
 import static javax.persistence.CascadeType.MERGE;
 
 @Entity
@@ -20,11 +23,12 @@ public class TelegramUser {
     private long id;
     @Column(name = "telegram_id", unique = true)
     private long telegramId;
-    @OneToOne(cascade = MERGE)
+    @OneToOne(cascade = MERGE, fetch = FetchType.LAZY)
     @JoinColumn(name = "telegram_id", insertable = false, updatable = false)
+    @NotFound(action = NotFoundAction.IGNORE)
     private Driver driver;
 
     public boolean isDriver() {
-        return driver != null;
+        return ofNullable(driver).isPresent();
     }
 }

@@ -46,8 +46,7 @@ public class Route implements Formatter {
 
     @Override
     public Object[] getFormattedData() {
-        return new Object[]{Objects.toString(countryFrom.getName(), EMPTY_STRING), Objects.toString(cityFrom.getName(), EMPTY_STRING),
-                Objects.toString(countryTo.getName(), EMPTY_STRING), Objects.toString(cityTo.getName(), EMPTY_STRING)};
+        return getFormattedData(countryFrom.getName(), cityFrom.getName(), countryTo.getName(), cityTo.getName());
     }
 
     public String getSimplifiedRoute() {

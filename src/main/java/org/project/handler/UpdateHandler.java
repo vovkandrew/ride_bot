@@ -1,5 +1,6 @@
 package org.project.handler;
 
+import lombok.Getter;
 import org.project.TelegramWebhookBot;
 import org.project.model.Phase;
 import org.project.model.UserMessage;
@@ -34,9 +35,13 @@ import static org.telegram.telegrambots.meta.api.methods.ParseMode.HTML;
 @Component
 public abstract class UpdateHandler {
     public Phase handlerPhase;
+    @Getter
     private TelegramWebhookBot webhookBot;
+    @Getter
     private UserMessageService userMessageService;
+    @Getter
     private UserPhaseService userPhaseService;
+    @Getter
     private PhaseService phaseService;
     private static final long EXPIRATION_PERIOD = 86400000L;
 
@@ -66,22 +71,6 @@ public abstract class UpdateHandler {
     @Autowired
     public void setPhaseService(PhaseService phaseService) {
         this.phaseService = phaseService;
-    }
-
-    public TelegramWebhookBot getWebhookBot() {
-        return webhookBot;
-    }
-
-    public UserMessageService getUserMessageService() {
-        return userMessageService;
-    }
-
-    public UserPhaseService getUserPhaseService() {
-        return userPhaseService;
-    }
-
-    public PhaseService getPhaseService() {
-        return phaseService;
     }
 
     protected UpdateHandler() {

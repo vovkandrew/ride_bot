@@ -15,9 +15,11 @@ create table if not exists user_phase (
 );
 
 create table if not exists user_message (
+    id BIGSERIAL PRIMARY KEY,
 	message_id BIGINT UNIQUE NOT NULL,
 	user_id BIGINT NOT NULL,
-	formatting_type varchar(50) NOT NULL UNIQUE
+	formatting_type varchar(50) NOT NULL,
+	created_at TIMESTAMP NOT NULL
 );
 
 create table if not exists driver (
@@ -46,8 +48,7 @@ create table if not exists city (
 
 create table if not exists route (
 	id BIGSERIAL PRIMARY KEY,
-	driver_id BIGINT NOT NULL,
-	FOREIGN KEY (driver_id) REFERENCES driver (id),
+	telegram_user_id BIGINT NOT NULL,
 	country_from_id BIGINT,
 	FOREIGN KEY (country_from_id) REFERENCES country (id),
 	city_from_id BIGINT,

@@ -28,12 +28,12 @@ public class CountryServiceImpl implements CountryService {
 
     @Override
     public Page<Country> findAllCountriesExcept(Pageable pageable, Country country) {
-        return countryRepository.findCountriesByIdNot(pageable, country.getId());
+        return countryRepository.findCountriesByIdNot(country.getId(), pageable);
     }
 
     @Override
     public Page<Country> findAllCountriesExcept(Pageable pageable, Country... countries) {
-        return countryRepository.findCountriesByIdNotIn(pageable,
-                Arrays.stream(countries).map(Country::getId).collect(Collectors.toList()));
+        return countryRepository.findCountriesByIdNotIn(
+                Arrays.stream(countries).map(Country::getId).collect(Collectors.toList()), pageable);
     }
 }

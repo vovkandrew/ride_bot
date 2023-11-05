@@ -5,10 +5,8 @@ import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
 import java.util.List;
-import java.util.Objects;
 
 import static javax.persistence.CascadeType.MERGE;
-import static org.project.util.constants.Constants.EMPTY_STRING;
 
 @Entity
 @Table(name = "driver")
@@ -43,9 +41,6 @@ public class Driver implements Formatter {
     private List<Route> routes;
 
     public Object[] getFormattedData() {
-        return new Object[]{Objects.toString(firstName, EMPTY_STRING), Objects.toString(lastName, EMPTY_STRING),
-                Objects.toString(phoneNumber, EMPTY_STRING), Objects.toString(carModel, EMPTY_STRING),
-                Objects.toString(carColor, EMPTY_STRING), Objects.toString(plateNumber, EMPTY_STRING),
-                Objects.toString(seatsNumber, EMPTY_STRING)};
+        return getFormattedData(firstName, lastName, phoneNumber, carModel, carColor, plateNumber, seatsNumber);
     }
 }

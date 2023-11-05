@@ -91,14 +91,8 @@ public class Trip implements Formatter {
 
     @Override
     public Object[] getFormattedData() {
-        return new Object[]{Objects.toString(route.getSimplifiedRoute(), EMPTY_STRING),
-                Objects.toString(getFormattedDepartureDate(), EMPTY_STRING),
-                Objects.toString(getFormattedDepartureTime(), EMPTY_STRING),
-                Objects.toString(getFormattedArrivalDate(), EMPTY_STRING),
-                Objects.toString(getFormattedArrivalTime(), EMPTY_STRING),
-                Objects.toString(pickupPoint, EMPTY_STRING), Objects.toString(dropOffPoint, EMPTY_STRING),
-                Objects.toString(currency, EMPTY_STRING), Objects.toString(price, EMPTY_STRING),
-                Objects.toString(baggageInfo, EMPTY_STRING), Objects.toString(otherInfo, EMPTY_STRING)};
+        return getFormattedData(route.getSimplifiedRoute(), getFormattedDepartureDate(), getFormattedDepartureTime(),
+                getFormattedArrivalTime(), pickupPoint, dropOffPoint, currency, price, baggageInfo, otherInfo);
     }
 
     public boolean verifyDepartureDate(String userInput) {
@@ -120,7 +114,7 @@ public class Trip implements Formatter {
     public boolean verifyDepartureTime(String userInput) {
         LocalTime userInputTime = LocalTime.parse(userInput, ofPattern(TIME_FORMAT));
         LocalDate today = LocalDate.now();
-        LocalTime leastAllowed = LocalTime.now().plus(1, ChronoUnit.HOURS);
+        LocalTime leastAllowed = LocalTime.now().plusHours(1);
         boolean isArrivalDateAvailable = Optional.ofNullable(arrivalDate).isPresent();
 
         return (!departureDate.isEqual(today) || userInputTime.isAfter(leastAllowed)) ||
