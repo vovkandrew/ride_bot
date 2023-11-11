@@ -88,6 +88,11 @@ public class RouteServiceImpl implements RouteService {
     }
 
     @Override
+    public Page<Route> getAllCreatedDriverRoutes(Pageable pageable, long userId) {
+        return routeRepository.findAllByTelegramUserIdAndStatusAndUserType(userId, CREATED, DRIVER, pageable);
+    }
+
+    @Override
     public void deleteRoute(Route route) {
         routeRepository.delete(route);
     }

@@ -11,8 +11,8 @@ import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
-import javax.annotation.PostConstruct;
 import java.io.File;
+import java.util.Optional;
 
 import static java.lang.String.format;
 import static org.project.util.Keyboards.getConfirmationKeyboard;
@@ -30,12 +30,7 @@ public class CreateDriverSetSeatsNumber extends UpdateHandler {
     @Value("${driver.agreement.file.path}")
     private String driverAgreementFilePath;
 
-    private InputFile agreementFile;
-
-    @PostConstruct
-    void init() {
-        agreementFile = new InputFile(new File(driverAgreementFilePath));
-    }
+    private String telegramFileId;
 
     public CreateDriverSetSeatsNumber(DriverService driverService) {
         this.driverService = driverService;
@@ -58,9 +53,15 @@ public class CreateDriverSetSeatsNumber extends UpdateHandler {
 
             sendRemovableMessage(userId, USER_AGREEMENT);
 
+            InputFile agreementFile = Optional.ofNullable(telegramFileId).isPresent() ? new InputFile(telegramFileId)
+                    : new InputFile(new File(driverAgreementFilePath));
+
             Message removable = getWebhookBot().execute(SendDocument.builder().chatId(userId)
                     .replyMarkup(getConfirmationKeyboard(CONFIRM_USER_AGREEMENT, DECLINE_USER_AGREEMENT))
                     .document(agreementFile).build());
+
+            telegramFileId = removable.getDocument().getFileId();
+
             getUserMessageService().createRemovableMessage(userId, removable.getMessageId());
 
             return;

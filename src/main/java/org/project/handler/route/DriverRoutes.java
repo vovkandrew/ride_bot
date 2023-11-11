@@ -47,17 +47,18 @@ public class DriverRoutes extends UpdateHandler {
         if (isUpdateContainsHandler(update, ROUTE_MENU_NEXT)) {
             int page = getOffsetParamFromUpdateByHandler(update, ROUTE_MENU_NEXT);
             PageRequest pageRequest = of(page, DEFAULT_ROUTE_LIMIT, ASC, DEFAULT_ID_FIELD);
-            Page<Route> routes = routeService.getAllCreatedRoutes(pageRequest, userId);
+            Page<Route> routes = routeService.getAllCreatedDriverRoutes(pageRequest, userId);
 
             deleteRemovableMessagesAndEraseAllFromRepo(userId);
 
-            sendRemovableMessage(userId, ROUTES_MENU, getDriverRoutesMenuKeyboard(routes, ROUTE_MENU_NEXT, ROUTES_MAIN_MENU));
+            sendRemovableMessage(userId, ROUTES_MENU, getDriverRoutesMenuKeyboard(routes, ROUTE_MENU_NEXT,
+                    ROUTES_MAIN_MENU));
 
             return;
         }
 
         PageRequest pageRequest = of(DEFAULT_OFFSET, DEFAULT_ROUTE_LIMIT, ASC, DEFAULT_ID_FIELD);
-        Page<Route> routes = routeService.getAllCreatedRoutes(pageRequest, userId);
+        Page<Route> routes = routeService.getAllCreatedDriverRoutes(pageRequest, userId);
 
         deleteRemovableMessagesAndEraseAllFromRepo(userId);
 

@@ -29,6 +29,7 @@ public interface RouteService {
     Page<Route> getAllCreatedRoutes(Pageable pageable, long userId);
 
     Page<Route> getAllCreatedPassengerRoutes(Pageable pageable, long userId);
+    Page<Route> getAllCreatedDriverRoutes(Pageable pageable, long userId);
 
     void deleteRoute(Route route);
 

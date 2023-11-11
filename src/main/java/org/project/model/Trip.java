@@ -7,11 +7,10 @@ import org.project.util.enums.Status;
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.time.temporal.ChronoUnit;
-import java.util.Objects;
 import java.util.Optional;
 
 import static java.time.format.DateTimeFormatter.ofPattern;
+import static java.util.Optional.ofNullable;
 import static javax.persistence.CascadeType.MERGE;
 import static javax.persistence.EnumType.STRING;
 import static javax.persistence.FetchType.LAZY;
@@ -58,48 +57,34 @@ public class Trip implements Formatter {
     private Status status;
 
     public String getFormattedDepartureDate() {
-        if (departureDate == null) {
-            return null;
-        }
-
-        return departureDate.format(ofPattern(DATE_FORMAT));
+        return Optional.ofNullable(departureDate).isPresent() ? departureDate.format(ofPattern(DATE_FORMAT)) : null;
     }
 
     public String getFormattedDepartureTime() {
-        if (departureTime == null) {
-            return null;
-        }
-
-        return departureTime.format(ofPattern(TIME_FORMAT));
+        return ofNullable(departureTime).isPresent() ? departureTime.format(ofPattern(TIME_FORMAT)) : null;
     }
 
     public String getFormattedArrivalDate() {
-        if (arrivalDate == null) {
-            return null;
-        }
-
-        return arrivalDate.format(ofPattern(DATE_FORMAT));
+        return ofNullable(arrivalDate).isPresent() ? arrivalDate.format(ofPattern(DATE_FORMAT)) : null;
     }
 
     public String getFormattedArrivalTime() {
-        if (arrivalTime == null) {
-            return null;
-        }
-
-        return arrivalTime.format(ofPattern(TIME_FORMAT));
+        return ofNullable(arrivalTime).isPresent() ? arrivalTime.format(ofPattern(TIME_FORMAT)) : null;
     }
 
     @Override
     public Object[] getFormattedData() {
         return getFormattedData(route.getSimplifiedRoute(), getFormattedDepartureDate(), getFormattedDepartureTime(),
-                getFormattedArrivalTime(), pickupPoint, dropOffPoint, currency, price, baggageInfo, otherInfo);
+                getFormattedArrivalDate(), getFormattedArrivalTime(), pickupPoint, dropOffPoint, currency, price,
+                baggageInfo, otherInfo);
     }
 
     public boolean verifyDepartureDate(String userInput) {
         LocalDate userInputDate = LocalDate.parse(userInput, ofPattern(DATE_FORMAT));
         LocalDate todayDate = LocalDate.now();
-        return (arrivalDate == null || (arrivalDate.isAfter(userInputDate) || arrivalDate.isEqual(userInputDate)))
-                && (todayDate.isBefore(userInputDate) || todayDate.isEqual(userInputDate));
+        return (Optional.ofNullable(arrivalDate).isEmpty() || (arrivalDate.isAfter(userInputDate) ||
+                arrivalDate.isEqual(userInputDate))) && (todayDate.isBefore(userInputDate) ||
+                todayDate.isEqual(userInputDate));
     }
 
     public boolean verifyArrivalDate(String userInput) {
@@ -115,7 +100,7 @@ public class Trip implements Formatter {
         LocalTime userInputTime = LocalTime.parse(userInput, ofPattern(TIME_FORMAT));
         LocalDate today = LocalDate.now();
         LocalTime leastAllowed = LocalTime.now().plusHours(1);
-        boolean isArrivalDateAvailable = Optional.ofNullable(arrivalDate).isPresent();
+        boolean isArrivalDateAvailable = ofNullable(arrivalDate).isPresent();
 
         return (!departureDate.isEqual(today) || userInputTime.isAfter(leastAllowed)) ||
                 ((isArrivalDateAvailable && (userInputTime.isBefore(arrivalTime))));
