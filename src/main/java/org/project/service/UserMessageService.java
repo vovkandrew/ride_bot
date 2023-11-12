@@ -13,4 +13,5 @@ public interface UserMessageService {
     void deleteAllRemovableMessagesByUserId(long userId);
     UserMessage getUserMessageByUserIdAndType(long userId, UserMessageType formattingType);
     List<UserMessage> getAllUserMessagesByUserIdAndType(long userId, UserMessageType formattingType);
+    void deleteAllExpiredRemovableMessages();
 }

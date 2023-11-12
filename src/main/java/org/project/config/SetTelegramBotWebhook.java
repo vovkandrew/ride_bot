@@ -5,33 +5,34 @@ import org.project.model.SetWebhookModel;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.core.env.Environment;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
 import static java.util.regex.Pattern.compile;
 import static org.springframework.http.HttpMethod.GET;
+import static org.springframework.web.util.UriComponentsBuilder.fromUriString;
 
 @Component
 @AllArgsConstructor
 public class SetTelegramBotWebhook implements ApplicationListener<ContextRefreshedEvent> {
     private final Environment environment;
     private final RestTemplate restTemplate = new RestTemplate();
-
+    private final static String SET_WEBHOOK_PATH = "/bot{bot-token}/setWebhook";
     private final Pattern descriptionPattern = compile("Webhook (is already set|was set)");
 
+    //this method binds app url with telegram to receive updates via webhook instead doing it manually on each app run
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event) {
         try {
-            URI uri = new URI("https://api.telegram.org/bot" + environment.getProperty("bot.token") +
-                    "/setWebhook?url=" + environment.getProperty("bot.webhookPath") + "&drop_pending_updates=true");
+            URI uri = fromUriString(Objects.requireNonNull(environment.getProperty("telegram.api-url")))
+                    .path(SET_WEBHOOK_PATH).queryParam("url", environment.getProperty("bot.webhook-url"))
+                    .buildAndExpand(environment.getProperty("bot.token")).toUri();
 
             ResponseEntity<SetWebhookModel> exchangeResult = restTemplate
                     .exchange(uri.toString(), GET, null, SetWebhookModel.class);
@@ -44,7 +45,7 @@ public class SetTelegramBotWebhook implements ApplicationListener<ContextRefresh
                             exchangeResult.getStatusCode().value(), model);
                 }
             }
-        } catch (URISyntaxException e) {
+        } catch (Exception e) {
             System.out.println("Exception thrown while trying setting bot webhook");
             System.out.println("\nCause: " + e.getCause());
             System.out.println("\nMessage: " + e.getMessage());

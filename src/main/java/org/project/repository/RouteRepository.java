@@ -1,5 +1,7 @@
 package org.project.repository;
 
+import org.project.model.City;
+import org.project.model.Country;
 import org.project.model.Route;
 import org.project.util.enums.Status;
 import org.project.util.enums.UserType;
@@ -11,6 +13,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Set;
 
 @Repository
@@ -40,4 +43,9 @@ public interface RouteRepository extends JpaRepository<Route, Long> {
 
     @Query("select r from Route r where r.telegramUserId = ?1 and r.status = ?2 and r.userType = ?3")
     Route getRouteByTelegramUserIdAndStatusAndUserType(long telegramUserId, Status status, UserType userType);
+
+    @Query("select r.telegramUserId from Route r where r.status = ?1 and r.countryFrom = ?2 and r.cityFrom = ?3 and " +
+                  "r.countryTo = ?4 and r.cityTo = ?5 and r.userType = ?6")
+    List<Long> getAllTelegramUsersByStatusAndRouteInfoAndUserType(Status status, Country countryFrom, City cityFrom,
+                                                                  Country countryTo, City cityTo, UserType userType);
 }

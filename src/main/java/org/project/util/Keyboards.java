@@ -469,4 +469,11 @@ public class Keyboards {
         return InlineKeyboardButton.builder().text(route.getSimplifiedRoute())
                 .callbackData(buildCallbackFromHandlerAndIdParam(countryCallback, route.getId())).build();
     }
+
+    public static InlineKeyboardMarkup getPassengerTripDetailsKeyboard(Trip trip) {
+        return InlineKeyboardMarkup.builder().keyboardRow(of(
+                InlineKeyboardButton.builder().text(GET_TRIP_DETAILS)
+                        .callbackData(buildCallbackFromHandlerAndIdParam(TRACKING_ROUTE_TRIP_DETAILS, trip.getId()))
+                        .build())).build();
+    }
 }

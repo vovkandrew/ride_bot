@@ -55,4 +55,9 @@ public class UserMessageServiceImpl implements UserMessageService {
     public List<UserMessage> getAllUserMessagesByUserIdAndType(long userId, UserMessageType formattingType) {
         return userMessageRepository.findAllByUserIdAndFormattingType(userId, formattingType);
     }
+
+    @Override
+    public void deleteAllExpiredRemovableMessages() {
+        userMessageRepository.deleteAllExpiredRemovableMessages();
+    }
 }

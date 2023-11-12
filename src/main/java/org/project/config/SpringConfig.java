@@ -20,14 +20,14 @@ public class SpringConfig {
 
     @Bean
     public SetWebhook setWebhookInstance() {
-        return SetWebhook.builder().url(Objects.requireNonNull(environment.getProperty("bot.webhookPath"))).build();
+        return SetWebhook.builder().url(Objects.requireNonNull(environment.getProperty("bot.webhook-url"))).build();
     }
 
     @Bean
     public TelegramWebhookBot springWebhookBot(SetWebhook setWebhook) {
         TelegramWebhookBot bot = new TelegramWebhookBot(setWebhook);
 
-        bot.setBotPath(environment.getProperty("bot.webhookPath"));
+        bot.setBotPath(environment.getProperty("bot.webhook-url"));
         bot.setBotUsername(environment.getProperty("bot.username"));
         bot.setBotToken(environment.getProperty("bot.token"));
 

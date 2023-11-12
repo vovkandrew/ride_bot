@@ -3,12 +3,16 @@ package org.project.handler.trip.create;
 import org.project.handler.UpdateHandler;
 import org.project.model.Trip;
 import org.project.model.UserPhase;
+import org.project.service.NotificationService;
 import org.project.service.TripService;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
+import java.util.concurrent.Executors;
+
 import static java.lang.String.format;
+import static java.util.concurrent.Executors.newSingleThreadExecutor;
 import static org.project.util.Keyboards.getDriverTripMenuKeyboard;
 import static org.project.util.UpdateHelper.getUserIdFromUpdate;
 import static org.project.util.UpdateHelper.getUserInputFromUpdate;
@@ -21,9 +25,11 @@ import static org.project.util.enums.Status.CREATED;
 @Component
 public class CreateTripSetOtherInfo extends UpdateHandler {
     private final TripService tripService;
+    private final NotificationService notificationService;
 
-    public CreateTripSetOtherInfo(TripService tripService) {
+    public CreateTripSetOtherInfo(TripService tripService, NotificationService notificationService) {
         this.tripService = tripService;
+        this.notificationService = notificationService;
     }
 
     @Override
@@ -46,6 +52,9 @@ public class CreateTripSetOtherInfo extends UpdateHandler {
                     getDriverTripMenuKeyboard(trip.getId()));
 
             updateUserPhase(userPhase, CREATE_TRIP_REVIEW_DETAILS);
+
+            Trip finalTrip = trip;
+            newSingleThreadExecutor().execute(() -> notificationService.notifyAboutNewTrip(finalTrip));
 
             return;
         }

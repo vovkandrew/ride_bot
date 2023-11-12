@@ -30,4 +30,10 @@ public interface UserMessageRepository extends JpaRepository<UserMessage, Long> 
     @Modifying
     @Query("delete from UserMessage u where u.userId = ?1 and u.formattingType = ?2")
     void deleteAllByUserIdAndFormattingType(long userId, UserMessageType formattingType);
+
+    @Transactional
+    @Modifying
+    @Query(value = "delete from user_message where user_message.created_at < current_timestamp - interval '48 hours' " +
+            "and user_message.formatting_type = 'REMOVABLE'", nativeQuery = true)
+    void deleteAllExpiredRemovableMessages();
 }

@@ -96,6 +96,7 @@ public abstract class UpdateHandler {
     }
 
     public void deleteRemovableMessagesBy(long userId) throws TelegramApiException {
+        //forEach instead of stream in order to just throw exception further
         for (UserMessage userMessage : userMessageService.getAllUserMessagesByUserIdAndType(userId, REMOVABLE)) {
             if (stillValid(userMessage))
                 webhookBot.execute(DeleteMessage.builder().chatId(userId).messageId((int) userMessage.getMessageId()).build());
@@ -122,12 +123,12 @@ public abstract class UpdateHandler {
     }
 
     public Message sendMessage(long chatId, String text, ReplyKeyboard replyKeyboard) throws TelegramApiException {
-        SendMessage message = SendMessage.builder().chatId(chatId).text(text).parseMode(HTML).replyMarkup(replyKeyboard).build();
-        return getWebhookBot().execute(message);
+        return webhookBot.execute(SendMessage.builder().chatId(chatId).text(text).parseMode(HTML)
+                .replyMarkup(replyKeyboard).build());
     }
 
     public Message sendMessage(long chatId, String text) throws TelegramApiException {
-        return getWebhookBot().execute(SendMessage.builder().chatId(chatId).text(text).parseMode(HTML).build());
+        return webhookBot.execute(SendMessage.builder().chatId(chatId).text(text).parseMode(HTML).build());
     }
 
     public void editMessage(long chatId, String text) throws TelegramApiException {

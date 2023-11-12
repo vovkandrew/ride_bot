@@ -7,9 +7,12 @@ import org.project.service.CityService;
 import org.project.service.CountryService;
 import org.project.service.RouteService;
 import org.project.util.enums.Status;
+import org.project.util.enums.UserType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 import static org.project.util.enums.Status.*;
 import static org.project.util.enums.UserType.DRIVER;
@@ -124,5 +127,11 @@ public class RouteServiceImpl implements RouteService {
     @Override
     public Route getNewDriverRoute(long userId) {
         return routeRepository.getRouteByTelegramUserIdAndStatusAndUserType(userId, NEW, DRIVER);
+    }
+
+    @Override
+    public List<Long> getAllUsersWhoTrackRoute(Route route) {
+        return routeRepository.getAllTelegramUsersByStatusAndRouteInfoAndUserType(CREATED, route.getCountryFrom(),
+                route.getCityFrom(), route.getCountryTo(), route.getCityTo(), PASSENGER);
     }
 }

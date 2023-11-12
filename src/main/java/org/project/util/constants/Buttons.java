@@ -56,4 +56,5 @@ public class Buttons {
     public static final String BACK_TO_PASSENGER_MENU = "Назад до меню пасажира \uD83D\uDE8F";
     public static final String TRACKING_ROUTES_MENU = "Поїздки за якими я слідкую \uD83D\uDD0E";
     public static final String PASSENGER_MAIN_MENU = "Меню пасажира \uD83D\uDED7";
+    public static final String GET_TRIP_DETAILS = "Деталі поїздки \uD83D\uDE90";
 }

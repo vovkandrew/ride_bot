@@ -23,7 +23,7 @@ public class TelegramUser {
     private long id;
     @Column(name = "telegram_id", unique = true)
     private long telegramId;
-    @OneToOne(cascade = MERGE, fetch = FetchType.LAZY)
+    @OneToOne(cascade = MERGE)
     @JoinColumn(name = "telegram_id", insertable = false, updatable = false)
     @NotFound(action = NotFoundAction.IGNORE)
     private Driver driver;
