@@ -73,20 +73,22 @@ public class EditRouteSetCountryTo extends UpdateHandler {
         }
 
         route = routeService.getEditingRoute(userId);
-        route = routeService.updateRouteCountryTo(route, getCallbackQueryIdParamFromUpdate(update));
 
-        updateUserPhase(userPhase, EDIT_ROUTE_CITY_TO);
+        route = routeService.updateRouteCountryTo(route, getCallbackQueryIdParamFromUpdate(update));
 
         deleteRemovableMessagesAndEraseAllFromRepo(userId);
 
         sendMessage(userId, String.format(COUNTRY_TO_PROVIDED, route.getCountryTo().getName()));
 
         int page = getOffsetParamFromUpdateByHandler(update, EDIT_ROUTE_CITY_TO_NEXT);
+
         PageRequest pageRequest = of(page, DEFAULT_CITY_LIMIT);
 
         sendRemovableMessage(userId, PROVIDE_CITY_TO, getAvailableCitiesKeyboard(
                 cityService.findAllUnusedCitiesTo(route, pageRequest), EDIT_ROUTE_CITY_TO_NEXT,
                 EDIT_ROUTE_CITY_TO));
+
+        updateUserPhase(userPhase, EDIT_ROUTE_CITY_TO);
     }
 
     @Override

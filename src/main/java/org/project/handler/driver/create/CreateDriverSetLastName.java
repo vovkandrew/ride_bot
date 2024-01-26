@@ -12,7 +12,7 @@ import static org.project.util.Keyboards.getShareContactKeyboard;
 import static org.project.util.UpdateHelper.getUserIdFromUpdate;
 import static org.project.util.UpdateHelper.getUserInputFromUpdate;
 import static org.project.util.constants.Messages.*;
-import static org.project.util.constants.Patterns.DRIVER_LAST_NAME;
+import static org.project.util.constants.Patterns.LAST_NAME_PATTERN;
 import static org.project.util.enums.HandlerName.GET_LAST_NAME;
 import static org.project.util.enums.HandlerName.GET_PHONE_NUMBER;
 
@@ -29,7 +29,7 @@ public class CreateDriverSetLastName extends UpdateHandler {
         long userId = getUserIdFromUpdate(update);
         String userInput = getUserInputFromUpdate(update);
 
-        if (isUserInputMatchesPattern(userInput, DRIVER_LAST_NAME)) {
+        if (isUserInputMatchesPattern(userInput, LAST_NAME_PATTERN)) {
             driverService.updateLastName(userId, userInput);
 
             editMessage(userId, format(LAST_NAME_PROVIDED, userInput));

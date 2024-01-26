@@ -11,7 +11,7 @@ import static java.lang.String.format;
 import static org.project.util.UpdateHelper.getUserIdFromUpdate;
 import static org.project.util.UpdateHelper.getUserInputFromUpdate;
 import static org.project.util.constants.Messages.*;
-import static org.project.util.constants.Patterns.CAR_COLOR;
+import static org.project.util.constants.Patterns.CAR_COLOR_PATTERN;
 import static org.project.util.enums.HandlerName.GET_CAR_COLOR;
 import static org.project.util.enums.HandlerName.GET_PLATE_NUMBER;
 import static org.springframework.util.StringUtils.hasText;
@@ -27,9 +27,10 @@ public class CreateDriverSetCarColor extends UpdateHandler {
     @Override
     public void handle(UserPhase userPhase, Update update) throws TelegramApiException {
         long userId = getUserIdFromUpdate(update);
+
         String userInput = getUserInputFromUpdate(update);
 
-        if (hasText(userInput) && userInput.matches(CAR_COLOR)) {
+        if (hasText(userInput) && userInput.matches(CAR_COLOR_PATTERN)) {
             driverService.updateCarColor(userId, userInput);
 
             editMessage(userId, format(CAR_COLOR_PROVIDED, userInput));

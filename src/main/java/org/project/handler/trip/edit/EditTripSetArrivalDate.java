@@ -1,9 +1,10 @@
 package org.project.handler.trip.edit;
 
-import org.project.handler.UpdateHandler;
 import org.project.model.Phase;
 import org.project.model.Trip;
 import org.project.model.UserPhase;
+import org.project.service.BookingService;
+import org.project.service.DriverService;
 import org.project.service.TripService;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -13,25 +14,23 @@ import java.util.Optional;
 
 import static java.lang.String.format;
 import static java.time.format.DateTimeFormatter.ofPattern;
-import static org.project.util.Keyboards.getDriverTripDetailsKeyboard;
 import static org.project.util.UpdateHelper.*;
 import static org.project.util.constants.Constants.DATE_FORMAT;
 import static org.project.util.constants.Messages.*;
-import static org.project.util.constants.Patterns.DATE;
-import static org.project.util.enums.HandlerName.*;
+import static org.project.util.constants.Patterns.DATE_PATTERN;
+import static org.project.util.enums.HandlerName.DRIVER_TRIP_EDITING_ARRIVAL_DATE;
 import static org.project.util.enums.Status.CREATED;
 
 @Component
-public class EditTripSetArrivalDate extends UpdateHandler {
-    private final TripService tripService;
-
-    public EditTripSetArrivalDate(TripService tripService) {
-        this.tripService = tripService;
+public class EditTripSetArrivalDate extends EditTripDetails {
+    public EditTripSetArrivalDate(TripService tripService, DriverService driverService, BookingService bookingService) {
+        super(tripService, driverService, bookingService);
     }
 
     @Override
     public boolean isApplicable(Optional<Phase> phaseOptional, Update update) {
-        return isUpdateContainsHandler(update, DRIVER_TRIP_EDITING_ARRIVAL_DATE) || super.isApplicable(phaseOptional, update);
+        return isUpdateContainsHandler(update, DRIVER_TRIP_EDITING_ARRIVAL_DATE)
+                || super.isApplicable(phaseOptional, update);
     }
 
     @Override
@@ -41,9 +40,9 @@ public class EditTripSetArrivalDate extends UpdateHandler {
         Trip trip;
 
         if (isUpdateContainsHandler(update, DRIVER_TRIP_EDITING_ARRIVAL_DATE)) {
-            trip = tripService.getTrip(getCallbackQueryIdParamFromUpdate(update));
+            trip = getTripService().getTrip(getCallbackQueryIdParamFromUpdate(update));
 
-            tripService.updateAllEditingTrips(trip);
+            getTripService().updateAllEditingTrips(trip);
 
             deleteRemovableMessagesAndEraseAllFromRepo(userId);
 
@@ -52,23 +51,19 @@ public class EditTripSetArrivalDate extends UpdateHandler {
             return;
         }
 
-        trip = tripService.getFirstEditingTrip(userId);
+        trip = getTripService().getFirstEditingTrip(userId);
 
         String userInput = getUserInputFromUpdate(update);
 
-        if (isUserInputMatchesPattern(userInput, DATE) && trip.verifyArrivalDate(userInput)) {
+        if (isUserInputMatchesPattern(userInput, DATE_PATTERN) && trip.verifyArrivalDate(userInput)) {
             trip.setStatus(CREATED);
 
-            tripService.updateTripArrivalDate(trip, userInput);
+            getTripService().updateTripArrivalDate(trip, userInput);
 
-            editMessage(userId, format(DRIVER_TRIP_ARRIVAL_DATE_PROVIDED, trip.getArrivalDate().format(ofPattern(DATE_FORMAT))));
+            editMessage(userId, format(DRIVER_TRIP_ARRIVAL_DATE_PROVIDED,
+                    trip.getArrivalDate().format(ofPattern(DATE_FORMAT))));
 
-            deleteRemovableMessagesAndEraseAllFromRepo(userId);
-
-            sendRemovableMessage(userId, format(TRIP_DETAILS, trip.getFormattedData()),
-                    getDriverTripDetailsKeyboard(trip.getId(), DRIVER_TRIP_DETAILS_LESS));
-
-            updateUserPhase(userPhase, DRIVER_TRIP_DETAILS);
+            sendDriverTripDetailsAndUpdateUserPhase(userId, trip, userPhase);
 
             return;
         }

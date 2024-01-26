@@ -12,7 +12,7 @@ import static java.lang.String.format;
 import static org.project.util.UpdateHelper.getUserIdFromUpdate;
 import static org.project.util.UpdateHelper.getUserInputFromUpdate;
 import static org.project.util.constants.Messages.*;
-import static org.project.util.constants.Patterns.PRICE;
+import static org.project.util.constants.Patterns.PRICE_PATTERN;
 import static org.project.util.enums.HandlerName.CREATE_TRIP_PROVIDE_BAGGAGE_INFO;
 import static org.project.util.enums.HandlerName.CREATE_TRIP_PROVIDE_PRICE;
 
@@ -32,7 +32,7 @@ public class CreateTripSetPrice extends UpdateHandler {
 
         String userInput = getUserInputFromUpdate(update);
 
-        if (isUserInputMatchesPattern(userInput, PRICE)) {
+        if (isUserInputMatchesPattern(userInput, PRICE_PATTERN)) {
             trip = tripService.updateTripPrice(trip, userInput);
 
             editMessage(userId, format(DRIVER_TRIP_PRICE_PROVIDED, trip.getPrice()));

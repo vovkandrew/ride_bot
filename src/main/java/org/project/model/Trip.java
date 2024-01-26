@@ -7,6 +7,7 @@ import org.project.util.enums.Status;
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.List;
 import java.util.Optional;
 
 import static java.time.format.DateTimeFormatter.ofPattern;
@@ -77,6 +78,13 @@ public class Trip implements Formatter {
         return getFormattedData(route.getSimplifiedRoute(), getFormattedDepartureDate(), getFormattedDepartureTime(),
                 getFormattedArrivalDate(), getFormattedArrivalTime(), pickupPoint, dropOffPoint, currency, price,
                 baggageInfo, otherInfo);
+    }
+
+    @Override
+    public List<Object> getFormattedDataAsList() {
+        return getFormattedDataAsList(route.getSimplifiedRoute(), getFormattedDepartureDate(),
+                getFormattedDepartureTime(), getFormattedArrivalDate(), getFormattedArrivalTime(), pickupPoint,
+                dropOffPoint, currency, price, baggageInfo, otherInfo);
     }
 
     public boolean verifyDepartureDate(String userInput) {

@@ -5,11 +5,11 @@ import org.project.util.enums.Status;
 import org.project.util.enums.UserType;
 
 import javax.persistence.*;
-import java.util.Objects;
+
+import java.util.List;
 
 import static javax.persistence.CascadeType.MERGE;
 import static javax.persistence.EnumType.STRING;
-import static org.project.util.constants.Constants.EMPTY_STRING;
 
 @Entity
 @Table(name = "route")
@@ -47,6 +47,11 @@ public class Route implements Formatter {
     @Override
     public Object[] getFormattedData() {
         return getFormattedData(countryFrom.getName(), cityFrom.getName(), countryTo.getName(), cityTo.getName());
+    }
+
+    @Override
+    public List<Object> getFormattedDataAsList() {
+        return getFormattedDataAsList(countryFrom.getName(), cityFrom.getName(), countryTo.getName(), cityTo.getName());
     }
 
     public String getSimplifiedRoute() {

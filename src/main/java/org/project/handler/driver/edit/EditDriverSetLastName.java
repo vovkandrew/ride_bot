@@ -1,12 +1,10 @@
 package org.project.handler.driver.edit;
 
-import org.project.handler.UpdateHandler;
 import org.project.model.Driver;
 import org.project.model.Phase;
 import org.project.model.UserPhase;
 import org.project.service.DriverService;
 import org.project.util.UpdateHelper;
-import org.project.util.constants.Messages;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
@@ -14,20 +12,16 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import java.util.Optional;
 
 import static java.lang.String.format;
-import static org.project.util.Keyboards.getEditDriverDetailsKeyboard;
 import static org.project.util.UpdateHelper.getUserIdFromUpdate;
 import static org.project.util.UpdateHelper.isUpdateContainsHandler;
 import static org.project.util.constants.Messages.*;
-import static org.project.util.constants.Patterns.DRIVER_LAST_NAME;
-import static org.project.util.enums.HandlerName.DRIVER_INFO;
+import static org.project.util.constants.Patterns.LAST_NAME_PATTERN;
 import static org.project.util.enums.HandlerName.EDITING_LAST_NAME;
 
 @Component
-public class EditDriverSetLastName extends UpdateHandler {
-    private final DriverService driverService;
-
+public class EditDriverSetLastName extends EditDriverInfo {
     public EditDriverSetLastName(DriverService driverService) {
-        this.driverService = driverService;
+        super(driverService);
     }
 
     @Override
@@ -51,17 +45,12 @@ public class EditDriverSetLastName extends UpdateHandler {
 
         String userInput = UpdateHelper.getUserInputFromUpdate(update);
 
-        if (isUserInputMatchesPattern(userInput, DRIVER_LAST_NAME)) {
-            Driver driver = driverService.updateLastName(userId, userInput);
+        if (isUserInputMatchesPattern(userInput, LAST_NAME_PATTERN)) {
+            Driver driver = getDriverService().updateLastName(userId, userInput);
 
             editMessage(userId, format(LAST_NAME_PROVIDED, userInput));
 
-            deleteRemovableMessagesAndEraseAllFromRepo(userId);
-
-            updateUserPhase(userPhase, DRIVER_INFO);
-
-            sendRemovableMessage(userId, joinMessages(DATA_UPDATED, format(Messages.DRIVER_DETAILS, driver.getFormattedData())),
-                    getEditDriverDetailsKeyboard());
+            sendDriverInfoAndUpdateUserPhase(userId, driver, userPhase);
 
             return;
         }

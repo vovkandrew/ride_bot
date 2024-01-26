@@ -1,6 +1,5 @@
 package org.project.handler.driver.edit;
 
-import org.project.handler.UpdateHandler;
 import org.project.model.Driver;
 import org.project.model.Phase;
 import org.project.model.UserPhase;
@@ -13,18 +12,16 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import java.util.Optional;
 
 import static java.lang.String.format;
-import static org.project.util.Keyboards.*;
+import static org.project.util.Keyboards.getRemoveKeyboard;
+import static org.project.util.Keyboards.getShareContactKeyboard;
 import static org.project.util.UpdateHelper.isUpdateContainsHandler;
 import static org.project.util.constants.Messages.*;
-import static org.project.util.enums.HandlerName.DRIVER_INFO;
 import static org.project.util.enums.HandlerName.EDITING_PHONE_NUMBER;
 
 @Component
-public class EditDriverSetPhoneNumber extends UpdateHandler {
-    private final DriverService driverService;
-
+public class EditDriverSetPhoneNumber extends EditDriverInfo {
     public EditDriverSetPhoneNumber(DriverService driverService) {
-        this.driverService = driverService;
+        super(driverService);
     }
 
     @Override
@@ -48,16 +45,12 @@ public class EditDriverSetPhoneNumber extends UpdateHandler {
 
         if (update.hasMessage() && update.getMessage().hasContact()) {
             String phoneNumber = update.getMessage().getContact().getPhoneNumber();
-            Driver driver = driverService.updatePhoneNumber(userId, phoneNumber);
 
-            deleteRemovableMessagesAndEraseAllFromRepo(userId);
-
-            updateUserPhase(userPhase, DRIVER_INFO);
+            Driver driver = getDriverService().updatePhoneNumber(userId, phoneNumber);
 
             sendMessage(userId, format(PHONE_NUMBER_PROVIDED, phoneNumber), getRemoveKeyboard());
 
-            sendRemovableMessage(userId, joinMessages(DATA_UPDATED, format(DRIVER_DETAILS, driver.getFormattedData())),
-                    getEditDriverDetailsKeyboard());
+            sendDriverInfoAndUpdateUserPhase(userId, driver, userPhase);
 
             return;
         }

@@ -6,7 +6,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 
 import static java.util.Optional.ofNullable;
 import static org.project.util.constants.Constants.*;
-import static org.project.util.constants.Patterns.SPLITERATOR;
+import static org.project.util.constants.Patterns.SPLITERATOR_PATTERN;
 
 public class UpdateHelper {
     public static long getUserIdFromUpdate(Update update) {
@@ -45,7 +45,7 @@ public class UpdateHelper {
             String callbackQuery = update.getCallbackQuery().getData();
 
             if (callbackQuery.contains(DEFAULT_SEPARATOR)) {
-                return callbackQuery.split(SPLITERATOR)[DEFAULT_OFFSET].equals(handlerName.name());
+                return callbackQuery.split(SPLITERATOR_PATTERN)[DEFAULT_OFFSET].equals(handlerName.name());
             } else {
                 return callbackQuery.equals(handlerName.name());
             }
@@ -58,7 +58,7 @@ public class UpdateHelper {
         if (update.hasCallbackQuery()) {
             String callbackQuery = update.getCallbackQuery().getData();
             if (callbackQuery.contains(DEFAULT_SEPARATOR)) {
-                return callbackQuery.split(SPLITERATOR)[DEFAULT_OFFSET].equals(handlerName);
+                return callbackQuery.split(SPLITERATOR_PATTERN)[DEFAULT_OFFSET].equals(handlerName);
             } else {
                 return callbackQuery.equals(handlerName);
             }
@@ -73,7 +73,7 @@ public class UpdateHelper {
 
     public static int getCallbackQueryIdParamFromUpdate(Update update) {
         if (update.hasCallbackQuery()) {
-            return Integer.parseInt(update.getCallbackQuery().getData().split(SPLITERATOR)[1]);
+            return Integer.parseInt(update.getCallbackQuery().getData().split(SPLITERATOR_PATTERN)[1]);
         }
 
         throw new IllegalArgumentException(DEFAULT_MISSING_CALLBACK_PARAM_EXCEPTION);
@@ -81,7 +81,7 @@ public class UpdateHelper {
 
     public static String getCallbackQueryStringParamFromUpdate(Update update) {
         if (update.hasCallbackQuery()) {
-            return update.getCallbackQuery().getData().split(SPLITERATOR)[1];
+            return update.getCallbackQuery().getData().split(SPLITERATOR_PATTERN)[1];
         }
 
         throw new IllegalArgumentException(DEFAULT_MISSING_CALLBACK_PARAM_EXCEPTION);

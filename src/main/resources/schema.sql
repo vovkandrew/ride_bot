@@ -77,3 +77,14 @@ create table if not exists trip (
 	status VARCHAR(250),
 	FOREIGN KEY (route_id) REFERENCES route (id)
 );
+
+create table if not exists booking (
+    id BIGSERIAL PRIMARY KEY,
+    trip_id BIGINT NOT NULL,
+    telegram_user_id BIGINT,
+    passenger_name VARCHAR(250),
+    passenger_phone_number VARCHAR(250),
+    number_of_seats INT,
+    FOREIGN KEY (trip_id) REFERENCES trip (id),
+    FOREIGN KEY (telegram_user_id) REFERENCES telegram_user (id)
+);

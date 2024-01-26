@@ -14,7 +14,7 @@ import static org.project.util.UpdateHelper.getUserIdFromUpdate;
 import static org.project.util.UpdateHelper.getUserInputFromUpdate;
 import static org.project.util.constants.Constants.TIME_FORMAT;
 import static org.project.util.constants.Messages.*;
-import static org.project.util.constants.Patterns.TIME;
+import static org.project.util.constants.Patterns.TIME_PATTERN;
 import static org.project.util.enums.HandlerName.CREATE_TRIP_PROVIDE_ARRIVAL_TIME;
 import static org.project.util.enums.HandlerName.CREATE_TRIP_PROVIDE_PICKUP_POINT;
 
@@ -34,7 +34,7 @@ public class CreateTripSetArrivalTime extends UpdateHandler {
 
         String userInput = getUserInputFromUpdate(update);
 
-        if (isUserInputMatchesPattern(userInput, TIME) && trip.verifyArrivalTime(userInput)) {
+        if (isUserInputMatchesPattern(userInput, TIME_PATTERN) && trip.verifyArrivalTime(userInput)) {
             trip = tripService.updateTripArrivalTime(trip, userInput);
 
             editMessage(userId, format(DRIVER_TRIP_ARRIVAL_TIME_PROVIDED, trip.getArrivalTime().format(ofPattern(TIME_FORMAT))));

@@ -1,16 +1,22 @@
 package org.project.handler.trip;
 
 import org.project.handler.UpdateHandler;
+import org.project.model.Driver;
 import org.project.model.Phase;
 import org.project.model.Trip;
 import org.project.model.UserPhase;
+import org.project.service.BookingService;
+import org.project.service.DriverService;
 import org.project.service.TripService;
 import org.project.util.enums.HandlerName;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static java.lang.String.format;
 import static org.project.util.Keyboards.getDriverTripDetailsKeyboard;
@@ -21,9 +27,13 @@ import static org.project.util.enums.HandlerName.*;
 @Component
 public class DriverTripDetails extends UpdateHandler {
     private final TripService tripService;
+    private final DriverService driverService;
+    private final BookingService bookingService;
 
-    public DriverTripDetails(TripService tripService) {
+    public DriverTripDetails(TripService tripService, DriverService driverService, BookingService bookingService) {
         this.tripService = tripService;
+        this.driverService = driverService;
+        this.bookingService = bookingService;
     }
 
     @Override
@@ -46,7 +56,15 @@ public class DriverTripDetails extends UpdateHandler {
 
         Trip trip = tripService.getTrip(dataParam);
 
-        sendRemovableMessage(userId, format(TRIP_DETAILS, trip.getFormattedData()),
+        Driver driver = driverService.getDriver(userId);
+
+        int numberOfBookedSeats = bookingService.getNumberOfBookedSeats(trip);
+
+        List<Object> collect = Arrays.stream(trip.getFormattedData()).collect(Collectors.toList());
+        collect.add(driver.getSeatsNumber());
+        collect.add(numberOfBookedSeats);
+
+        sendRemovableMessage(userId, format(TRIP_DETAILS, collect.toArray()),
                 getDriverTripDetailsKeyboard(trip.getId(), handlerName));
     }
 

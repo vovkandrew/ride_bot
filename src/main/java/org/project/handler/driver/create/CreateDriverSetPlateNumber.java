@@ -11,7 +11,7 @@ import static java.lang.String.format;
 import static org.project.util.UpdateHelper.getUserIdFromUpdate;
 import static org.project.util.UpdateHelper.getUserInputFromUpdate;
 import static org.project.util.constants.Messages.*;
-import static org.project.util.constants.Patterns.CAR_PLATE_NUMBER;
+import static org.project.util.constants.Patterns.CAR_PLATE_NUMBER_PATTERN;
 import static org.project.util.enums.HandlerName.GET_PLATE_NUMBER;
 import static org.project.util.enums.HandlerName.GET_SEATS_NUMBER;
 
@@ -28,7 +28,7 @@ public class CreateDriverSetPlateNumber extends UpdateHandler {
         long userId = getUserIdFromUpdate(update);
         String userInput = getUserInputFromUpdate(update);
 
-        if (isUserInputMatchesPattern(userInput, CAR_PLATE_NUMBER)) {
+        if (isUserInputMatchesPattern(userInput, CAR_PLATE_NUMBER_PATTERN)) {
             driverService.updatePlateNumber(userId, userInput);
 
             editMessage(userId, format(PLATE_NUMBER_PROVIDED, userInput));

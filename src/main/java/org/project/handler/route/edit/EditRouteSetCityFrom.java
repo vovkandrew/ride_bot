@@ -1,6 +1,5 @@
 package org.project.handler.route.edit;
 
-import org.project.handler.UpdateHandler;
 import org.project.model.Phase;
 import org.project.model.Route;
 import org.project.model.UserPhase;
@@ -15,16 +14,16 @@ import java.util.Optional;
 
 import static java.lang.String.format;
 import static org.project.util.Keyboards.getAvailableCitiesKeyboard;
-import static org.project.util.Keyboards.getDriverRouteMenuKeyboard;
 import static org.project.util.UpdateHelper.*;
 import static org.project.util.constants.Constants.DEFAULT_CITY_LIMIT;
 import static org.project.util.constants.Messages.*;
-import static org.project.util.enums.HandlerName.*;
+import static org.project.util.enums.HandlerName.EDIT_ROUTE_CITY_FROM;
+import static org.project.util.enums.HandlerName.EDIT_ROUTE_CITY_FROM_NEXT;
 import static org.project.util.enums.Status.CREATED;
 import static org.project.util.enums.Status.EDITING;
 
 @Component
-public class EditRouteSetCityFrom extends UpdateHandler {
+public class EditRouteSetCityFrom extends EditRoute {
     private final CityService cityService;
     private final RouteService routeService;
 
@@ -72,18 +71,14 @@ public class EditRouteSetCityFrom extends UpdateHandler {
         }
 
         route = routeService.getEditingRoute(userId);
+
         route = routeService.updateRouteCityFrom(route, getCallbackQueryIdParamFromUpdate(update));
 
-        updateUserPhase(userPhase, ROUTES_MAIN_MENU);
-
-        deleteRemovableMessagesAndEraseAllFromRepo(userId);
+        routeService.updateRouteStatus(route, CREATED);
 
         sendMessage(userId, format(CITY_FROM_PROVIDED, route.getCityFrom().getName()));
 
-        sendRemovableMessage(userId, joinMessages(format(ROUTE_DATA, route.getFormattedData()), ROUTE_DATA_INFO),
-                getDriverRouteMenuKeyboard(route.getId()));
-
-        routeService.updateRouteStatus(route, CREATED);
+        sendRouteDetailsAndUpdateUserPhase(userId, route, userPhase);
     }
 
     @Override

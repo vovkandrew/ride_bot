@@ -1,6 +1,5 @@
 package org.project.handler.driver.edit;
 
-import org.project.handler.UpdateHandler;
 import org.project.model.Driver;
 import org.project.model.Phase;
 import org.project.model.UserPhase;
@@ -13,20 +12,16 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import java.util.Optional;
 
 import static java.lang.String.format;
-import static org.project.util.Keyboards.getEditDriverDetailsKeyboard;
 import static org.project.util.UpdateHelper.getUserIdFromUpdate;
 import static org.project.util.UpdateHelper.isUpdateContainsHandler;
 import static org.project.util.constants.Messages.*;
-import static org.project.util.constants.Patterns.CAR_MODEL;
-import static org.project.util.enums.HandlerName.DRIVER_INFO;
+import static org.project.util.constants.Patterns.CAR_MODEL_PATTERN;
 import static org.project.util.enums.HandlerName.EDITING_CAR_MODEL;
 
 @Component
-public class EditDriverSetCarModel extends UpdateHandler {
-    private final DriverService driverService;
-
+public class EditDriverSetCarModel extends EditDriverInfo {
     public EditDriverSetCarModel(DriverService driverService) {
-        this.driverService = driverService;
+        super(driverService);
     }
 
     @Override
@@ -50,17 +45,12 @@ public class EditDriverSetCarModel extends UpdateHandler {
 
         String userInput = UpdateHelper.getUserInputFromUpdate(update);
 
-        if (isUserInputMatchesPattern(userInput, CAR_MODEL)) {
-            Driver driver = driverService.updateCarModel(userId, userInput);
+        if (isUserInputMatchesPattern(userInput, CAR_MODEL_PATTERN)) {
+            Driver driver = getDriverService().updateCarModel(userId, userInput);
 
             editMessage(userId, format(CAR_MODEL_PROVIDED, userInput));
 
-            deleteRemovableMessagesAndEraseAllFromRepo(userId);
-
-            updateUserPhase(userPhase, DRIVER_INFO);
-
-            sendRemovableMessage(userId, joinMessages(DATA_UPDATED, format(DRIVER_DETAILS, driver.getFormattedData())),
-                    getEditDriverDetailsKeyboard());
+            sendDriverInfoAndUpdateUserPhase(userId, driver, userPhase);
 
             return;
         }

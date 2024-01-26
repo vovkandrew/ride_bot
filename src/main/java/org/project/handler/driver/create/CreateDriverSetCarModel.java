@@ -11,7 +11,7 @@ import static java.lang.String.format;
 import static org.project.util.UpdateHelper.getUserIdFromUpdate;
 import static org.project.util.UpdateHelper.getUserInputFromUpdate;
 import static org.project.util.constants.Messages.*;
-import static org.project.util.constants.Patterns.CAR_MODEL;
+import static org.project.util.constants.Patterns.CAR_MODEL_PATTERN;
 import static org.project.util.enums.HandlerName.GET_CAR_COLOR;
 import static org.project.util.enums.HandlerName.GET_CAR_MODEL;
 import static org.springframework.util.StringUtils.hasText;
@@ -29,7 +29,7 @@ public class CreateDriverSetCarModel extends UpdateHandler {
         long userId = getUserIdFromUpdate(update);
         String userInput = getUserInputFromUpdate(update);
 
-        if (isUserInputMatchesPattern(userInput, CAR_MODEL)) {
+        if (isUserInputMatchesPattern(userInput, CAR_MODEL_PATTERN)) {
             driverService.updateCarModel(userId, userInput);
 
             editMessage(userId, format(CAR_MODEL_PROVIDED, userInput));

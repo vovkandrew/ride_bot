@@ -1,6 +1,5 @@
 package org.project.handler.driver.edit;
 
-import org.project.handler.UpdateHandler;
 import org.project.model.Driver;
 import org.project.model.Phase;
 import org.project.model.UserPhase;
@@ -12,19 +11,15 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import java.util.Optional;
 
 import static java.lang.String.format;
-import static org.project.util.Keyboards.getEditDriverDetailsKeyboard;
 import static org.project.util.UpdateHelper.*;
 import static org.project.util.constants.Messages.*;
-import static org.project.util.constants.Patterns.CAR_PLATE_NUMBER;
-import static org.project.util.enums.HandlerName.DRIVER_INFO;
+import static org.project.util.constants.Patterns.CAR_PLATE_NUMBER_PATTERN;
 import static org.project.util.enums.HandlerName.EDITING_PLATE_NUMBER;
 
 @Component
-public class EditDriverSetPlateNumber extends UpdateHandler {
-    private final DriverService driverService;
-
+public class EditDriverSetPlateNumber extends EditDriverInfo {
     public EditDriverSetPlateNumber(DriverService driverService) {
-        this.driverService = driverService;
+        super(driverService);
     }
 
     @Override
@@ -48,17 +43,12 @@ public class EditDriverSetPlateNumber extends UpdateHandler {
 
         String userInput = getUserInputFromUpdate(update);
 
-        if (isUserInputMatchesPattern(userInput, CAR_PLATE_NUMBER)) {
-            Driver driver = driverService.updatePlateNumber(userId, userInput);
+        if (isUserInputMatchesPattern(userInput, CAR_PLATE_NUMBER_PATTERN)) {
+            Driver driver = getDriverService().updatePlateNumber(userId, userInput);
 
             editMessage(userId, format(PLATE_NUMBER_PROVIDED, userInput));
 
-            deleteRemovableMessagesAndEraseAllFromRepo(userId);
-
-            updateUserPhase(userPhase, DRIVER_INFO);
-
-            sendRemovableMessage(userId, joinMessages(DATA_UPDATED, format(DRIVER_DETAILS, driver.getFormattedData())),
-                    getEditDriverDetailsKeyboard());
+            sendDriverInfoAndUpdateUserPhase(userId, driver, userPhase);
 
             return;
         }

@@ -1,6 +1,5 @@
 package org.project.handler.route.edit;
 
-import org.project.handler.UpdateHandler;
 import org.project.model.Phase;
 import org.project.model.Route;
 import org.project.model.UserPhase;
@@ -15,17 +14,18 @@ import java.util.Optional;
 
 import static java.lang.String.format;
 import static org.project.util.Keyboards.getAvailableCitiesKeyboard;
-import static org.project.util.Keyboards.getDriverRouteMenuKeyboard;
 import static org.project.util.UpdateHelper.*;
 import static org.project.util.constants.Constants.DEFAULT_CITY_LIMIT;
-import static org.project.util.constants.Messages.*;
-import static org.project.util.enums.HandlerName.*;
+import static org.project.util.constants.Messages.CITY_TO_PROVIDED;
+import static org.project.util.constants.Messages.PROVIDE_CITY_TO;
+import static org.project.util.enums.HandlerName.EDIT_ROUTE_CITY_TO;
+import static org.project.util.enums.HandlerName.EDIT_ROUTE_CITY_TO_NEXT;
 import static org.project.util.enums.Status.CREATED;
 import static org.project.util.enums.Status.EDITING;
 import static org.springframework.data.domain.PageRequest.of;
 
 @Component
-public class EditRouteSetCityTo extends UpdateHandler {
+public class EditRouteSetCityTo extends EditRoute {
     private final CityService cityService;
     private final RouteService routeService;
 
@@ -70,18 +70,14 @@ public class EditRouteSetCityTo extends UpdateHandler {
         }
 
         route = routeService.getEditingRoute(userId);
+
         route = routeService.updateRouteCityTo(route, getCallbackQueryIdParamFromUpdate(update));
 
-        updateUserPhase(userPhase, ROUTES_MAIN_MENU);
-
-        deleteRemovableMessagesAndEraseAllFromRepo(userId);
+        routeService.updateRouteStatus(route, CREATED);
 
         sendMessage(userId, format(CITY_TO_PROVIDED, route.getCityTo().getName()));
 
-        sendRemovableMessage(userId, joinMessages(format(ROUTE_DATA, route.getFormattedData()), ROUTE_DATA_INFO),
-                getDriverRouteMenuKeyboard(route.getId()));
-
-        routeService.updateRouteStatus(route, CREATED);
+        sendRouteDetailsAndUpdateUserPhase(userId, route, userPhase);
     }
 
     @Override

@@ -12,7 +12,7 @@ import static java.lang.String.format;
 import static org.project.util.UpdateHelper.getUserIdFromUpdate;
 import static org.project.util.UpdateHelper.getUserInputFromUpdate;
 import static org.project.util.constants.Messages.*;
-import static org.project.util.constants.Patterns.GENERAL_MESSAGE;
+import static org.project.util.constants.Patterns.GENERAL_MESSAGE_PATTERN;
 import static org.project.util.enums.HandlerName.CREATE_TRIP_PROVIDE_BAGGAGE_INFO;
 import static org.project.util.enums.HandlerName.CREATE_TRIP_PROVIDE_OTHER_INFO;
 
@@ -32,7 +32,7 @@ public class CreateTripSetBaggageInfo extends UpdateHandler {
 
         String userInput = getUserInputFromUpdate(update);
 
-        if (isUserInputMatchesPattern(userInput, GENERAL_MESSAGE)) {
+        if (isUserInputMatchesPattern(userInput, GENERAL_MESSAGE_PATTERN)) {
             trip = tripService.updateTripBaggageInfo(trip, userInput);
 
             editMessage(userId, format(DRIVER_TRIP_BAGGAGE_INFO_PROVIDED, trip.getBaggageInfo()));

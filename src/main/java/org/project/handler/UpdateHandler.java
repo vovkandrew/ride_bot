@@ -45,8 +45,8 @@ public abstract class UpdateHandler {
     private PhaseService phaseService;
     private static final long EXPIRATION_PERIOD = 86400000L;
 
-    public UpdateHandler(TelegramWebhookBot webhookBot, UserMessageService userMessageService, UserPhaseService userPhaseService,
-                         PhaseService phaseService) {
+    public UpdateHandler(TelegramWebhookBot webhookBot, UserMessageService userMessageService,
+                         UserPhaseService userPhaseService, PhaseService phaseService) {
         this.webhookBot = webhookBot;
         this.userMessageService = userMessageService;
         this.userPhaseService = userPhaseService;
@@ -99,7 +99,8 @@ public abstract class UpdateHandler {
         //forEach instead of stream in order to just throw exception further
         for (UserMessage userMessage : userMessageService.getAllUserMessagesByUserIdAndType(userId, REMOVABLE)) {
             if (stillValid(userMessage))
-                webhookBot.execute(DeleteMessage.builder().chatId(userId).messageId((int) userMessage.getMessageId()).build());
+                webhookBot.execute(DeleteMessage.builder().chatId(userId).messageId((int) userMessage.getMessageId())
+                        .build());
         }
     }
 

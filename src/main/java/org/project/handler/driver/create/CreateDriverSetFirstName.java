@@ -14,7 +14,7 @@ import java.util.Optional;
 import static java.lang.String.format;
 import static org.project.util.UpdateHelper.*;
 import static org.project.util.constants.Messages.*;
-import static org.project.util.constants.Patterns.DRIVER_FIRST_NAME;
+import static org.project.util.constants.Patterns.FIRST_NAME_PATTERN;
 import static org.project.util.enums.HandlerName.GET_FIRST_NAME;
 import static org.project.util.enums.HandlerName.GET_LAST_NAME;
 
@@ -49,7 +49,7 @@ public class CreateDriverSetFirstName extends UpdateHandler {
 
         String userInput = getUserInputFromUpdate(update);
 
-        if (isUserInputMatchesPattern(userInput, DRIVER_FIRST_NAME)) {
+        if (isUserInputMatchesPattern(userInput, FIRST_NAME_PATTERN)) {
             driverService.saveDriver(Driver.builder().id(userId).firstName(userInput).build());
 
             editMessage(userId, format(FIRST_NAME_PROVIDED, userInput));

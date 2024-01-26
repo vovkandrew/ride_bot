@@ -1,9 +1,10 @@
 package org.project.handler.trip.edit;
 
-import org.project.handler.UpdateHandler;
 import org.project.model.Phase;
 import org.project.model.Trip;
 import org.project.model.UserPhase;
+import org.project.service.BookingService;
+import org.project.service.DriverService;
 import org.project.service.TripService;
 import org.project.util.enums.Currency;
 import org.springframework.stereotype.Component;
@@ -14,18 +15,17 @@ import java.util.Optional;
 
 import static java.lang.String.format;
 import static org.project.util.Keyboards.getCurrenciesKeyboard;
-import static org.project.util.Keyboards.getDriverTripDetailsKeyboard;
 import static org.project.util.UpdateHelper.*;
 import static org.project.util.constants.Messages.*;
-import static org.project.util.enums.HandlerName.*;
+import static org.project.util.enums.HandlerName.DRIVER_TRIP_DETAILS;
+import static org.project.util.enums.HandlerName.DRIVER_TRIP_EDITING_CURRENCY;
 import static org.project.util.enums.Status.CREATED;
 
 @Component
-public class EditTripSetCurrency extends UpdateHandler {
-    private final TripService tripService;
+public class EditTripSetCurrency extends EditTripDetails {
 
-    public EditTripSetCurrency(TripService tripService) {
-        this.tripService = tripService;
+    public EditTripSetCurrency(TripService tripService, DriverService driverService, BookingService bookingService) {
+        super(tripService, driverService, bookingService);
     }
 
     @Override
@@ -40,9 +40,9 @@ public class EditTripSetCurrency extends UpdateHandler {
         Trip trip;
 
         if (isUpdateCallbackEqualsHandler(update, DRIVER_TRIP_EDITING_CURRENCY)) {
-            trip = tripService.getTrip(getCallbackQueryIdParamFromUpdate(update));
+            trip = getTripService().getTrip(getCallbackQueryIdParamFromUpdate(update));
 
-            tripService.updateAllEditingTrips(trip);
+            getTripService().updateAllEditingTrips(trip);
 
             deleteRemovableMessagesAndEraseAllFromRepo(userId);
 
@@ -51,21 +51,16 @@ public class EditTripSetCurrency extends UpdateHandler {
             return;
         }
 
-        trip = tripService.getFirstEditingTrip(userId);
-
         if (!isUserInputPresented(update)) {
+            trip = getTripService().getFirstEditingTrip(userId);
+
             trip.setStatus(CREATED);
 
-            tripService.updateTripCurrency(trip, Currency.valueOf(getCallbackQueryStringParamFromUpdate(update)));
+            getTripService().updateTripCurrency(trip, Currency.valueOf(getCallbackQueryStringParamFromUpdate(update)));
 
             editMessage(userId, format(DRIVER_TRIP_CURRENCY_PROVIDED, trip.getCurrency()));
 
-            deleteRemovableMessagesAndEraseAllFromRepo(userId);
-
-            sendRemovableMessage(userId, format(TRIP_DETAILS, trip.getFormattedData()),
-                    getDriverTripDetailsKeyboard(trip.getId(), DRIVER_TRIP_DETAILS_LESS));
-
-            updateUserPhase(userPhase, DRIVER_TRIP_DETAILS);
+            sendDriverTripDetailsAndUpdateUserPhase(userId, trip, userPhase);
 
             return;
         }

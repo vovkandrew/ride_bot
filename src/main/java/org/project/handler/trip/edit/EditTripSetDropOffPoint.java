@@ -1,9 +1,10 @@
 package org.project.handler.trip.edit;
 
-import org.project.handler.UpdateHandler;
 import org.project.model.Phase;
 import org.project.model.Trip;
 import org.project.model.UserPhase;
+import org.project.service.BookingService;
+import org.project.service.DriverService;
 import org.project.service.TripService;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -12,24 +13,23 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import java.util.Optional;
 
 import static java.lang.String.format;
-import static org.project.util.Keyboards.getDriverTripDetailsKeyboard;
 import static org.project.util.UpdateHelper.*;
 import static org.project.util.constants.Messages.*;
 import static org.project.util.constants.Patterns.getGeneralMessagePatternWithParameterizedStartLimit;
-import static org.project.util.enums.HandlerName.*;
+import static org.project.util.enums.HandlerName.DRIVER_TRIP_EDITING_DROPOFF_POINT;
 import static org.project.util.enums.Status.CREATED;
 
 @Component
-public class EditTripSetDropOffPoint extends UpdateHandler {
-    private final TripService tripService;
-
-    public EditTripSetDropOffPoint(TripService tripService) {
-        this.tripService = tripService;
+public class EditTripSetDropOffPoint extends EditTripDetails {
+    public EditTripSetDropOffPoint(TripService tripService, DriverService driverService,
+                                   BookingService bookingService) {
+        super(tripService, driverService, bookingService);
     }
 
     @Override
     public boolean isApplicable(Optional<Phase> phaseOptional, Update update) {
-        return isUpdateContainsHandler(update, DRIVER_TRIP_EDITING_DROPOFF_POINT) || super.isApplicable(phaseOptional, update);
+        return isUpdateContainsHandler(update, DRIVER_TRIP_EDITING_DROPOFF_POINT)
+                || super.isApplicable(phaseOptional, update);
     }
 
     @Override
@@ -39,9 +39,9 @@ public class EditTripSetDropOffPoint extends UpdateHandler {
         Trip trip;
 
         if (isUpdateContainsHandler(update, DRIVER_TRIP_EDITING_DROPOFF_POINT)) {
-            trip = tripService.getTrip(getCallbackQueryIdParamFromUpdate(update));
+            trip = getTripService().getTrip(getCallbackQueryIdParamFromUpdate(update));
 
-            tripService.updateAllEditingTrips(trip);
+            getTripService().updateAllEditingTrips(trip);
 
             deleteRemovableMessagesAndEraseAllFromRepo(userId);
 
@@ -50,23 +50,19 @@ public class EditTripSetDropOffPoint extends UpdateHandler {
             return;
         }
 
-        trip = tripService.getFirstEditingTrip(userId);
 
         String userInput = getUserInputFromUpdate(update);
 
         if (isUserInputMatchesPattern(userInput, getGeneralMessagePatternWithParameterizedStartLimit(10))) {
+            trip = getTripService().getFirstEditingTrip(userId);
+
             trip.setStatus(CREATED);
 
-            tripService.updateTripDropOffPoint(trip, userInput);
+            getTripService().updateTripDropOffPoint(trip, userInput);
 
             editMessage(userId, format(DRIVER_TRIP_DROPOFF_POINT_PROVIDED, trip.getDropOffPoint()));
 
-            deleteRemovableMessagesAndEraseAllFromRepo(userId);
-
-            sendRemovableMessage(userId, format(TRIP_DETAILS, trip.getFormattedData()),
-                    getDriverTripDetailsKeyboard(trip.getId(), DRIVER_TRIP_DETAILS_LESS));
-
-            updateUserPhase(userPhase, DRIVER_TRIP_DETAILS);
+            sendDriverTripDetailsAndUpdateUserPhase(userId, trip, userPhase);
 
             return;
         }

@@ -43,4 +43,9 @@ public class Driver implements Formatter {
     public Object[] getFormattedData() {
         return getFormattedData(firstName, lastName, phoneNumber, carModel, carColor, plateNumber, seatsNumber);
     }
+
+    @Override
+    public List<Object> getFormattedDataAsList() {
+        return getFormattedDataAsList(firstName, lastName, phoneNumber, carModel, carColor, plateNumber, seatsNumber);
+    }
 }

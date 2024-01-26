@@ -20,7 +20,7 @@ import static org.project.util.UpdateHelper.getUserIdFromUpdate;
 import static org.project.util.UpdateHelper.getUserInputFromUpdate;
 import static org.project.util.constants.Messages.USER_AGREEMENT;
 import static org.project.util.constants.Messages.*;
-import static org.project.util.constants.Patterns.CAR_SEATS_NUMBER;
+import static org.project.util.constants.Patterns.CAR_SEATS_NUMBER_PATTERN;
 import static org.project.util.enums.HandlerName.*;
 
 @Component
@@ -42,7 +42,7 @@ public class CreateDriverSetSeatsNumber extends UpdateHandler {
         String userInput = getUserInputFromUpdate(update);
         updateUserPhase(userPhase, handlerPhase);
 
-        if (isUserInputMatchesPattern(userInput, CAR_SEATS_NUMBER)) {
+        if (isUserInputMatchesPattern(userInput, CAR_SEATS_NUMBER_PATTERN)) {
             driverService.updateSeatsNumber(userId, userInput);
 
             editMessage(userId, format(SEATS_NUMBER_PROVIDED, userInput));
