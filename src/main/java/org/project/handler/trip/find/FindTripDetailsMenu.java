@@ -60,7 +60,7 @@ public class FindTripDetailsMenu extends UpdateHandler {
                 trip.getBaggageInfo(), trip.getOtherInfo(), trip.getPrice(),trip.getCurrency(), availableSeats);
 
         sendRemovableMessage(userId, msg,
-                getPassengerChosenTripDetailsKeyboard(route.getCityTo().getId(), tripId, FIND_TRIP_CITY_TO));
+                getPassengerChosenTripDetailsKeyboard(tripId, FIND_TRIP_MENU));
     }
 
     @Override
