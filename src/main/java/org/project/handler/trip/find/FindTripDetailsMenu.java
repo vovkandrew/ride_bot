@@ -15,20 +15,16 @@ import static org.project.util.Keyboards.getPassengerChosenTripDetailsKeyboard;
 import static org.project.util.UpdateHelper.getCallbackQueryIdParamFromUpdate;
 import static org.project.util.constants.Messages.FIND_TRIP_DETAILS_DESCRIPTION;
 import static org.project.util.enums.HandlerName.*;
-import static org.springframework.data.domain.PageRequest.of;
 
 @Component
 public class FindTripDetailsMenu extends UpdateHandler {
-    private final CountryService countryService;
-    private final CityService cityService;
+
     private final TripService tripService;
     private final BookingService bookingService;
     private final DriverService driverService;
 
 
-    public FindTripDetailsMenu(CountryService countryService, CityService cityService, TripService tripService, BookingService bookingService, DriverService driverService) {
-        this.countryService = countryService;
-        this.cityService = cityService;
+    public FindTripDetailsMenu(TripService tripService, BookingService bookingService, DriverService driverService) {
         this.tripService = tripService;
         this.bookingService = bookingService;
         this.driverService = driverService;
@@ -44,20 +40,27 @@ public class FindTripDetailsMenu extends UpdateHandler {
         long userId = getUserIdFromUpdate(update);
         deleteRemovableMessagesAndEraseAllFromRepo(userId);
         updateUserPhase(userPhase, handlerPhase);
-        if (isMessageSentInsteadOfButtonClick(update)) {return;}
+
+        if (isMessageSentInsteadOfButtonClick(update)) {
+            return;
+        }
 
         long tripId = getCallbackQueryIdParamFromUpdate(update);
         Trip trip = tripService.getTrip(tripId);
-        int availableSeats = driverService.findDriver(trip.getRoute().getTelegramUserId()).orElseThrow().getSeatsNumber()
-                - bookingService.getNumberOfBookedSeats(trip);
 
+        int availableSeats = driverService.getDriver(trip.getRoute().
+                getTelegramUserId()).getSeatsNumber()
+                - bookingService.getNumberOfBookedSeats(trip);
         Route route = trip.getRoute();
 
-        String msg = format(FIND_TRIP_DETAILS_DESCRIPTION, route.getCountryFrom().getName(), route.getCityFrom().getName(), trip.getPickupPoint(),
-                trip.getFormattedDepartureDate(), trip.getFormattedDepartureTime(), route.getCountryTo().getName(), route.getCityTo().getName(),
-                trip.getDropOffPoint(), trip.getFormattedArrivalDate(), trip.getFormattedArrivalTime(), trip.getBaggageInfo(),
-                trip.getOtherInfo(), trip.getPrice(), availableSeats);
-        sendRemovableMessage(userId, msg, getPassengerChosenTripDetailsKeyboard(route.getCityTo().getId(), tripId, FIND_TRIP_CITY_TO));
+        String msg = format(FIND_TRIP_DETAILS_DESCRIPTION, route.getCountryFrom().getName(), route.getCityFrom().
+                        getName(), trip.getPickupPoint(), trip.getFormattedDepartureDate(),
+                trip.getFormattedDepartureTime(), route.getCountryTo().getName(), route.getCityTo().getName(),
+                trip.getDropOffPoint(), trip.getFormattedArrivalDate(), trip.getFormattedArrivalTime(),
+                trip.getBaggageInfo(), trip.getOtherInfo(), trip.getPrice(),trip.getCurrency(), availableSeats);
+
+        sendRemovableMessage(userId, msg,
+                getPassengerChosenTripDetailsKeyboard(route.getCityTo().getId(), tripId, FIND_TRIP_CITY_TO));
     }
 
     @Override

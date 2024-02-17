@@ -58,5 +58,4 @@ public class Buttons {
     public static final String PASSENGER_MAIN_MENU = "Меню пасажира \uD83D\uDED7";
     public static final String GET_TRIP_DETAILS = "Деталі поїздки \uD83D\uDE90";
     public static final String PURCHASE_TICKET = "Придбати квиток";
-
 }
