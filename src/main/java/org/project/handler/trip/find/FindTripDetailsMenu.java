@@ -48,19 +48,17 @@ public class FindTripDetailsMenu extends UpdateHandler {
         long tripId = getCallbackQueryIdParamFromUpdate(update);
         Trip trip = tripService.getTrip(tripId);
 
-        int availableSeats = driverService.getDriver(trip.getRoute().
-                getTelegramUserId()).getSeatsNumber()
-                - bookingService.getNumberOfBookedSeats(trip);
+        int availableSeats = driverService.getDriver(trip.getRoute().getTelegramUserId()).getSeatsNumber() -
+                bookingService.getNumberOfBookedSeats(trip);
         Route route = trip.getRoute();
 
-        String msg = format(FIND_TRIP_DETAILS_DESCRIPTION, route.getCountryFrom().getName(), route.getCityFrom().
-                        getName(), trip.getPickupPoint(), trip.getFormattedDepartureDate(),
+        String msg = format(FIND_TRIP_DETAILS_DESCRIPTION, route.getCountryFrom().getName(),
+                route.getCityFrom().getName(), trip.getPickupPoint(), trip.getFormattedDepartureDate(),
                 trip.getFormattedDepartureTime(), route.getCountryTo().getName(), route.getCityTo().getName(),
                 trip.getDropOffPoint(), trip.getFormattedArrivalDate(), trip.getFormattedArrivalTime(),
                 trip.getBaggageInfo(), trip.getOtherInfo(), trip.getPrice(),trip.getCurrency(), availableSeats);
 
-        sendRemovableMessage(userId, msg,
-                getPassengerChosenTripDetailsKeyboard(tripId, FIND_TRIP_MENU));
+        sendRemovableMessage(userId, msg, getPassengerChosenTripDetailsKeyboard(tripId, FIND_TRIP_MENU));
     }
 
     @Override

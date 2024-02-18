@@ -43,17 +43,16 @@ public class FindTripMenu extends UpdateHandler {
         long userId = getUserIdFromUpdate(update);
         updateUserPhase(userPhase, handlerPhase);
         Route route = routeService.getNewPassengerRoute(userId);
-
         deleteRemovableMessagesAndEraseAllFromRepo(userId);
         if (isMessageSentInsteadOfButtonClick(update)) {
             return;
         }
 
         Page<Trip> trips = tripService.findAllCreatedNonDriverTrips(route, of(DEFAULT_OFFSET, DEFAULT_TRIP_LIMIT));
-
         sendRemovableMessage(userId, format(FIND_TRIP_CHOOSE_TRIPS, route.getFormattedData()),
                 getAvailableTripsForPassengerKeyboard(trips, FIND_TRIP_MENU_NEXT, FIND_TRIP_MENU_DETAILS));
     }
+
     @Override
     public void initHandler() {
         handlerPhase = getPhaseService().getPhaseByHandlerName(FIND_TRIP_MENU);
