@@ -114,8 +114,10 @@ public class Messages {
     public static String FIND_TRIP_LOOKING_FOR_TRIPS = "Шукаэмо поїздки за маршрутом <b><i>%s</i></b> \uD83D\uDD0E...";
     public static String FIND_TRIP_CHOOSE_TRIPS = "Будь ласка скористайтесь кнопками навігації аби переглянути наявні"
             + " поїздки за маршрутом <b><i>%s</i></b>";
-    public static String FIND_TRIP_DETAILS_DESCRIPTION = "Деталі маршруту \uD83D\uDEE3\uFE0F \nВідправлення: %s, %s, %s" +
-            "\nДата: %s о %s\nПрибуття: %s, %s, %s\nДата: %s о %s\nБагаж: %s\nІнше: %s\nЦіна: %s\nВільних місць: %s\n";
+    public static String FIND_TRIP_DETAILS_DESCRIPTION = "Деталі маршруту \uD83D\uDEE3\uFE0F \nВідправлення: <b><i>%s</i></b>," +
+            " <b><i>%s</i></b>, <b><i>%s</i></b>\nДата: <b><i>%s</i></b> о <b><i>%s</i></b>\nПрибуття: <b><i>%s</i></b>," +
+            " <b><i>%s</i></b>, <b><i>%s</i></b>\nДата: <b><i>%s</i></b> о <b><i>%s</i></b>\nБагаж: <b><i>%s</i></b>" +
+            "\nІнше: <b><i>%s</i></b>\nЦіна: <b><i>%s</i></b> <b><i>%s</i></b>\nВільних місць: <b><i>%s</i></b>\n";
     public static String START_TRACKING_ROUTE = "Тепер ви відслідковуєте маршрут %s \uD83D\uDEE3\uFE0F. Коли хтось створить " +
             "поїздку за цим маршрутом, ми вас сповістимо!";
     public static String TRACKING_ROUTES_MENU = "Тут ви можете подивитись список маршрутів котрі ви відслідковуєте " +
