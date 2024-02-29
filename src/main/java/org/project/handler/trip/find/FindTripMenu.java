@@ -13,12 +13,10 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import java.util.Optional;
 
 import static java.lang.String.format;
-import static org.project.util.Keyboards.getAvailableCitiesKeyboard;
 import static org.project.util.Keyboards.getAvailableTripsForPassengerKeyboard;
 import static org.project.util.UpdateHelper.*;
 import static org.project.util.constants.Constants.*;
 import static org.project.util.constants.Messages.FIND_TRIP_CHOOSE_TRIPS;
-import static org.project.util.constants.Messages.PROVIDE_CITY_TO;
 import static org.project.util.enums.HandlerName.*;
 import static org.springframework.data.domain.PageRequest.of;
 

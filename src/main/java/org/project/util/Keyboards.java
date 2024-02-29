@@ -479,11 +479,16 @@ public class Keyboards {
     public static InlineKeyboardMarkup getPassengerChosenTripDetailsKeyboard(long tripId,
                                                                              HandlerName navigationCallback){
         InlineKeyboardButton purchaseTicket = InlineKeyboardButton.builder().text(PURCHASE_TICKET)
-                .callbackData(buildCallbackFromHandlerAndIdParam(TRACKING_ROUTE_PURCHASE_TICKET, tripId)).build();
+                .callbackData(buildCallbackFromHandlerAndIdParam(PASSENGER_RESERVE_SEATS, tripId)).build();
         InlineKeyboardButton backToPassengerMenu = InlineKeyboardButton.builder().text(BACK_TO_PASSENGER_MENU)
                 .callbackData(PASSENGER_MENU.name()).build();
         InlineKeyboardButton back = InlineKeyboardButton.builder().text(BACK_BUTTON)
                 .callbackData(navigationCallback.name()).build();
         return new InlineKeyboardMarkup(of(of(purchaseTicket),of(backToPassengerMenu,back)));
+    }
+    public static InlineKeyboardMarkup getBackButton(HandlerName backCallback){
+        InlineKeyboardButton back = InlineKeyboardButton.builder().text(BACK_BUTTON)
+                .callbackData(backCallback.name()).build();
+        return new InlineKeyboardMarkup(of(of(back)));
     }
 }
