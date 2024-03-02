@@ -28,7 +28,7 @@ public interface TripRepository extends JpaRepository<Trip, Long> {
     List<Trip> findAllEditing(long telegramUserId);
 
     @Query(value = "select t from Trip t where t.status = 'CREATED' and t.route.countryFrom = ?1 " +
-            "and t.route.cityFrom = ?2 and t.route.countryTo = ?3 and t.route.cityTo = ?4 and t.route.telegramUserId != ?5")
+            "and t.route.cityFrom = ?2 and t.route.countryTo = ?3 and t.route.cityTo = ?4 and t.route.telegramUserId != ?5 order by t.departureDate")
     Page<Trip> findAllCreatedNonDriverTripsByRouteDetails(Country countryFrom, City cityFrom, Country countryTo, City cityTo,
                                                           long driverId, Pageable pageable);
 

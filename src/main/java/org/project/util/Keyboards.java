@@ -168,6 +168,9 @@ public class Keyboards {
                     .callbackData(buildCallbackFromHandlerAndIdParam(navigationCallback, countries.getNumber() + 1)).build()));
         }
 
+        rows.add(of(InlineKeyboardButton.builder().text(BACK_TO_PASSENGER_MENU)
+                .callbackData(PASSENGER_MENU.name()).build()));
+
         return new InlineKeyboardMarkup(rows);
     }
 
@@ -200,6 +203,9 @@ public class Keyboards {
             rows.add(of(InlineKeyboardButton.builder().text(NEXT_BUTTON)
                     .callbackData(buildCallbackFromHandlerAndIdParam(navigationCallback, cities.getNumber() + 1)).build()));
         }
+
+        rows.add(of(InlineKeyboardButton.builder().text(BACK_TO_PASSENGER_MENU)
+                .callbackData(PASSENGER_MENU.name()).build()));
 
         return new InlineKeyboardMarkup(rows);
     }

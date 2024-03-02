@@ -42,15 +42,16 @@ public class PassengerReserveSeats extends UpdateHandler {
     public void handle(UserPhase userPhase, Update update) throws TelegramApiException {
         long userId = getUserIdFromUpdate(update);
         deleteRemovableMessagesAndEraseAllFromRepo(userId);
+
         long tripId = getCallbackQueryIdParamFromUpdate(update);
 
-        if(bookingService.findNew(telegramUserService.getTelegramUser(userId).getId()).isEmpty()){
-            Trip trip = tripService.getTrip(tripId);
-            TelegramUser telegramUser = telegramUserService.getTelegramUser(userId);
+        TelegramUser telegramUser = telegramUserService.getTelegramUser(userId);
+        Trip trip = tripService.getTrip(tripId);
 
+        if(bookingService.findNew(telegramUser.getId()).isEmpty()){
+            sendEditableMessage(userId, CHECK_AVAILABLE_SEATS);
             int available = driverService.getDriver(trip.getRoute().getTelegramUserId()).getSeatsNumber() -
                     bookingService.getNumberOfBookedSeats(trip);
-            sendEditableMessage(userId, CHECK_AVAILABLE_SEATS);
 
             if(available == 0){
                 sendRemovableMessage(userId, NO_EMPTY_SEATS_LEFT,getBackButton(FIND_TRIP_MENU));
@@ -61,10 +62,25 @@ public class PassengerReserveSeats extends UpdateHandler {
             sendRemovableMessage(userId, joinMessages(format(PASSENGER_SEATS_FOUND,available),PASSENGER_ENTER_SEATS));
 
             updateUserPhase(userPhase, PASSENGER_SEATS_CONFIRM);
-            return;
-        }
-        sendRemovableMessage(userId, CONTINUE_NEW_BOOKING,getBackButton(FIND_TRIP_MENU));
 
+        }else if (bookingService.findNew(telegramUser.getId()).get().getTrip().getId() == tripId){
+            sendRemovableMessage(userId, CONTINUE_NEW_BOOKING);
+
+        }else {
+            sendEditableMessage(userId, CHECK_AVAILABLE_SEATS);
+            int available = driverService.getDriver(trip.getRoute().getTelegramUserId()).getSeatsNumber() -
+                    bookingService.getNumberOfBookedSeats(trip);
+
+            if(available == 0){
+                sendRemovableMessage(userId, NO_EMPTY_SEATS_LEFT,getBackButton(FIND_TRIP_MENU));
+                return;
+            }
+
+            bookingService.updateTripBooking(bookingService.getNewBooking(telegramUser.getId()),trip);
+            sendRemovableMessage(userId, joinMessages(format(PASSENGER_SEATS_FOUND,available),PASSENGER_ENTER_SEATS));
+
+            updateUserPhase(userPhase, PASSENGER_SEATS_CONFIRM);
+        }
     }
 
     @Override
