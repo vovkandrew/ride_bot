@@ -21,70 +21,74 @@ import static org.project.util.enums.Status.NEW;
 
 @Component
 public class PassengerReserveSeats extends UpdateHandler {
-    private final TripService tripService;
-    private final DriverService driverService;
-    private final BookingService bookingService;
-    private final TelegramUserService telegramUserService;
+	private final TripService tripService;
+	private final BookingService bookingService;
+	private final TelegramUserService telegramUserService;
 
-    public PassengerReserveSeats(TripService tripService, DriverService driverService, BookingService bookingService, TelegramUserService telegramUserService) {
-        this.tripService = tripService;
-        this.driverService = driverService;
-        this.bookingService = bookingService;
-        this.telegramUserService = telegramUserService;
-    }
+	public PassengerReserveSeats (TripService tripService,
+	                              BookingService bookingService, TelegramUserService telegramUserService) {
+		this.tripService = tripService;
+		this.bookingService = bookingService;
+		this.telegramUserService = telegramUserService;
+	}
 
-    @Override
-    public boolean isApplicable(Optional<Phase> phaseOptional, Update update) {
-        return super.isApplicable(phaseOptional, update) || isUpdateContainsHandler(update, handlerPhase);
-    }
+	@Override
+	public boolean isApplicable (Optional<Phase> phaseOptional, Update update) {
+		return super.isApplicable(phaseOptional, update) || isUpdateContainsHandler(update, handlerPhase);
+	}
 
-    @Override
-    public void handle(UserPhase userPhase, Update update) throws TelegramApiException {
-        long userId = getUserIdFromUpdate(update);
-        deleteRemovableMessagesAndEraseAllFromRepo(userId);
+	@Override
+	public void handle (UserPhase userPhase, Update update) throws TelegramApiException {
+		long userId = getUserIdFromUpdate(update);
 
-        long tripId = getCallbackQueryIdParamFromUpdate(update);
+		long tripId = getCallbackQueryIdParamFromUpdate(update);
 
-        TelegramUser telegramUser = telegramUserService.getTelegramUser(userId);
-        Trip trip = tripService.getTrip(tripId);
+		TelegramUser telegramUser = telegramUserService.getTelegramUser(userId);
 
-        if(bookingService.findNew(telegramUser.getId()).isEmpty()){
-            sendEditableMessage(userId, CHECK_AVAILABLE_SEATS);
-            int available = driverService.getDriver(trip.getRoute().getTelegramUserId()).getSeatsNumber() -
-                    bookingService.getNumberOfBookedSeats(trip);
+		Trip trip = tripService.getTrip(tripId);
 
-            if(available == 0){
-                sendRemovableMessage(userId, NO_EMPTY_SEATS_LEFT,getBackButton(FIND_TRIP_MENU));
-                return;
-            }
+		deleteRemovableMessagesAndEraseAllFromRepo(userId);
 
-            bookingService.updateTripBooking(Booking.builder().telegramUser(telegramUser).status(NEW).build(),trip);
-            sendRemovableMessage(userId, joinMessages(format(PASSENGER_SEATS_FOUND,available),PASSENGER_ENTER_SEATS));
+		if (bookingService.isNoNewBooking(telegramUser)) {
+			sendEditableMessage(userId, CHECK_AVAILABLE_SEATS);
 
-            updateUserPhase(userPhase, PASSENGER_SEATS_CONFIRM);
+			int availableSeats = bookingService.getAvailableSeats(trip);
 
-        }else if (bookingService.findNew(telegramUser.getId()).get().getTrip().getId() == tripId){
-            sendRemovableMessage(userId, CONTINUE_NEW_BOOKING);
+			if (availableSeats == 0) {
+				sendRemovableMessage(userId, NO_EMPTY_SEATS_LEFT, getBackButton(FIND_TRIP_MENU));
 
-        }else {
-            sendEditableMessage(userId, CHECK_AVAILABLE_SEATS);
-            int available = driverService.getDriver(trip.getRoute().getTelegramUserId()).getSeatsNumber() -
-                    bookingService.getNumberOfBookedSeats(trip);
+				return;
+			}
 
-            if(available == 0){
-                sendRemovableMessage(userId, NO_EMPTY_SEATS_LEFT,getBackButton(FIND_TRIP_MENU));
-                return;
-            }
+			updateUserPhase(userPhase, PASSENGER_SEATS_CONFIRM);
 
-            bookingService.updateTripBooking(bookingService.getNewBooking(telegramUser.getId()),trip);
-            sendRemovableMessage(userId, joinMessages(format(PASSENGER_SEATS_FOUND,available),PASSENGER_ENTER_SEATS));
+			bookingService.updateBookingTrip(Booking.builder().telegramUser(telegramUser).status(NEW).build(), trip);
 
-            updateUserPhase(userPhase, PASSENGER_SEATS_CONFIRM);
-        }
-    }
+			sendRemovableMessage(userId,
+					joinMessages(format(PASSENGER_SEATS_FOUND, availableSeats), PASSENGER_ENTER_SEATS));
+		} else {
+			sendEditableMessage(userId, CHECK_AVAILABLE_SEATS);
 
-    @Override
-    public void initHandler() {
-        handlerPhase = getPhaseService().getPhaseByHandlerName(PASSENGER_RESERVE_SEATS);
-    }
+			int availableSeats = bookingService.getAvailableSeats(trip);
+
+			if (availableSeats == 0) {
+				sendRemovableMessage(userId, NO_EMPTY_SEATS_LEFT, getBackButton(FIND_TRIP_MENU));
+
+				return;
+			}
+
+			updateUserPhase(userPhase, PASSENGER_SEATS_CONFIRM);
+
+			bookingService.updateBookingTrip(bookingService.getNewBooking(telegramUser.getId()), trip);
+
+			sendRemovableMessage(userId,
+					joinMessages(format(PASSENGER_SEATS_FOUND, availableSeats), PASSENGER_ENTER_SEATS));
+		}
+	}
+
+	@Override
+	public void initHandler () {
+		handlerPhase = getPhaseService().getPhaseByHandlerName(PASSENGER_RESERVE_SEATS);
+	}
+
 }

@@ -1,6 +1,7 @@
 package org.project.service;
 
 import org.project.model.Booking;
+import org.project.model.TelegramUser;
 import org.project.model.Trip;
 
 import java.util.Optional;
@@ -8,11 +9,15 @@ import java.util.Optional;
 public interface BookingService {
     int getNumberOfBookedSeats(Trip trip);
 
-    Optional<Booking> findNew(long passengerId);
+    Optional<Booking> findNewBooking (long passengerId);
 
     Booking getNewBooking(long passengerId);
 
     Booking updateNumberOfBookedSeats(Booking booking, int numberOfBookedSeats);
 
-    void updateTripBooking(Booking booking, Trip trip);
+    void updateBookingTrip (Booking booking, Trip trip);
+
+    boolean isNoNewBooking(TelegramUser telegramUser);
+
+    int getAvailableSeats(Trip trip);
 }

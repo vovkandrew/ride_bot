@@ -127,11 +127,10 @@ public class Messages {
     public static final String NO_EMPTY_SEATS_LEFT = "\uD83D\uDCBA Нажаль в даній поїздці не залишилось вільних місць!";
     public static final String EDIT_TRIP_ADD_PASSENGER_SET_NAME = "\uD83C\uDFF7\uFE0F Будь-ласка запровадьте" +
             " ідентіфікаційні дані пасажира у форматі: Ілля, Надія К., Володимир Одарчук, тощо.";
-    public static final String PASSENGER_ENTER_SEATS = "Введіть число місць, які потрібно забронювати (В форматі: 2)";
+    public static final String PASSENGER_ENTER_SEATS = "Введіть кількість місць, які потрібно забронювати (В форматі: 2)";
     public static final String CHECK_AVAILABLE_SEATS = "Триває перевірка наявності вільних пасажирських місць";
     public static final String PASSENGER_ENTER_SEATS_PROVIDED = "Дякую за відповідь!\uD83D\uDE4C Кількість пасажирських" +
-            " місць, які ви хочете забронювати: <b><i>%s</i></b>";
-    public static final String PASSENGER_SEATS_FOUND = "Кількість доступних місць: <b><i>%s</i></b>";
+            " місць, які ви хочете забронювати: <b><i>%d</i></b>";
+    public static final String PASSENGER_SEATS_FOUND = "Кількість доступних місць: <b><i>%d</i></b>";
     public static final String PASSENGER_SEATS_TOO_MUCH = "Кількість введених місць не має перевищувати кількість доступних!";
-    public static final String CONTINUE_NEW_BOOKING = "Завершіть бронювання обраної поїздки!";
 }

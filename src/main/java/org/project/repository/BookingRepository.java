@@ -15,5 +15,6 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     List<Booking> getAllBookingsByTrip(Trip trip);
 
     @Query(value = "select b from Booking b where b.status = 'NEW' and b.telegramUser.id = ?1")
-    Optional<Booking> findNew(long telegramUserId);
+    Optional<Booking> findNewBookingByUserId (long telegramUserId);
+
 }

@@ -2,9 +2,10 @@ package org.project.service.impl;
 
 import lombok.AllArgsConstructor;
 import org.project.model.Booking;
+import org.project.model.TelegramUser;
 import org.project.model.Trip;
 import org.project.repository.BookingRepository;
-import org.project.repository.TripRepository;
+import org.project.repository.DriverRepository;
 import org.project.service.BookingService;
 import org.springframework.stereotype.Service;
 
@@ -14,7 +15,7 @@ import java.util.Optional;
 @AllArgsConstructor
 public class BookingServiceImpl implements BookingService {
     private final BookingRepository bookingRepository;
-    private final TripRepository tripRepository;
+    private final DriverRepository driverRepository;
 
     @Override
     public int getNumberOfBookedSeats(Trip trip) {
@@ -23,13 +24,13 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public Optional<Booking> findNew(long passengerId) {
-        return bookingRepository.findNew(passengerId);
+    public Optional<Booking> findNewBooking (long passengerId) {
+        return bookingRepository.findNewBookingByUserId(passengerId);
     }
 
     @Override
     public Booking getNewBooking(long passengerId) {
-        return bookingRepository.findNew(passengerId).orElse(new Booking());
+        return bookingRepository.findNewBookingByUserId(passengerId).orElse(new Booking());
     }
 
     @Override
@@ -39,8 +40,20 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public void updateTripBooking(Booking booking, Trip trip) {
+    public void updateBookingTrip (Booking booking, Trip trip) {
         booking.setTrip(trip);
         bookingRepository.save(booking);
     }
+
+    @Override
+    public boolean isNoNewBooking (TelegramUser telegramUser) {
+        return bookingRepository.findNewBookingByUserId(telegramUser.getId()).isEmpty();
+    }
+
+    @Override
+    public int getAvailableSeats (Trip trip) {
+        return driverRepository.getById(trip.getRoute().getTelegramUserId()).getSeatsNumber()
+                - this.getNumberOfBookedSeats(trip);
+    }
+
 }

@@ -29,7 +29,8 @@ public class CreateTripSetOtherInfo extends UpdateHandler {
     private final TripService tripService;
     private final NotificationService notificationService;
 
-    public CreateTripSetOtherInfo(DriverService driverService, TripService tripService, NotificationService notificationService) {
+    public CreateTripSetOtherInfo(DriverService driverService, TripService tripService,
+                                  NotificationService notificationService) {
         this.driverService = driverService;
         this.tripService = tripService;
         this.notificationService = notificationService;
@@ -51,11 +52,11 @@ public class CreateTripSetOtherInfo extends UpdateHandler {
 
             trip = tripService.updateTripStatus(trip, CREATED);
 
-            List<Object> collect = trip.getFormattedDataAsList();
-            collect.add(driverService.getDriver(userId).getSeatsNumber());
-            collect.add(0);
+            List<Object> tripDataList = trip.getFormattedDataAsList();
+            tripDataList.add(driverService.getDriver(userId).getSeatsNumber());
+            tripDataList.add(0);
 
-            sendRemovableMessage(userId, joinMessages(TRIP_CREATED, format(TRIP_DETAILS, collect.toArray())),
+            sendRemovableMessage(userId, joinMessages(TRIP_CREATED, format(TRIP_DETAILS, tripDataList.toArray())),
                     getDriverTripMenuKeyboard(trip.getId()));
 
             updateUserPhase(userPhase, CREATE_TRIP_REVIEW_DETAILS);
