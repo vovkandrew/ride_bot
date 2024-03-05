@@ -133,5 +133,6 @@ public class Messages {
             " місць, які ви хочете забронювати: <b><i>%d</i></b>";
     public static final String PASSENGER_SEATS_FOUND = "Кількість доступних місць: <b><i>%d</i></b>";
     public static final String PASSENGER_SEATS_TOO_MUCH = "Кількість введених місць не має перевищувати кількість доступних!";
-    public static final String MOVE_TO_PREVIOUS_SELECTION = "Повернутись до попереднього вибору";
+    public static final String MOVE_TO_PREVIOUS_SELECTION_CITIES = "Повернутись до вибору міст";
+    public static final String MOVE_TO_PREVIOUS_SELECTION_COUNTRIES= "Повернутись до вибору країн";
 }

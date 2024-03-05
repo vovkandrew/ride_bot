@@ -25,7 +25,8 @@ import static org.project.util.constants.Buttons.MAIN_MENU;
 import static org.project.util.constants.Buttons.TRACKING_ROUTES_MENU;
 import static org.project.util.constants.Buttons.*;
 import static org.project.util.constants.Constants.*;
-import static org.project.util.constants.Messages.MOVE_TO_PREVIOUS_SELECTION;
+import static org.project.util.constants.Messages.MOVE_TO_PREVIOUS_SELECTION_CITIES;
+import static org.project.util.constants.Messages.MOVE_TO_PREVIOUS_SELECTION_COUNTRIES;
 import static org.project.util.enums.Currency.EUR;
 import static org.project.util.enums.Currency.UA;
 import static org.project.util.enums.HandlerName.*;
@@ -169,8 +170,9 @@ public class Keyboards {
                     .callbackData(buildCallbackFromHandlerAndIdParam(navigationCallback, countries.getNumber() + 1)).build()));
         }
 
-        if(!backCallback.equals(DRIVER_ROUTES)){
-            rows.add(of(InlineKeyboardButton.builder().text(MOVE_TO_PREVIOUS_SELECTION)
+        if (!countryCallback.equals(FIND_TRIP_COUNTRY_FROM) && !countryCallback.equals(SET_ROUTE_COUNTRY_FROM)
+                && !backCallback.equals(DRIVER_ROUTES)) {
+            rows.add(of(InlineKeyboardButton.builder().text(MOVE_TO_PREVIOUS_SELECTION_CITIES)
                     .callbackData(backCallback.name()).build()));
         }
 
@@ -208,7 +210,7 @@ public class Keyboards {
         }
 
         if(!backCallback.equals(DRIVER_ROUTES)){
-            rows.add(of(InlineKeyboardButton.builder().text(MOVE_TO_PREVIOUS_SELECTION)
+            rows.add(of(InlineKeyboardButton.builder().text(MOVE_TO_PREVIOUS_SELECTION_COUNTRIES)
                     .callbackData(backCallback.name()).build()));
         }
 
@@ -409,7 +411,7 @@ public class Keyboards {
                 .text(START_LOOKING_FOR_TRIP).callbackData(FINDING_TRIP.name()).build());
         List<InlineKeyboardButton> thirdRow = of(InlineKeyboardButton.builder()
                 .text(BACK_TO_PASSENGER_MENU).callbackData(PASSENGER_MENU.name()).build());
-        List<InlineKeyboardButton> fourthRow = of(InlineKeyboardButton.builder().text(MOVE_TO_PREVIOUS_SELECTION)
+        List<InlineKeyboardButton> fourthRow = of(InlineKeyboardButton.builder().text(MOVE_TO_PREVIOUS_SELECTION_CITIES)
                 .callbackData(backCallback.name()).build());
         return new InlineKeyboardMarkup(of(firstRow, secondRow, thirdRow, fourthRow));
     }
@@ -435,7 +437,7 @@ public class Keyboards {
 
         rows.add(of(InlineKeyboardButton.builder().text(FIND_TRIP).callbackData(FINDING_TRIP.name()).build()));
 
-        rows.add(of(InlineKeyboardButton.builder().text(MOVE_TO_PREVIOUS_SELECTION)
+        rows.add(of(InlineKeyboardButton.builder().text(MOVE_TO_PREVIOUS_SELECTION_CITIES)
                 .callbackData(backCallback.name()).build()));
 
         return new InlineKeyboardMarkup(rows);
