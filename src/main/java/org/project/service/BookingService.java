@@ -17,7 +17,7 @@ public interface BookingService {
 
     void updateBookingTrip (Booking booking, Trip trip);
 
-    boolean isNoNewBooking(TelegramUser telegramUser);
+    boolean hasNewBooking(TelegramUser telegramUser);
 
     int getAvailableSeats(Trip trip);
 }
