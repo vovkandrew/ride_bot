@@ -28,61 +28,68 @@ import static org.springframework.data.domain.Sort.Direction.ASC;
 
 @Component
 public class CreateRouteSetCountryFrom extends UpdateHandler {
-    private final CountryService countryService;
-    private final CityService cityService;
-    private final RouteService routeService;
+	private final CountryService countryService;
+	private final CityService cityService;
+	private final RouteService routeService;
 
-    public CreateRouteSetCountryFrom(CountryService countryService, CityService cityService, RouteService routeService) {
-        this.countryService = countryService;
-        this.cityService = cityService;
-        this.routeService = routeService;
-    }
+	public CreateRouteSetCountryFrom(CountryService countryService, CityService cityService,
+	                                 RouteService routeService) {
+		this.countryService = countryService;
+		this.cityService = cityService;
+		this.routeService = routeService;
+	}
 
-    @Override
-    public boolean isApplicable(Optional<Phase> phaseOptional, Update update) {
-        return super.isApplicable(phaseOptional, update) || isUpdateContainsHandler(update, ROUTE_CREATION);
-    }
+	@Override
+	public boolean isApplicable(Optional<Phase> phaseOptional, Update update) {
+		return super.isApplicable(phaseOptional, update)
+				|| isUpdateContainsAnyHandler(update, ROUTE_CREATION, SET_ROUTE_COUNTRY_FROM_BACK);
+	}
 
-    @Override
-    public void handle(UserPhase userPhase, Update update) throws TelegramApiException {
-        long userId = getUserIdFromUpdate(update);
-        updateUserPhase(userPhase, handlerPhase);
+	@Override
+	public void handle(UserPhase userPhase, Update update) throws TelegramApiException {
+		long userId = getUserIdFromUpdate(update);
+		updateUserPhase(userPhase, handlerPhase);
 
-        routeService.deleteAllNewDriversRoutes(userId);
+		routeService.deleteAllNewDriversRoutes(userId);
 
-        if (isMessageSentInsteadOfButtonClick(update)) {
-            return;
-        }
+		if (isMessageSentInsteadOfButtonClick(update)) {
+			return;
+		}
 
-        if (isUpdateContainsAnyHandler(update, ROUTE_CREATION, SET_ROUTE_COUNTRY_FROM_NEXT)) {
-            int page = getOffsetParamFromUpdateByHandler(update, SET_ROUTE_COUNTRY_FROM_NEXT);
-            PageRequest pageRequest = of(page, DEFAULT_COUNTRY_LIMIT, ASC, DEFAULT_NAME_FIELD);
+		if (isUpdateContainsAnyHandler(update, ROUTE_CREATION, SET_ROUTE_COUNTRY_FROM_NEXT,
+				SET_ROUTE_COUNTRY_FROM_BACK)) {
+			int page = getOffsetParamFromUpdateByHandler(update, SET_ROUTE_COUNTRY_FROM_NEXT);
+			PageRequest pageRequest = of(page, DEFAULT_COUNTRY_LIMIT, ASC, DEFAULT_NAME_FIELD);
 
-            deleteRemovableMessagesAndEraseAllFromRepo(userId);
+			deleteRemovableMessagesAndEraseAllFromRepo(userId);
 
-            sendRemovableMessage(userId, PROVIDE_COUNTY_FROM, getAvailableCountriesKeyboard(
-                    countryService.findAllCountries(pageRequest), SET_ROUTE_COUNTRY_FROM_NEXT, SET_ROUTE_COUNTRY_FROM));
+			sendRemovableMessage(userId, PROVIDE_COUNTY_FROM,
+					getAvailableCountriesKeyboard(countryService.findAllCountries(pageRequest),
+							SET_ROUTE_COUNTRY_FROM_NEXT, SET_ROUTE_COUNTRY_FROM, DRIVER_MENU));
 
-            return;
-        }
+			return;
+		}
 
-        Route route =
-                routeService.updateRouteCountryFrom(Route.builder().telegramUserId(userId).status(NEW).userType(DRIVER).build(),
-                        getCallbackQueryIdParamFromUpdate(update));
-        PageRequest pageRequest = of(DEFAULT_OFFSET, DEFAULT_COUNTRY_LIMIT, ASC, DEFAULT_NAME_FIELD);
+		Route route = routeService.updateRouteCountryFrom(
+				Route.builder().telegramUserId(userId).status(NEW).userType(DRIVER).build(),
+				getCallbackQueryIdParamFromUpdate(update));
 
-        updateUserPhase(userPhase, SET_ROUTE_CITY_FROM);
+		PageRequest pageRequest = of(DEFAULT_OFFSET, DEFAULT_COUNTRY_LIMIT, ASC, DEFAULT_NAME_FIELD);
 
-        deleteRemovableMessagesAndEraseAllFromRepo(userId);
+		updateUserPhase(userPhase, SET_ROUTE_CITY_FROM);
 
-        sendMessage(userId, format(COUNTRY_FROM_PROVIDED, route.getCountryFrom().getName()));
+		deleteRemovableMessagesAndEraseAllFromRepo(userId);
 
-        sendRemovableMessage(userId, PROVIDE_CITY_FROM, getAvailableCitiesKeyboard(
-                cityService.findAllCities(pageRequest, route.getCountryFrom()), SET_ROUTE_CITY_FROM_NEXT, SET_ROUTE_CITY_FROM));
-    }
+		sendMessage(userId, format(COUNTRY_FROM_PROVIDED, route.getCountryFrom().getName()));
 
-    @Override
-    public void initHandler() {
-        handlerPhase = getPhaseService().getPhaseByHandlerName(SET_ROUTE_COUNTRY_FROM);
-    }
+		sendRemovableMessage(userId, PROVIDE_CITY_FROM,
+				getAvailableCitiesKeyboard(cityService.findAllCities(pageRequest, route.getCountryFrom()),
+						SET_ROUTE_CITY_FROM_NEXT, SET_ROUTE_CITY_FROM, SET_ROUTE_COUNTRY_FROM_BACK));
+	}
+
+	@Override
+	public void initHandler() {
+		handlerPhase = getPhaseService().getPhaseByHandlerName(SET_ROUTE_COUNTRY_FROM);
+	}
+
 }

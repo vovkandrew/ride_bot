@@ -1,6 +1,5 @@
 package org.project.handler.route.edit;
 
-import lombok.Getter;
 import org.project.handler.UpdateHandler;
 import org.project.model.Route;
 import org.project.model.UserPhase;

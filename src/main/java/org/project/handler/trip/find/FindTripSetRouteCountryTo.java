@@ -26,61 +26,64 @@ import static org.springframework.data.domain.Sort.Direction.ASC;
 
 @Component
 public class FindTripSetRouteCountryTo extends UpdateHandler {
-    private final CountryService countryService;
-    private final CityService cityService;
-    private final RouteService routeService;
+	private final CountryService countryService;
+	private final CityService cityService;
+	private final RouteService routeService;
 
-    public FindTripSetRouteCountryTo(CountryService countryService, CityService cityService, RouteService routeService) {
-        this.countryService = countryService;
-        this.cityService = cityService;
-        this.routeService = routeService;
-    }
+	public FindTripSetRouteCountryTo(CountryService countryService, CityService cityService,
+	                                 RouteService routeService) {
+		this.countryService = countryService;
+		this.cityService = cityService;
+		this.routeService = routeService;
+	}
 
-    @Override
-    public boolean isApplicable(Optional<Phase> phaseOptional, Update update) {
-        return isUpdateContainsHandlerPhase(update);
-    }
+	@Override
+	public boolean isApplicable(Optional<Phase> phaseOptional, Update update) {
+		return isUpdateContainsAnyHandler(update, FIND_TRIP_COUNTRY_TO, FIND_TRIP_COUNTRY_TO_BACK);
+	}
 
-    @Override
-    public void handle(UserPhase userPhase, Update update) throws TelegramApiException {
-        long userId = getUserIdFromUpdate(update);
-        updateUserPhase(userPhase, handlerPhase);
+	@Override
+	public void handle(UserPhase userPhase, Update update) throws TelegramApiException {
+		long userId = getUserIdFromUpdate(update);
+		updateUserPhase(userPhase, handlerPhase);
 
-        if (isMessageSentInsteadOfButtonClick(update)) {
-            return;
-        }
+		if (isMessageSentInsteadOfButtonClick(update)) {
+			return;
+		}
 
-        Route route = routeService.getNewPassengerRoute(userId);
+		Route route = routeService.getNewPassengerRoute(userId);
 
-        if (isUpdateContainsHandler(update, FIND_TRIP_COUNTRY_TO_NEXT)) {
-            int page = getOffsetParamFromUpdateByHandler(update, FIND_TRIP_COUNTRY_TO_NEXT);
-            PageRequest pageRequest = of(page, DEFAULT_COUNTRY_LIMIT, ASC, DEFAULT_NAME_FIELD);
+		if (isUpdateContainsAnyHandler(update, FIND_TRIP_COUNTRY_TO_NEXT, FIND_TRIP_COUNTRY_TO_BACK)) {
+			int page = getOffsetParamFromUpdateByHandler(update, FIND_TRIP_COUNTRY_TO_NEXT);
+			PageRequest pageRequest = of(page, DEFAULT_COUNTRY_LIMIT, ASC, DEFAULT_NAME_FIELD);
 
-            deleteRemovableMessagesAndEraseAllFromRepo(userId);
+			deleteRemovableMessagesAndEraseAllFromRepo(userId);
 
-            sendRemovableMessage(userId, PROVIDE_COUNTY_TO, getAvailableCountriesKeyboard(
-                    countryService.findAllCountriesExcept(pageRequest, route.getCountryFrom()),
-                    FIND_TRIP_COUNTRY_TO_NEXT, FIND_TRIP_COUNTRY_TO));
+			sendRemovableMessage(userId, PROVIDE_COUNTY_TO,
+					getAvailableCountriesKeyboard(countryService.findAllCountriesExcept(pageRequest, route.getCountryFrom()),
+							FIND_TRIP_COUNTRY_TO_NEXT, FIND_TRIP_COUNTRY_TO, FIND_TRIP_CITY_FROM_BACK));
 
-            return;
-        }
+			return;
+		}
 
-        route = routeService.updateRouteCountryTo(route, getCallbackQueryIdParamFromUpdate(update));
+		route = routeService.updateRouteCountryTo(route, getCallbackQueryIdParamFromUpdate(update));
 
-        PageRequest pageRequest = of(DEFAULT_OFFSET, DEFAULT_COUNTRY_LIMIT);
+		PageRequest pageRequest = of(DEFAULT_OFFSET, DEFAULT_COUNTRY_LIMIT);
 
-        updateUserPhase(userPhase, FIND_TRIP_CITY_TO);
+		updateUserPhase(userPhase, FIND_TRIP_CITY_TO);
 
-        deleteRemovableMessagesAndEraseAllFromRepo(userId);
+		deleteRemovableMessagesAndEraseAllFromRepo(userId);
 
-        sendMessage(userId, format(COUNTRY_TO_PROVIDED, route.getCountryTo().getName()));
+		sendMessage(userId, format(COUNTRY_TO_PROVIDED, route.getCountryTo().getName()));
 
-        sendRemovableMessage(userId, PROVIDE_CITY_TO, getAvailableCitiesKeyboard(
-                cityService.findAllCities(pageRequest, route.getCountryTo()), FIND_TRIP_CITY_TO_NEXT, FIND_TRIP_CITY_TO));
-    }
+		sendRemovableMessage(userId, PROVIDE_CITY_TO,
+				getAvailableCitiesKeyboard(cityService.findAllCities(pageRequest, route.getCountryTo()),
+						FIND_TRIP_CITY_TO_NEXT, FIND_TRIP_CITY_TO, FIND_TRIP_COUNTRY_TO_BACK));
+	}
 
-    @Override
-    public void initHandler() {
-        handlerPhase = getPhaseService().getPhaseByHandlerName(FIND_TRIP_COUNTRY_TO);
-    }
+	@Override
+	public void initHandler() {
+		handlerPhase = getPhaseService().getPhaseByHandlerName(FIND_TRIP_COUNTRY_TO);
+	}
+
 }
