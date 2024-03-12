@@ -3,11 +3,14 @@ package org.project.handler.trip.create;
 import org.project.handler.UpdateHandler;
 import org.project.model.Trip;
 import org.project.model.UserPhase;
+import org.project.service.DriverService;
 import org.project.service.NotificationService;
 import org.project.service.TripService;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+
+import java.util.List;
 
 import static java.lang.String.format;
 import static java.util.concurrent.Executors.newSingleThreadExecutor;
@@ -22,10 +25,13 @@ import static org.project.util.enums.Status.CREATED;
 
 @Component
 public class CreateTripSetOtherInfo extends UpdateHandler {
+    private final DriverService driverService;
     private final TripService tripService;
     private final NotificationService notificationService;
 
-    public CreateTripSetOtherInfo(TripService tripService, NotificationService notificationService) {
+    public CreateTripSetOtherInfo(DriverService driverService, TripService tripService,
+                                  NotificationService notificationService) {
+        this.driverService = driverService;
         this.tripService = tripService;
         this.notificationService = notificationService;
     }
@@ -46,7 +52,11 @@ public class CreateTripSetOtherInfo extends UpdateHandler {
 
             trip = tripService.updateTripStatus(trip, CREATED);
 
-            sendRemovableMessage(userId, joinMessages(TRIP_CREATED, format(TRIP_DETAILS, trip.getFormattedData())),
+            List<Object> tripDataList = trip.getFormattedDataAsList();
+            tripDataList.add(driverService.getDriver(userId).getSeatsNumber());
+            tripDataList.add(0);
+
+            sendRemovableMessage(userId, joinMessages(TRIP_CREATED, format(TRIP_DETAILS, tripDataList.toArray())),
                     getDriverTripMenuKeyboard(trip.getId()));
 
             updateUserPhase(userPhase, CREATE_TRIP_REVIEW_DETAILS);

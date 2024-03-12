@@ -3,9 +3,13 @@ package org.project.model;
 import lombok.*;
 import org.hibernate.annotations.NotFound;
 import org.hibernate.annotations.NotFoundAction;
+import org.project.util.enums.Status;
 
 import javax.persistence.*;
 
+import java.util.List;
+
+import static javax.persistence.EnumType.STRING;
 import static javax.persistence.FetchType.LAZY;
 
 @Entity
@@ -16,7 +20,7 @@ import static javax.persistence.FetchType.LAZY;
 @NoArgsConstructor
 @AllArgsConstructor
 @org.springframework.data.relational.core.mapping.Table(value = "booking")
-public class Booking {
+public class Booking implements Formatter {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
@@ -33,5 +37,18 @@ public class Booking {
     private String passengerPhoneNumber;
     @Column(name = "number_of_seats")
     private int numberOfBookedSeats;
+    @Column(name = "status", nullable = false)
+    @Enumerated(value = STRING)
+    private Status status;
 
+
+    @Override
+    public Object[] getFormattedData() {
+        return getFormattedData(trip, passengerName, passengerPhoneNumber, numberOfBookedSeats, status);
+    }
+
+    @Override
+    public List<Object> getFormattedDataAsList() {
+        return getFormattedDataAsList(trip, passengerName, passengerPhoneNumber, numberOfBookedSeats, status);
+    }
 }

@@ -20,4 +20,9 @@ public class TelegramUserServiceImpl implements TelegramUserService {
     public void createTelegramUser(TelegramUser user) {
         repository.save(user);
     }
+
+    @Override
+    public TelegramUser getTelegramUser(long telegramId) {
+        return repository.findByTelegramId(telegramId).get();
+    }
 }
