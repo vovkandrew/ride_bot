@@ -54,15 +54,18 @@ public class FindTripMenu extends UpdateHandler {
             Page<Trip> trips = tripService.findAllCreatedNonDriverTrips(route, pageRequest);
 
             sendRemovableMessage(userId, format(FIND_TRIP_CHOOSE_TRIPS, route.getFormattedData()),
-                    getAvailableTripsForPassengerKeyboard(trips, FIND_TRIP_MENU_NEXT, FIND_TRIP_MENU_DETAILS));
+                    getAvailableTripsForPassengerKeyboard(trips, FIND_TRIP_MENU_NEXT, FIND_TRIP_MENU_DETAILS,
+                            FIND_TRIP_CITY_TO_BACK));
 
             return;
         }
 
         deleteRemovableMessagesAndEraseAllFromRepo(userId);
         Page<Trip> trips = tripService.findAllCreatedNonDriverTrips(route, of(DEFAULT_OFFSET, DEFAULT_TRIP_LIMIT));
+
         sendRemovableMessage(userId, format(FIND_TRIP_CHOOSE_TRIPS, route.getFormattedData()),
-                getAvailableTripsForPassengerKeyboard(trips, FIND_TRIP_MENU_NEXT, FIND_TRIP_MENU_DETAILS));
+                getAvailableTripsForPassengerKeyboard(trips, FIND_TRIP_MENU_NEXT, FIND_TRIP_MENU_DETAILS,
+                        FIND_TRIP_CITY_TO_BACK));
     }
 
     @Override

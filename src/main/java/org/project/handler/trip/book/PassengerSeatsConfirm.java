@@ -71,7 +71,8 @@ public class PassengerSeatsConfirm extends UpdateHandler {
 						of(DEFAULT_OFFSET, DEFAULT_TRIP_LIMIT));
 
 				sendRemovableMessage(userId, format(FIND_TRIP_CHOOSE_TRIPS, route.getFormattedData()),
-						getAvailableTripsForPassengerKeyboard(trips, FIND_TRIP_MENU_NEXT, FIND_TRIP_MENU_DETAILS));
+						getAvailableTripsForPassengerKeyboard(trips, FIND_TRIP_MENU_NEXT, FIND_TRIP_MENU_DETAILS,
+								FIND_TRIP_CITY_TO));
 
 				return;
 			}

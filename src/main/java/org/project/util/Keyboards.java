@@ -25,6 +25,7 @@ import static org.project.util.constants.Buttons.MAIN_MENU;
 import static org.project.util.constants.Buttons.TRACKING_ROUTES_MENU;
 import static org.project.util.constants.Buttons.*;
 import static org.project.util.constants.Constants.*;
+import static org.project.util.constants.Messages.MOVE_TO_PREVIOUS_SELECTION;
 import static org.project.util.enums.Currency.EUR;
 import static org.project.util.enums.Currency.UA;
 import static org.project.util.enums.HandlerName.*;
@@ -144,7 +145,7 @@ public class Keyboards {
     }
 
     public static InlineKeyboardMarkup getAvailableCountriesKeyboard(Page<Country> countries, HandlerName navigationCallback,
-                                                                     HandlerName countryCallback) {
+                                                                     HandlerName countryCallback, HandlerName backCallback) {
         List<Country> countryList = countries.toList();
         List<List<InlineKeyboardButton>> rows = new ArrayList<>();
 
@@ -168,8 +169,10 @@ public class Keyboards {
                     .callbackData(buildCallbackFromHandlerAndIdParam(navigationCallback, countries.getNumber() + 1)).build()));
         }
 
-        rows.add(of(InlineKeyboardButton.builder().text(BACK_TO_PASSENGER_MENU)
-                .callbackData(PASSENGER_MENU.name()).build()));
+        if(!backCallback.equals(DRIVER_ROUTES)){
+            rows.add(of(InlineKeyboardButton.builder().text(MOVE_TO_PREVIOUS_SELECTION)
+                    .callbackData(backCallback.name()).build()));
+        }
 
         return new InlineKeyboardMarkup(rows);
     }
@@ -180,7 +183,7 @@ public class Keyboards {
     }
 
     public static InlineKeyboardMarkup getAvailableCitiesKeyboard(Page<City> cities, HandlerName navigationCallback,
-                                                                  HandlerName cityCallback) {
+                                                                  HandlerName cityCallback, HandlerName backCallback) {
         List<City> cityList = cities.toList();
         List<List<InlineKeyboardButton>> rows = new ArrayList<>();
 
@@ -204,8 +207,10 @@ public class Keyboards {
                     .callbackData(buildCallbackFromHandlerAndIdParam(navigationCallback, cities.getNumber() + 1)).build()));
         }
 
-        rows.add(of(InlineKeyboardButton.builder().text(BACK_TO_PASSENGER_MENU)
-                .callbackData(PASSENGER_MENU.name()).build()));
+        if(!backCallback.equals(DRIVER_ROUTES)){
+            rows.add(of(InlineKeyboardButton.builder().text(MOVE_TO_PREVIOUS_SELECTION)
+                    .callbackData(backCallback.name()).build()));
+        }
 
         return new InlineKeyboardMarkup(rows);
     }
@@ -397,18 +402,20 @@ public class Keyboards {
         return new InlineKeyboardMarkup(of(first, second));
     }
 
-    public static InlineKeyboardMarkup getNoTripsKeyboard(long routeId) {
+    public static InlineKeyboardMarkup getNoTripsKeyboard(long routeId, HandlerName backCallback) {
         List<InlineKeyboardButton> firstRow = of(InlineKeyboardButton.builder().text(START_TRACK_TRIP)
                 .callbackData(joinHandlerAndParam(TRACK_TRIP, routeId)).build());
         List<InlineKeyboardButton> secondRow = of(InlineKeyboardButton.builder()
                 .text(START_LOOKING_FOR_TRIP).callbackData(FINDING_TRIP.name()).build());
         List<InlineKeyboardButton> thirdRow = of(InlineKeyboardButton.builder()
                 .text(BACK_TO_PASSENGER_MENU).callbackData(PASSENGER_MENU.name()).build());
-        return new InlineKeyboardMarkup(of(firstRow, secondRow, thirdRow));
+        List<InlineKeyboardButton> fourthRow = of(InlineKeyboardButton.builder().text(MOVE_TO_PREVIOUS_SELECTION)
+                .callbackData(backCallback.name()).build());
+        return new InlineKeyboardMarkup(of(firstRow, secondRow, thirdRow, fourthRow));
     }
 
     public static InlineKeyboardMarkup getAvailableTripsForPassengerKeyboard(Page<Trip> trips, HandlerName navigationCallback,
-                                                                             HandlerName tripCallback) {
+                                                                             HandlerName tripCallback, HandlerName backCallback) {
         List<Trip> tripsList = trips.toList();
         List<List<InlineKeyboardButton>> rows = new ArrayList<>();
 
@@ -427,6 +434,9 @@ public class Keyboards {
         }
 
         rows.add(of(InlineKeyboardButton.builder().text(FIND_TRIP).callbackData(FINDING_TRIP.name()).build()));
+
+        rows.add(of(InlineKeyboardButton.builder().text(MOVE_TO_PREVIOUS_SELECTION)
+                .callbackData(backCallback.name()).build()));
 
         return new InlineKeyboardMarkup(rows);
     }
