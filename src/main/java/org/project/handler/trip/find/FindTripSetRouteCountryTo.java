@@ -39,7 +39,7 @@ public class FindTripSetRouteCountryTo extends UpdateHandler {
 
 	@Override
 	public boolean isApplicable(Optional<Phase> phaseOptional, Update update) {
-		return isUpdateContainsAnyHandler(update, FIND_TRIP_COUNTRY_TO, FIND_TRIP_COUNTRY_TO_BACK);
+		return isUpdateContainsHandler(update, FIND_TRIP_COUNTRY_TO);
 	}
 
 	@Override

@@ -34,7 +34,7 @@ public class CreateRouteSetCityTo extends UpdateHandler {
 
     @Override
     public boolean isApplicable(Optional<Phase> phaseOptional, Update update) {
-        return isUpdateContainsAnyHandler(update, SET_ROUTE_CITY_TO, SET_ROUTE_CITY_TO_BACK);
+        return isUpdateContainsHandler(update, SET_ROUTE_CITY_TO);
     }
 
     @Override

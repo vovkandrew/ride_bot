@@ -42,7 +42,7 @@ public class CreateRouteSetCountryFrom extends UpdateHandler {
 	@Override
 	public boolean isApplicable(Optional<Phase> phaseOptional, Update update) {
 		return super.isApplicable(phaseOptional, update)
-				|| isUpdateContainsAnyHandler(update, ROUTE_CREATION, SET_ROUTE_COUNTRY_FROM_BACK);
+				|| isUpdateContainsAnyHandler(update, ROUTE_CREATION, SET_ROUTE_COUNTRY_FROM);
 	}
 
 	@Override

@@ -36,7 +36,7 @@ public class FindTripSetRouteCityTo extends UpdateHandler {
 
 	@Override
 	public boolean isApplicable(Optional<Phase> phaseOptional, Update update) {
-		return isUpdateContainsAnyHandler(update, FIND_TRIP_CITY_TO, FIND_TRIP_CITY_TO_BACK);
+		return isUpdateContainsHandler(update, FIND_TRIP_CITY_TO);
 	}
 
 	@Override
