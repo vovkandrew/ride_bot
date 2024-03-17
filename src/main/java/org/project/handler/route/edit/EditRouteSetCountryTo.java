@@ -67,7 +67,7 @@ public class EditRouteSetCountryTo extends UpdateHandler {
 
             sendRemovableMessage(userId, PROVIDE_COUNTY_TO, getAvailableCountriesKeyboard(
                     countryService.findAllCountriesExcept(pageRequest, route.getCountryFrom(), route.getCountryTo()),
-                    EDIT_ROUTE_COUNTRY_TO_NEXT, EDIT_ROUTE_COUNTRY_TO, DRIVER_ROUTES));
+                    EDIT_ROUTE_COUNTRY_TO_NEXT, EDIT_ROUTE_COUNTRY_TO, DRIVER_ROUTES, null));
 
             return;
         }
@@ -86,7 +86,7 @@ public class EditRouteSetCountryTo extends UpdateHandler {
 
         sendRemovableMessage(userId, PROVIDE_CITY_TO, getAvailableCitiesKeyboard(
                 cityService.findAllUnusedCitiesTo(route, pageRequest), EDIT_ROUTE_CITY_TO_NEXT,
-                EDIT_ROUTE_CITY_TO, DRIVER_ROUTES));
+                EDIT_ROUTE_CITY_TO, DRIVER_ROUTES, null));
 
         updateUserPhase(userPhase, EDIT_ROUTE_CITY_TO);
     }

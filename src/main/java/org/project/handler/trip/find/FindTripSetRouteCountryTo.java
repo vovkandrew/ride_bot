@@ -18,9 +18,12 @@ import static java.lang.String.format;
 import static org.project.util.Keyboards.getAvailableCitiesKeyboard;
 import static org.project.util.Keyboards.getAvailableCountriesKeyboard;
 import static org.project.util.UpdateHelper.*;
+import static org.project.util.constants.Buttons.BACK_TO_CITIES;
+import static org.project.util.constants.Buttons.BACK_TO_COUNTRIES;
 import static org.project.util.constants.Constants.*;
 import static org.project.util.constants.Messages.*;
 import static org.project.util.enums.HandlerName.*;
+import static org.project.util.enums.HandlerName.FIND_TRIP_CITY_FROM_NEXT;
 import static org.springframework.data.domain.PageRequest.of;
 import static org.springframework.data.domain.Sort.Direction.ASC;
 
@@ -53,7 +56,7 @@ public class FindTripSetRouteCountryTo extends UpdateHandler {
 
 		Route route = routeService.getNewPassengerRoute(userId);
 
-		if (isUpdateContainsAnyHandler(update, FIND_TRIP_COUNTRY_TO_NEXT, FIND_TRIP_COUNTRY_TO_BACK)) {
+		if (isUpdateContainsHandler(update, FIND_TRIP_COUNTRY_TO_NEXT)) {
 			int page = getOffsetParamFromUpdateByHandler(update, FIND_TRIP_COUNTRY_TO_NEXT);
 			PageRequest pageRequest = of(page, DEFAULT_COUNTRY_LIMIT, ASC, DEFAULT_NAME_FIELD);
 
@@ -61,7 +64,7 @@ public class FindTripSetRouteCountryTo extends UpdateHandler {
 
 			sendRemovableMessage(userId, PROVIDE_COUNTY_TO,
 					getAvailableCountriesKeyboard(countryService.findAllCountriesExcept(pageRequest, route.getCountryFrom()),
-							FIND_TRIP_COUNTRY_TO_NEXT, FIND_TRIP_COUNTRY_TO, FIND_TRIP_CITY_FROM_BACK));
+							FIND_TRIP_COUNTRY_TO_NEXT, FIND_TRIP_COUNTRY_TO, FIND_TRIP_CITY_FROM_NEXT, BACK_TO_CITIES));
 
 			return;
 		}
@@ -78,7 +81,7 @@ public class FindTripSetRouteCountryTo extends UpdateHandler {
 
 		sendRemovableMessage(userId, PROVIDE_CITY_TO,
 				getAvailableCitiesKeyboard(cityService.findAllCities(pageRequest, route.getCountryTo()),
-						FIND_TRIP_CITY_TO_NEXT, FIND_TRIP_CITY_TO, FIND_TRIP_COUNTRY_TO_BACK));
+						FIND_TRIP_CITY_TO_NEXT, FIND_TRIP_CITY_TO, FIND_TRIP_COUNTRY_TO_NEXT, BACK_TO_COUNTRIES));
 	}
 
 	@Override

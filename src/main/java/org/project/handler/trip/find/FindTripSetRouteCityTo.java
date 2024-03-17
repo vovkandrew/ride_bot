@@ -17,6 +17,8 @@ import java.util.Optional;
 import static java.lang.String.format;
 import static org.project.util.Keyboards.*;
 import static org.project.util.UpdateHelper.*;
+import static org.project.util.constants.Buttons.BACK_TO_CITIES;
+import static org.project.util.constants.Buttons.BACK_TO_COUNTRIES;
 import static org.project.util.constants.Constants.*;
 import static org.project.util.constants.Messages.*;
 import static org.project.util.enums.HandlerName.*;
@@ -49,7 +51,7 @@ public class FindTripSetRouteCityTo extends UpdateHandler {
 			return;
 		}
 
-		if (isUpdateContainsAnyHandler(update, FIND_TRIP_CITY_TO_NEXT, FIND_TRIP_CITY_TO_BACK)) {
+		if (isUpdateContainsHandler(update, FIND_TRIP_CITY_TO_NEXT)) {
 			int page = getOffsetParamFromUpdateByHandler(update, FIND_TRIP_CITY_TO_NEXT);
 			PageRequest pageRequest = of(page, DEFAULT_CITY_LIMIT);
 
@@ -59,7 +61,7 @@ public class FindTripSetRouteCityTo extends UpdateHandler {
 
 			sendRemovableMessage(userId, PROVIDE_CITY_TO,
 					getAvailableCitiesKeyboard(cities, FIND_TRIP_CITY_TO_NEXT, FIND_TRIP_CITY_TO,
-							FIND_TRIP_COUNTRY_TO_BACK));
+							FIND_TRIP_COUNTRY_TO_NEXT, BACK_TO_COUNTRIES));
 
 			return;
 		}
@@ -77,14 +79,14 @@ public class FindTripSetRouteCityTo extends UpdateHandler {
 		Page<Trip> trips = tripService.findAllCreatedNonDriverTrips(route, of(DEFAULT_OFFSET, DEFAULT_TRIP_LIMIT));
 
 		if (trips.isEmpty()) {
-			sendRemovableMessage(userId, FIND_TRIP_NO_TRIPS, getNoTripsKeyboard(route.getId(), FIND_TRIP_CITY_TO_BACK));
+			sendRemovableMessage(userId, FIND_TRIP_NO_TRIPS, getNoTripsKeyboard(route.getId(), FIND_TRIP_CITY_TO_NEXT));
 
 			return;
 		}
 
 		sendRemovableMessage(userId, format(FIND_TRIP_CHOOSE_TRIPS, route.getFormattedData()),
 				getAvailableTripsForPassengerKeyboard(trips, FIND_TRIP_MENU_NEXT, FIND_TRIP_MENU_DETAILS,
-						FIND_TRIP_CITY_TO_BACK));
+						FIND_TRIP_CITY_TO_NEXT, BACK_TO_CITIES));
 	}
 
 	@Override

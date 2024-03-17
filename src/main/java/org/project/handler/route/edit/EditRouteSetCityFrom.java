@@ -64,7 +64,7 @@ public class EditRouteSetCityFrom extends EditRoute {
 
             sendRemovableMessage(userId, PROVIDE_CITY_FROM, getAvailableCitiesKeyboard(
                     cityService.findAllUnusedCitiesFrom(route, pageRequest), EDIT_ROUTE_CITY_FROM_NEXT,
-                    EDIT_ROUTE_CITY_FROM, DRIVER_ROUTES));
+                    EDIT_ROUTE_CITY_FROM, DRIVER_ROUTES, null));
 
             return;
         }

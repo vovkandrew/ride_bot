@@ -18,6 +18,8 @@ import static java.lang.String.format;
 import static org.project.util.Keyboards.getAvailableCitiesKeyboard;
 import static org.project.util.Keyboards.getDriverRouteMenuKeyboard;
 import static org.project.util.UpdateHelper.*;
+import static org.project.util.constants.Buttons.BACK_TO_CITIES;
+import static org.project.util.constants.Buttons.BACK_TO_COUNTRIES;
 import static org.project.util.constants.Messages.*;
 import static org.project.util.enums.HandlerName.*;
 import static org.springframework.data.domain.PageRequest.of;
@@ -47,7 +49,7 @@ public class CreateRouteSetCityTo extends UpdateHandler {
             return;
         }
 
-        if (isUpdateContainsAnyHandler(update, SET_ROUTE_CITY_TO_NEXT, SET_ROUTE_CITY_TO_BACK)) {
+        if (isUpdateContainsHandler(update, SET_ROUTE_CITY_TO_NEXT)) {
             int page = getOffsetParamFromUpdateByHandler(update, SET_ROUTE_CITY_TO_NEXT);
             PageRequest pageRequest = of(page, Constants.DEFAULT_CITY_LIMIT);
 
@@ -55,7 +57,7 @@ public class CreateRouteSetCityTo extends UpdateHandler {
 
             sendRemovableMessage(userId, PROVIDE_CITY_TO,
                     getAvailableCitiesKeyboard(cityService.findAllUnusedCitiesTo(route, pageRequest),
-                            SET_ROUTE_CITY_TO_NEXT, SET_ROUTE_CITY_TO, SET_ROUTE_COUNTRY_TO_BACK));
+                            SET_ROUTE_CITY_TO_NEXT, SET_ROUTE_CITY_TO, SET_ROUTE_COUNTRY_TO_NEXT, BACK_TO_COUNTRIES));
 
             return;
         }

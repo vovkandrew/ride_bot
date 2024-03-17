@@ -18,6 +18,7 @@ import static java.lang.String.format;
 import static org.project.util.Keyboards.getAvailableTripsForPassengerKeyboard;
 import static org.project.util.UpdateHelper.getUserIdFromUpdate;
 import static org.project.util.UpdateHelper.isUpdateContainsHandler;
+import static org.project.util.constants.Buttons.BACK_BUTTON;
 import static org.project.util.constants.Constants.DEFAULT_OFFSET;
 import static org.project.util.constants.Constants.DEFAULT_TRIP_LIMIT;
 import static org.project.util.constants.Messages.*;
@@ -72,7 +73,7 @@ public class PassengerSeatsConfirm extends UpdateHandler {
 
 				sendRemovableMessage(userId, format(FIND_TRIP_CHOOSE_TRIPS, route.getFormattedData()),
 						getAvailableTripsForPassengerKeyboard(trips, FIND_TRIP_MENU_NEXT, FIND_TRIP_MENU_DETAILS,
-								FIND_TRIP_CITY_TO));
+								FIND_TRIP_CITY_TO, BACK_BUTTON));
 
 				return;
 			}

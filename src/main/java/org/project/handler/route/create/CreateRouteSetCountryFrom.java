@@ -18,6 +18,7 @@ import static java.lang.String.format;
 import static org.project.util.Keyboards.getAvailableCitiesKeyboard;
 import static org.project.util.Keyboards.getAvailableCountriesKeyboard;
 import static org.project.util.UpdateHelper.*;
+import static org.project.util.constants.Buttons.*;
 import static org.project.util.constants.Constants.*;
 import static org.project.util.constants.Messages.*;
 import static org.project.util.enums.HandlerName.*;
@@ -56,8 +57,7 @@ public class CreateRouteSetCountryFrom extends UpdateHandler {
 			return;
 		}
 
-		if (isUpdateContainsAnyHandler(update, ROUTE_CREATION, SET_ROUTE_COUNTRY_FROM_NEXT,
-				SET_ROUTE_COUNTRY_FROM_BACK)) {
+		if (isUpdateContainsAnyHandler(update, ROUTE_CREATION, SET_ROUTE_COUNTRY_FROM_NEXT)) {
 			int page = getOffsetParamFromUpdateByHandler(update, SET_ROUTE_COUNTRY_FROM_NEXT);
 			PageRequest pageRequest = of(page, DEFAULT_COUNTRY_LIMIT, ASC, DEFAULT_NAME_FIELD);
 
@@ -65,7 +65,7 @@ public class CreateRouteSetCountryFrom extends UpdateHandler {
 
 			sendRemovableMessage(userId, PROVIDE_COUNTY_FROM,
 					getAvailableCountriesKeyboard(countryService.findAllCountries(pageRequest),
-							SET_ROUTE_COUNTRY_FROM_NEXT, SET_ROUTE_COUNTRY_FROM, DRIVER_MENU));
+							SET_ROUTE_COUNTRY_FROM_NEXT, SET_ROUTE_COUNTRY_FROM, DRIVER_ROUTES, BACK_TO_DRIVER_ROUTES));
 
 			return;
 		}
@@ -84,7 +84,7 @@ public class CreateRouteSetCountryFrom extends UpdateHandler {
 
 		sendRemovableMessage(userId, PROVIDE_CITY_FROM,
 				getAvailableCitiesKeyboard(cityService.findAllCities(pageRequest, route.getCountryFrom()),
-						SET_ROUTE_CITY_FROM_NEXT, SET_ROUTE_CITY_FROM, SET_ROUTE_COUNTRY_FROM_BACK));
+						SET_ROUTE_CITY_FROM_NEXT, SET_ROUTE_CITY_FROM, SET_ROUTE_COUNTRY_FROM_NEXT, BACK_TO_COUNTRIES));
 	}
 
 	@Override

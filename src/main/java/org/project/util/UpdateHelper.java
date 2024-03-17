@@ -73,9 +73,12 @@ public class UpdateHelper {
 
     public static int getCallbackQueryIdParamFromUpdate(Update update) {
         if (update.hasCallbackQuery()) {
-            return Integer.parseInt(update.getCallbackQuery().getData().split(SPLITERATOR_PATTERN)[1]);
+            try {
+                return Integer.parseInt(update.getCallbackQuery().getData().split(SPLITERATOR_PATTERN)[1]);
+            }catch (Exception e){
+                return 0;
+            }
         }
-
         throw new IllegalArgumentException(DEFAULT_MISSING_CALLBACK_PARAM_EXCEPTION);
     }
 

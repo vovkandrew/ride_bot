@@ -20,6 +20,8 @@ import static java.lang.String.format;
 import static org.project.util.Keyboards.getAvailableCitiesKeyboard;
 import static org.project.util.Keyboards.getAvailableCountriesKeyboard;
 import static org.project.util.UpdateHelper.*;
+import static org.project.util.constants.Buttons.BACK_TO_COUNTRIES;
+import static org.project.util.constants.Buttons.BACK_TO_PASSENGER_MENU;
 import static org.project.util.constants.Constants.*;
 import static org.project.util.constants.Messages.*;
 import static org.project.util.enums.HandlerName.*;
@@ -64,8 +66,7 @@ public class FindTripSetRouteCountryFrom extends UpdateHandler {
 
 		PageRequest pageRequest;
 
-		if (isUpdateContainsAnyHandler(update, FINDING_TRIP, FIND_TRIP_COUNTRY_FROM_NEXT,
-				FIND_TRIP_COUNTRY_FROM_BACK)) {
+		if (isUpdateContainsAnyHandler(update, FINDING_TRIP, FIND_TRIP_COUNTRY_FROM_NEXT)) {
 			int page = getOffsetParamFromUpdateByHandler(update, FIND_TRIP_COUNTRY_FROM_NEXT);
 			pageRequest = of(page, DEFAULT_COUNTRY_LIMIT, ASC, DEFAULT_NAME_FIELD);
 
@@ -75,7 +76,7 @@ public class FindTripSetRouteCountryFrom extends UpdateHandler {
 
 			sendRemovableMessage(userId, PROVIDE_COUNTY_FROM,
 					getAvailableCountriesKeyboard(countries, FIND_TRIP_COUNTRY_FROM_NEXT,
-							FIND_TRIP_COUNTRY_FROM, PASSENGER_MENU));
+							FIND_TRIP_COUNTRY_FROM, PASSENGER_MENU, BACK_TO_PASSENGER_MENU));
 
 			return;
 		}
@@ -92,7 +93,7 @@ public class FindTripSetRouteCountryFrom extends UpdateHandler {
 
 		sendRemovableMessage(userId, PROVIDE_CITY_FROM, getAvailableCitiesKeyboard(
 				cityService.findAllCities(pageRequest, route.getCountryFrom()), FIND_TRIP_CITY_FROM_NEXT,
-				FIND_TRIP_CITY_FROM, FIND_TRIP_COUNTRY_FROM_BACK));
+				FIND_TRIP_CITY_FROM, FIND_TRIP_COUNTRY_FROM_NEXT, BACK_TO_COUNTRIES));
 	}
 
 	@Override
