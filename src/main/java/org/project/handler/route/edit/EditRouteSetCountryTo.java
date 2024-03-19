@@ -14,6 +14,7 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.util.Optional;
 
+import static java.util.Optional.empty;
 import static org.project.util.Keyboards.getAvailableCitiesKeyboard;
 import static org.project.util.Keyboards.getAvailableCountriesKeyboard;
 import static org.project.util.UpdateHelper.*;
@@ -67,7 +68,7 @@ public class EditRouteSetCountryTo extends UpdateHandler {
 
             sendRemovableMessage(userId, PROVIDE_COUNTY_TO, getAvailableCountriesKeyboard(
                     countryService.findAllCountriesExcept(pageRequest, route.getCountryFrom(), route.getCountryTo()),
-                    EDIT_ROUTE_COUNTRY_TO_NEXT, EDIT_ROUTE_COUNTRY_TO, Optional.empty(), Optional.empty()));
+                    EDIT_ROUTE_COUNTRY_TO_NEXT, EDIT_ROUTE_COUNTRY_TO, empty(), empty()));
 
             return;
         }
@@ -86,7 +87,7 @@ public class EditRouteSetCountryTo extends UpdateHandler {
 
         sendRemovableMessage(userId, PROVIDE_CITY_TO, getAvailableCitiesKeyboard(
                 cityService.findAllUnusedCitiesTo(route, pageRequest), EDIT_ROUTE_CITY_TO_NEXT,
-                EDIT_ROUTE_CITY_TO, Optional.empty(), Optional.empty()));
+                EDIT_ROUTE_CITY_TO, empty(), empty()));
 
         updateUserPhase(userPhase, EDIT_ROUTE_CITY_TO);
     }

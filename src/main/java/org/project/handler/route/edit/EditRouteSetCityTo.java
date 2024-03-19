@@ -13,6 +13,7 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import java.util.Optional;
 
 import static java.lang.String.format;
+import static java.util.Optional.empty;
 import static org.project.util.Keyboards.getAvailableCitiesKeyboard;
 import static org.project.util.UpdateHelper.*;
 import static org.project.util.constants.Constants.DEFAULT_CITY_LIMIT;
@@ -64,7 +65,7 @@ public class EditRouteSetCityTo extends EditRoute {
 
             sendRemovableMessage(userId, PROVIDE_CITY_TO, getAvailableCitiesKeyboard(
                     cityService.findAllUnusedCitiesTo(route, pageRequest), EDIT_ROUTE_CITY_TO_NEXT,
-                    EDIT_ROUTE_CITY_TO, Optional.empty(), Optional.empty()));
+                    EDIT_ROUTE_CITY_TO, empty(), empty()));
 
             return;
         }

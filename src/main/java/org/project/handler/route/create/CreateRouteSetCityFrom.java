@@ -80,7 +80,7 @@ public class CreateRouteSetCityFrom extends UpdateHandler {
 
 		sendRemovableMessage(userId, PROVIDE_COUNTY_TO,
 				getAvailableCountriesKeyboard(countryService.findAllCountriesExcept(pageRequest, route.getCountryFrom()),
-						SET_ROUTE_COUNTRY_TO_NEXT, SET_ROUTE_COUNTRY_TO, Optional.of(SET_ROUTE_CITY_FROM_BACK),
+						SET_ROUTE_COUNTRY_TO_NEXT, SET_ROUTE_COUNTRY_TO, Optional.of(SET_ROUTE_CITY_FROM_NEXT),
 						Optional.of(BACK_TO_CITIES)));
 	}
 
