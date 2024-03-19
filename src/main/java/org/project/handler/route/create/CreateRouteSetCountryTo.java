@@ -62,7 +62,8 @@ public class CreateRouteSetCountryTo extends UpdateHandler {
 
 			sendRemovableMessage(userId, PROVIDE_COUNTY_TO,
 					getAvailableCountriesKeyboard(countryService.findAllCountriesExcept(pageRequest, route.getCountryFrom()),
-							SET_ROUTE_COUNTRY_TO_NEXT, SET_ROUTE_COUNTRY_TO, SET_ROUTE_CITY_FROM_NEXT, BACK_TO_CITIES));
+							SET_ROUTE_COUNTRY_TO_NEXT, SET_ROUTE_COUNTRY_TO, Optional.of(SET_ROUTE_CITY_FROM_NEXT),
+							Optional.of(BACK_TO_CITIES)));
 
 			return;
 		}
@@ -78,7 +79,8 @@ public class CreateRouteSetCountryTo extends UpdateHandler {
 
 		sendRemovableMessage(userId, PROVIDE_CITY_TO,
 				getAvailableCitiesKeyboard(cityService.findAllUnusedCitiesTo(route, pageRequest),
-						SET_ROUTE_CITY_TO_NEXT, SET_ROUTE_CITY_TO, SET_ROUTE_COUNTRY_TO_NEXT, BACK_TO_COUNTRIES));
+						SET_ROUTE_CITY_TO_NEXT, SET_ROUTE_CITY_TO, Optional.of(SET_ROUTE_COUNTRY_TO_NEXT),
+						Optional.of(BACK_TO_COUNTRIES)));
 	}
 
 	@Override

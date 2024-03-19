@@ -63,7 +63,8 @@ public class FindTripSetRouteCityFrom extends UpdateHandler {
 
 			sendRemovableMessage(userId, PROVIDE_CITY_FROM,
 					getAvailableCitiesKeyboard(cityService.findAllCities(pageRequest, route.getCountryFrom()),
-							FIND_TRIP_CITY_FROM_NEXT, FIND_TRIP_CITY_FROM, FIND_TRIP_COUNTRY_FROM_NEXT, BACK_TO_COUNTRIES));
+							FIND_TRIP_CITY_FROM_NEXT, FIND_TRIP_CITY_FROM, Optional.of(FIND_TRIP_COUNTRY_FROM_NEXT),
+							Optional.of(BACK_TO_COUNTRIES)));
 
 			return;
 		}
@@ -80,7 +81,8 @@ public class FindTripSetRouteCityFrom extends UpdateHandler {
 
 		sendRemovableMessage(userId, PROVIDE_COUNTY_TO,
 				getAvailableCountriesKeyboard(countryService.findAllCountriesExcept(pageRequest, route.getCountryFrom()),
-						FIND_TRIP_COUNTRY_TO_NEXT, FIND_TRIP_COUNTRY_TO, FIND_TRIP_CITY_FROM_NEXT, BACK_TO_CITIES));
+						FIND_TRIP_COUNTRY_TO_NEXT, FIND_TRIP_COUNTRY_TO, Optional.of(FIND_TRIP_CITY_FROM_NEXT),
+						Optional.of(BACK_TO_CITIES)));
 	}
 
 	@Override

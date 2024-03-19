@@ -61,7 +61,7 @@ public class FindTripSetRouteCityTo extends UpdateHandler {
 
 			sendRemovableMessage(userId, PROVIDE_CITY_TO,
 					getAvailableCitiesKeyboard(cities, FIND_TRIP_CITY_TO_NEXT, FIND_TRIP_CITY_TO,
-							FIND_TRIP_COUNTRY_TO_NEXT, BACK_TO_COUNTRIES));
+							Optional.of(FIND_TRIP_COUNTRY_TO_NEXT), Optional.of(BACK_TO_COUNTRIES)));
 
 			return;
 		}

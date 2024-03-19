@@ -16,6 +16,7 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.Keyboard
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import static java.lang.String.format;
 import static java.time.format.DateTimeFormatter.ofPattern;
@@ -144,8 +145,9 @@ public class Keyboards {
     }
 
     public static InlineKeyboardMarkup getAvailableCountriesKeyboard(Page<Country> countries, HandlerName navigationCallback,
-                                                                     HandlerName countryCallback, HandlerName backCallback,
-                                                                     String backButton) {
+                                                                     HandlerName countryCallback,
+                                                                     Optional<HandlerName> previousMenuCallback,
+                                                                     Optional<String> backButtonName) {
         List<Country> countryList = countries.toList();
         List<List<InlineKeyboardButton>> rows = new ArrayList<>();
 
@@ -169,9 +171,9 @@ public class Keyboards {
                     .callbackData(buildCallbackFromHandlerAndIdParam(navigationCallback, countries.getNumber() + 1)).build()));
         }
 
-        if(backButton != null){
-            rows.add(of(InlineKeyboardButton.builder().text(backButton)
-                    .callbackData(backCallback.name()).build()));
+        if(previousMenuCallback.isPresent()){
+            rows.add(of(InlineKeyboardButton.builder().text(backButtonName.get())
+                    .callbackData(previousMenuCallback.get().name()).build()));
         }
 
         return new InlineKeyboardMarkup(rows);
@@ -183,8 +185,9 @@ public class Keyboards {
     }
 
     public static InlineKeyboardMarkup getAvailableCitiesKeyboard(Page<City> cities, HandlerName navigationCallback,
-                                                                  HandlerName cityCallback, HandlerName backCallback,
-                                                                  String backButton) {
+                                                                  HandlerName cityCallback,
+                                                                  Optional<HandlerName> previousMenuCallback,
+                                                                  Optional<String> backButtonName) {
         List<City> cityList = cities.toList();
         List<List<InlineKeyboardButton>> rows = new ArrayList<>();
 
@@ -208,9 +211,9 @@ public class Keyboards {
                     .callbackData(buildCallbackFromHandlerAndIdParam(navigationCallback, cities.getNumber() + 1)).build()));
         }
 
-        if(backButton != null){
-            rows.add(of(InlineKeyboardButton.builder().text(backButton)
-                    .callbackData(backCallback.name()).build()));
+        if(previousMenuCallback.isPresent()){
+            rows.add(of(InlineKeyboardButton.builder().text(backButtonName.get())
+                    .callbackData(previousMenuCallback.get().name()).build()));
         }
 
         return new InlineKeyboardMarkup(rows);

@@ -65,7 +65,8 @@ public class CreateRouteSetCountryFrom extends UpdateHandler {
 
 			sendRemovableMessage(userId, PROVIDE_COUNTY_FROM,
 					getAvailableCountriesKeyboard(countryService.findAllCountries(pageRequest),
-							SET_ROUTE_COUNTRY_FROM_NEXT, SET_ROUTE_COUNTRY_FROM, DRIVER_ROUTES, BACK_TO_DRIVER_ROUTES));
+							SET_ROUTE_COUNTRY_FROM_NEXT, SET_ROUTE_COUNTRY_FROM, Optional.of(DRIVER_ROUTES),
+							Optional.of(BACK_TO_DRIVER_ROUTES)));
 
 			return;
 		}
@@ -84,7 +85,8 @@ public class CreateRouteSetCountryFrom extends UpdateHandler {
 
 		sendRemovableMessage(userId, PROVIDE_CITY_FROM,
 				getAvailableCitiesKeyboard(cityService.findAllCities(pageRequest, route.getCountryFrom()),
-						SET_ROUTE_CITY_FROM_NEXT, SET_ROUTE_CITY_FROM, SET_ROUTE_COUNTRY_FROM_NEXT, BACK_TO_COUNTRIES));
+						SET_ROUTE_CITY_FROM_NEXT, SET_ROUTE_CITY_FROM, Optional.of(SET_ROUTE_COUNTRY_FROM_NEXT),
+						Optional.of(BACK_TO_COUNTRIES)));
 	}
 
 	@Override
