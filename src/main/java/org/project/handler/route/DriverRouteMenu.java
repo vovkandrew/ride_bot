@@ -13,7 +13,8 @@ import java.util.Optional;
 
 import static java.lang.String.format;
 import static org.project.util.Keyboards.getDriverRouteMenuKeyboard;
-import static org.project.util.UpdateHelper.*;
+import static org.project.util.UpdateHelper.getCallbackQueryIdParamFromUpdate;
+import static org.project.util.UpdateHelper.getUserIdFromUpdate;
 import static org.project.util.constants.Messages.*;
 import static org.project.util.enums.HandlerName.ROUTES_MAIN_MENU;
 

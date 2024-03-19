@@ -15,6 +15,7 @@ import java.util.Optional;
 import static java.lang.String.format;
 import static org.project.util.Keyboards.getAvailableTripsForPassengerKeyboard;
 import static org.project.util.UpdateHelper.*;
+import static org.project.util.constants.Buttons.BACK_TO_CITIES;
 import static org.project.util.constants.Constants.*;
 import static org.project.util.constants.Messages.FIND_TRIP_CHOOSE_TRIPS;
 import static org.project.util.enums.HandlerName.*;
@@ -54,15 +55,18 @@ public class FindTripMenu extends UpdateHandler {
             Page<Trip> trips = tripService.findAllCreatedNonDriverTrips(route, pageRequest);
 
             sendRemovableMessage(userId, format(FIND_TRIP_CHOOSE_TRIPS, route.getFormattedData()),
-                    getAvailableTripsForPassengerKeyboard(trips, FIND_TRIP_MENU_NEXT, FIND_TRIP_MENU_DETAILS));
+                    getAvailableTripsForPassengerKeyboard(trips, FIND_TRIP_MENU_NEXT, FIND_TRIP_MENU_DETAILS,
+                            FIND_TRIP_CITY_TO_NEXT, BACK_TO_CITIES));
 
             return;
         }
 
         deleteRemovableMessagesAndEraseAllFromRepo(userId);
         Page<Trip> trips = tripService.findAllCreatedNonDriverTrips(route, of(DEFAULT_OFFSET, DEFAULT_TRIP_LIMIT));
+
         sendRemovableMessage(userId, format(FIND_TRIP_CHOOSE_TRIPS, route.getFormattedData()),
-                getAvailableTripsForPassengerKeyboard(trips, FIND_TRIP_MENU_NEXT, FIND_TRIP_MENU_DETAILS));
+                getAvailableTripsForPassengerKeyboard(trips, FIND_TRIP_MENU_NEXT, FIND_TRIP_MENU_DETAILS,
+                        FIND_TRIP_CITY_TO_NEXT, BACK_TO_CITIES));
     }
 
     @Override

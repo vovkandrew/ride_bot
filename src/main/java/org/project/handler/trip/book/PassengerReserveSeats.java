@@ -16,6 +16,7 @@ import java.util.Optional;
 import static java.lang.String.format;
 import static org.project.util.Keyboards.getAvailableTripsForPassengerKeyboard;
 import static org.project.util.UpdateHelper.*;
+import static org.project.util.constants.Buttons.BACK_BUTTON;
 import static org.project.util.constants.Constants.DEFAULT_OFFSET;
 import static org.project.util.constants.Constants.DEFAULT_TRIP_LIMIT;
 import static org.project.util.constants.Messages.*;
@@ -68,7 +69,8 @@ public class PassengerReserveSeats extends UpdateHandler {
 						of(DEFAULT_OFFSET, DEFAULT_TRIP_LIMIT));
 
 				sendRemovableMessage(userId, format(FIND_TRIP_CHOOSE_TRIPS, route.getFormattedData()),
-						getAvailableTripsForPassengerKeyboard(trips, FIND_TRIP_MENU_NEXT, FIND_TRIP_MENU_DETAILS));
+						getAvailableTripsForPassengerKeyboard(trips, FIND_TRIP_MENU_NEXT, FIND_TRIP_MENU_DETAILS,
+								FIND_TRIP_CITY_TO, BACK_BUTTON));
 
 				return;
 			}
@@ -92,7 +94,8 @@ public class PassengerReserveSeats extends UpdateHandler {
 						of(DEFAULT_OFFSET, DEFAULT_TRIP_LIMIT));
 
 				sendRemovableMessage(userId, format(FIND_TRIP_CHOOSE_TRIPS, route.getFormattedData()),
-						getAvailableTripsForPassengerKeyboard(trips, FIND_TRIP_MENU_NEXT, FIND_TRIP_MENU_DETAILS));
+						getAvailableTripsForPassengerKeyboard(trips, FIND_TRIP_MENU_NEXT, FIND_TRIP_MENU_DETAILS,
+								FIND_TRIP_CITY_TO, BACK_BUTTON));
 
 				return;
 			}

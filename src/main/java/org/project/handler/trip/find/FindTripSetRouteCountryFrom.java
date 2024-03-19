@@ -20,6 +20,8 @@ import static java.lang.String.format;
 import static org.project.util.Keyboards.getAvailableCitiesKeyboard;
 import static org.project.util.Keyboards.getAvailableCountriesKeyboard;
 import static org.project.util.UpdateHelper.*;
+import static org.project.util.constants.Buttons.BACK_TO_COUNTRIES;
+import static org.project.util.constants.Buttons.BACK_TO_PASSENGER_MENU;
 import static org.project.util.constants.Constants.*;
 import static org.project.util.constants.Messages.*;
 import static org.project.util.enums.HandlerName.*;
@@ -30,68 +32,73 @@ import static org.springframework.data.domain.Sort.Direction.ASC;
 
 @Component
 public class FindTripSetRouteCountryFrom extends UpdateHandler {
-    private final CountryService countryService;
-    private final CityService cityService;
-    private final RouteService routeService;
+	private final CountryService countryService;
+	private final CityService cityService;
+	private final RouteService routeService;
 
-    public FindTripSetRouteCountryFrom(CountryService countryService, CityService cityService, RouteService routeService) {
-        this.countryService = countryService;
-        this.cityService = cityService;
-        this.routeService = routeService;
-    }
+	public FindTripSetRouteCountryFrom(CountryService countryService, CityService cityService,
+	                                   RouteService routeService) {
+		this.countryService = countryService;
+		this.cityService = cityService;
+		this.routeService = routeService;
+	}
 
-    @Override
-    public boolean isApplicable(Optional<Phase> phaseOptional, Update update) {
-        return super.isApplicable(phaseOptional, update) || isUpdateContainsHandler(update, FINDING_TRIP);
-    }
+	@Override
+	public boolean isApplicable(Optional<Phase> phaseOptional, Update update) {
+		return super.isApplicable(phaseOptional, update)
+				|| isUpdateContainsAnyHandler(update, FINDING_TRIP, FIND_TRIP_COUNTRY_FROM);
+	}
 
-    @Override
-    public void handle(UserPhase userPhase, Update update) throws TelegramApiException {
-        long userId = getUserIdFromUpdate(update);
-        updateUserPhase(userPhase, handlerPhase);
+	@Override
+	public void handle(UserPhase userPhase, Update update) throws TelegramApiException {
+		long userId = getUserIdFromUpdate(update);
+		updateUserPhase(userPhase, handlerPhase);
 
-        routeService.deleteAllNewPassengersRoutes(userId);
+		routeService.deleteAllNewPassengersRoutes(userId);
 
-        if (isMessageSentInsteadOfButtonClick(update)) {
-            return;
-        }
+		if (isMessageSentInsteadOfButtonClick(update)) {
+			return;
+		}
 
-        if (isUpdateCallbackEqualsHandler(update, FINDING_TRIP)) {
-            sendMessage(userId, FIND_TRIP);
-        }
+		if (isUpdateCallbackEqualsHandler(update, FINDING_TRIP)) {
+			sendMessage(userId, FIND_TRIP);
+		}
 
-        PageRequest pageRequest;
+		PageRequest pageRequest;
 
-        if (isUpdateContainsAnyHandler(update, FINDING_TRIP, FIND_TRIP_COUNTRY_FROM_NEXT)) {
-            int page = getOffsetParamFromUpdateByHandler(update, FIND_TRIP_COUNTRY_FROM_NEXT);
-            pageRequest = of(page, DEFAULT_COUNTRY_LIMIT, ASC, DEFAULT_NAME_FIELD);
+		if (isUpdateContainsAnyHandler(update, FINDING_TRIP, FIND_TRIP_COUNTRY_FROM_NEXT)) {
+			int page = getOffsetParamFromUpdateByHandler(update, FIND_TRIP_COUNTRY_FROM_NEXT);
+			pageRequest = of(page, DEFAULT_COUNTRY_LIMIT, ASC, DEFAULT_NAME_FIELD);
 
-            deleteRemovableMessagesAndEraseAllFromRepo(userId);
+			deleteRemovableMessagesAndEraseAllFromRepo(userId);
 
-            Page<Country> countries = countryService.findAllCountries(pageRequest);
+			Page<Country> countries = countryService.findAllCountries(pageRequest);
 
-            sendRemovableMessage(userId, PROVIDE_COUNTY_FROM, getAvailableCountriesKeyboard(countries,
-                    FIND_TRIP_COUNTRY_FROM_NEXT, FIND_TRIP_COUNTRY_FROM));
+			sendRemovableMessage(userId, PROVIDE_COUNTY_FROM,
+					getAvailableCountriesKeyboard(countries, FIND_TRIP_COUNTRY_FROM_NEXT,
+							FIND_TRIP_COUNTRY_FROM, Optional.of(PASSENGER_MENU), Optional.of(BACK_TO_PASSENGER_MENU)));
 
-            return;
-        }
+			return;
+		}
 
-        Route route = Route.builder().telegramUserId(userId).status(NEW).userType(PASSENGER).build();
-        route = routeService.updateRouteCountryFrom(route, getCallbackQueryIdParamFromUpdate(update));
-        pageRequest = of(DEFAULT_OFFSET, DEFAULT_COUNTRY_LIMIT, ASC, DEFAULT_NAME_FIELD);
+		Route route = Route.builder().telegramUserId(userId).status(NEW).userType(PASSENGER).build();
+		route = routeService.updateRouteCountryFrom(route, getCallbackQueryIdParamFromUpdate(update));
+		pageRequest = of(DEFAULT_OFFSET, DEFAULT_COUNTRY_LIMIT, ASC, DEFAULT_NAME_FIELD);
 
-        updateUserPhase(userPhase, FIND_TRIP_CITY_FROM);
+		updateUserPhase(userPhase, FIND_TRIP_CITY_FROM);
 
-        deleteRemovableMessagesAndEraseAllFromRepo(userId);
+		deleteRemovableMessagesAndEraseAllFromRepo(userId);
 
-        sendMessage(userId, format(COUNTRY_FROM_PROVIDED, route.getCountryFrom().getName()));
+		sendMessage(userId, format(COUNTRY_FROM_PROVIDED, route.getCountryFrom().getName()));
 
-        sendRemovableMessage(userId, PROVIDE_CITY_FROM, getAvailableCitiesKeyboard(
-                cityService.findAllCities(pageRequest, route.getCountryFrom()), FIND_TRIP_CITY_FROM_NEXT, FIND_TRIP_CITY_FROM));
-    }
+		sendRemovableMessage(userId, PROVIDE_CITY_FROM, getAvailableCitiesKeyboard(
+				cityService.findAllCities(pageRequest, route.getCountryFrom()), FIND_TRIP_CITY_FROM_NEXT,
+				FIND_TRIP_CITY_FROM, Optional.of(FIND_TRIP_COUNTRY_FROM_NEXT), Optional.of(BACK_TO_COUNTRIES)));
+	}
 
-    @Override
-    public void initHandler() {
-        handlerPhase = getPhaseService().getPhaseByHandlerName(FIND_TRIP_COUNTRY_FROM);
-    }
+	@Override
+	public void initHandler() {
+		handlerPhase = getPhaseService().getPhaseByHandlerName(FIND_TRIP_COUNTRY_FROM);
+	}
+
 }

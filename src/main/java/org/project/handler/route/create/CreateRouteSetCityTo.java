@@ -7,7 +7,6 @@ import org.project.model.UserPhase;
 import org.project.service.CityService;
 import org.project.service.RouteService;
 import org.project.util.constants.Constants;
-import org.project.util.enums.HandlerName;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -19,9 +18,10 @@ import static java.lang.String.format;
 import static org.project.util.Keyboards.getAvailableCitiesKeyboard;
 import static org.project.util.Keyboards.getDriverRouteMenuKeyboard;
 import static org.project.util.UpdateHelper.*;
+import static org.project.util.constants.Buttons.BACK_TO_CITIES;
+import static org.project.util.constants.Buttons.BACK_TO_COUNTRIES;
 import static org.project.util.constants.Messages.*;
-import static org.project.util.enums.HandlerName.ROUTES_MAIN_MENU;
-import static org.project.util.enums.HandlerName.SET_ROUTE_CITY_TO;
+import static org.project.util.enums.HandlerName.*;
 import static org.springframework.data.domain.PageRequest.of;
 
 @Component
@@ -36,7 +36,7 @@ public class CreateRouteSetCityTo extends UpdateHandler {
 
     @Override
     public boolean isApplicable(Optional<Phase> phaseOptional, Update update) {
-        return super.isApplicable(phaseOptional, update) || isUpdateContainsHandler(update, SET_ROUTE_CITY_TO);
+        return isUpdateContainsHandler(update, SET_ROUTE_CITY_TO);
     }
 
     @Override
@@ -49,15 +49,16 @@ public class CreateRouteSetCityTo extends UpdateHandler {
             return;
         }
 
-        if (isUpdateContainsHandler(update, HandlerName.SET_ROUTE_CITY_TO_NEXT)) {
-            int page = getOffsetParamFromUpdateByHandler(update, HandlerName.SET_ROUTE_CITY_TO_NEXT);
+        if (isUpdateContainsHandler(update, SET_ROUTE_CITY_TO_NEXT)) {
+            int page = getOffsetParamFromUpdateByHandler(update, SET_ROUTE_CITY_TO_NEXT);
             PageRequest pageRequest = of(page, Constants.DEFAULT_CITY_LIMIT);
 
             deleteRemovableMessagesAndEraseAllFromRepo(userId);
 
-            sendRemovableMessage(userId, PROVIDE_CITY_TO, getAvailableCitiesKeyboard(
-                    cityService.findAllUnusedCitiesTo(route, pageRequest),
-                    HandlerName.SET_ROUTE_CITY_TO_NEXT, SET_ROUTE_CITY_TO));
+            sendRemovableMessage(userId, PROVIDE_CITY_TO,
+                    getAvailableCitiesKeyboard(cityService.findAllUnusedCitiesTo(route, pageRequest),
+                            SET_ROUTE_CITY_TO_NEXT, SET_ROUTE_CITY_TO, Optional.of(SET_ROUTE_COUNTRY_TO_NEXT),
+                            Optional.of(BACK_TO_COUNTRIES)));
 
             return;
         }

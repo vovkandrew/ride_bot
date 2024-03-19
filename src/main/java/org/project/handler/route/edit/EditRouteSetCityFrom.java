@@ -13,14 +13,15 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import java.util.Optional;
 
 import static java.lang.String.format;
+import static java.util.Optional.empty;
 import static org.project.util.Keyboards.getAvailableCitiesKeyboard;
 import static org.project.util.UpdateHelper.*;
 import static org.project.util.constants.Constants.DEFAULT_CITY_LIMIT;
 import static org.project.util.constants.Messages.*;
-import static org.project.util.enums.HandlerName.EDIT_ROUTE_CITY_FROM;
-import static org.project.util.enums.HandlerName.EDIT_ROUTE_CITY_FROM_NEXT;
+import static org.project.util.enums.HandlerName.*;
 import static org.project.util.enums.Status.CREATED;
 import static org.project.util.enums.Status.EDITING;
+
 
 @Component
 public class EditRouteSetCityFrom extends EditRoute {
@@ -65,7 +66,7 @@ public class EditRouteSetCityFrom extends EditRoute {
 
             sendRemovableMessage(userId, PROVIDE_CITY_FROM, getAvailableCitiesKeyboard(
                     cityService.findAllUnusedCitiesFrom(route, pageRequest), EDIT_ROUTE_CITY_FROM_NEXT,
-                    EDIT_ROUTE_CITY_FROM));
+                    EDIT_ROUTE_CITY_FROM, empty(), empty()));
 
             return;
         }
