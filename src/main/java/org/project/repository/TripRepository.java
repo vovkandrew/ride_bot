@@ -38,4 +38,7 @@ public interface TripRepository extends JpaRepository<Trip, Long> {
     @Query("delete from Trip t where t.route = ?1 and t.status = ?2")
     void deleteAllTripsByRouteAndStatus(Route route, Status status);
 
+    @Query ("select (count(t) > 0) from Trip t where t.route.id = ?1 and concat (t.departureDate, ' ', t.departureTime) > ?2")
+    boolean isNonExpired(long routeId, String currentDateTime);
+
 }
