@@ -51,4 +51,6 @@ public interface TripService {
     Page<Trip> findAllCreatedNonDriverTrips(Route route, Pageable pageable);
 
     void deleteAllNewTrips(Route route);
+
+    public boolean isNonExpiredTripsExists(long routeId, String currentDateTime);
 }

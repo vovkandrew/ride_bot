@@ -12,6 +12,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -36,6 +37,8 @@ public class TripServiceImpl implements TripService {
     public Optional<Trip> findNewTrip(long driverId) {
         return tripRepository.findNew(driverId);
     }
+
+
 
     @Override
     public Trip getNewTrip(long driverId) {
@@ -153,4 +156,10 @@ public class TripServiceImpl implements TripService {
     public void deleteAllNewTrips(Route route) {
         tripRepository.deleteAllTripsByRouteAndStatus(route, Status.NEW);
     }
+
+    @Override
+    public boolean isNonExpiredTripsExists(long routeId, String currentDateTime) {
+        return tripRepository.isNonExpired(routeId, currentDateTime);
+    }
+
 }
