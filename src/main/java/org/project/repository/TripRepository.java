@@ -13,6 +13,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -38,7 +39,7 @@ public interface TripRepository extends JpaRepository<Trip, Long> {
     @Query("delete from Trip t where t.route = ?1 and t.status = ?2")
     void deleteAllTripsByRouteAndStatus(Route route, Status status);
 
-    @Query ("select (count(t) > 0) from Trip t where t.route.id = ?1 and concat (t.departureDate, ' ', t.departureTime) > ?2")
-    boolean isNonExpired(long routeId, String currentDateTime);
+    @Query ("select (count(t) > 0) from Trip t where t.route.id = ?1 and t.arrivalDate > ?2")
+    boolean isNonExpired(long routeId, LocalDate today);
 
 }

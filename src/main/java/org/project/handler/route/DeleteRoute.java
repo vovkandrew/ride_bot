@@ -6,12 +6,14 @@ import org.project.model.Route;
 import org.project.model.UserPhase;
 import org.project.service.RouteService;
 import org.project.service.TripService;
+import org.project.util.enums.Status;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
@@ -47,11 +49,9 @@ public class DeleteRoute extends UpdateHandler {
 
         long routeId = getCallbackQueryIdParamFromUpdate(update);
 
-        String currentDateTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern(DATE_TIME_FORMAT));
-
         Route route = routeService.getRoute(routeId);
 
-        if(tripService.isNonExpiredTripsExists(routeId, currentDateTime)){
+        if(tripService.isNonExpiredTripsExists(routeId, LocalDate.now())){
             deleteRemovableMessagesAndEraseAllFromRepo(userId);
 
             sendRemovableMessage(userId, format(RESTRICTED_ROUTE_DELETION, route.getSimplifiedRoute()));
@@ -65,8 +65,7 @@ public class DeleteRoute extends UpdateHandler {
 
             return;
         }
-
-        routeService.deleteRoute(route);
+        route.setStatus(Status.DELETED);
 
         deleteRemovableMessagesAndEraseAllFromRepo(userId);
 

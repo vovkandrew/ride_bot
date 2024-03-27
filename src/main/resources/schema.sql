@@ -76,7 +76,6 @@ create table if not exists trip (
 	other_info VARCHAR(250),
 	status VARCHAR(250),
 	FOREIGN KEY (route_id) REFERENCES route (id)
-	ON DELETE CASCADE
 );
 
 create table if not exists booking (

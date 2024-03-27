@@ -7,6 +7,7 @@ import org.project.util.enums.Status;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.time.LocalDate;
 import java.util.Optional;
 
 public interface TripService {
@@ -52,5 +53,5 @@ public interface TripService {
 
     void deleteAllNewTrips(Route route);
 
-    public boolean isNonExpiredTripsExists(long routeId, String currentDateTime);
+    public boolean isNonExpiredTripsExists(long routeId, LocalDate today);
 }

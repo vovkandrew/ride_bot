@@ -158,8 +158,8 @@ public class TripServiceImpl implements TripService {
     }
 
     @Override
-    public boolean isNonExpiredTripsExists(long routeId, String currentDateTime) {
-        return tripRepository.isNonExpired(routeId, currentDateTime);
+    public boolean isNonExpiredTripsExists(long routeId, LocalDate today) {
+        return tripRepository.isNonExpired(routeId, today);
     }
 
 }

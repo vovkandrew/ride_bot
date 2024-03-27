@@ -13,6 +13,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.project.util.enums.Status.*;
 import static org.project.util.enums.UserType.DRIVER;
@@ -133,5 +134,11 @@ public class RouteServiceImpl implements RouteService {
     public List<Long> getAllUsersWhoTrackRoute(Route route) {
         return routeRepository.getAllTelegramUsersByStatusAndRouteInfoAndUserType(CREATED, route.getCountryFrom(),
                 route.getCityFrom(), route.getCountryTo(), route.getCityTo(), PASSENGER);
+    }
+
+    @Override
+    public Optional<Route> findDriverDeletedRoute(long userId, Route route) {
+        return routeRepository.findRouteByEverything(userId, route.getCountryFrom(), route.getCityFrom(),
+                route.getCountryTo(), route.getCityTo(), DELETED, DRIVER);
     }
 }
