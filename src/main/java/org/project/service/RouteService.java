@@ -49,5 +49,5 @@ public interface RouteService {
 
     List<Long> getAllUsersWhoTrackRoute(Route route);
 
-    public Optional<Route> findDriverDeletedRoute(long userId, Route route);
+    public Optional<Route> findDeletedDriverRoute(long userId, Route route);
 }

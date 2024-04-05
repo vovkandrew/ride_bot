@@ -136,7 +136,7 @@ public class RouteServiceImpl implements RouteService {
     }
 
     @Override
-    public Optional<Route> findDriverDeletedRoute(long userId, Route route) {
+    public Optional<Route> findDeletedDriverRoute(long userId, Route route) {
         return routeRepository.findRouteByDetails(userId, route.getCountryFrom(), route.getCityFrom(),
                 route.getCountryTo(), route.getCityTo(), DELETED, DRIVER);
     }

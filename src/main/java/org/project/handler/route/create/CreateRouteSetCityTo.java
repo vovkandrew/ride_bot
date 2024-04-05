@@ -65,12 +65,12 @@ public class CreateRouteSetCityTo extends UpdateHandler {
 
         route = routeService.updateRouteCityTo(route, getCallbackQueryIdParamFromUpdate(update));
 
-        Optional<Route> similarRoute = routeService.findDriverDeletedRoute(userId, route);
+        Optional<Route> existingDeletedRoute = routeService.findDeletedDriverRoute(userId, route);
 
-        if (similarRoute.isPresent()){
+        if (existingDeletedRoute.isPresent()){
             routeService.deleteRoute(route);
 
-			route = similarRoute.get();
+			route = existingDeletedRoute.get();
 
             route.setStatus(Status.CREATED);
 
