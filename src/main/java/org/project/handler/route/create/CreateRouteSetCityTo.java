@@ -73,6 +73,8 @@ public class CreateRouteSetCityTo extends UpdateHandler {
 			route = similarRoute.get();
 
             route.setStatus(Status.CREATED);
+
+            routeService.saveRoute(route);
         } else {
             routeService.createRoute(route);
         }

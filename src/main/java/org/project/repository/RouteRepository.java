@@ -52,6 +52,6 @@ public interface RouteRepository extends JpaRepository<Route, Long> {
 
     @Query ("select r from Route r where r.telegramUserId = ?1 and r.countryFrom = ?2 and r.cityFrom = ?3 and " +
                     "r.countryTo = ?4 and r.cityTo = ?5 and r.status = ?6 and r.userType = ?7")
-    Optional<Route> findRouteByEverything(long telegramUserId, Country countryFrom, City cityFrom, Country countryTo,
-                                         City cityTo, Status status, UserType userType);
+    Optional<Route> findRouteByDetails(long telegramUserId, Country countryFrom, City cityFrom, Country countryTo,
+                                       City cityTo, Status status, UserType userType);
 }

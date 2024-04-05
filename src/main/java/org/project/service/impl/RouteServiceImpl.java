@@ -7,7 +7,6 @@ import org.project.service.CityService;
 import org.project.service.CountryService;
 import org.project.service.RouteService;
 import org.project.util.enums.Status;
-import org.project.util.enums.UserType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -138,7 +137,7 @@ public class RouteServiceImpl implements RouteService {
 
     @Override
     public Optional<Route> findDriverDeletedRoute(long userId, Route route) {
-        return routeRepository.findRouteByEverything(userId, route.getCountryFrom(), route.getCityFrom(),
+        return routeRepository.findRouteByDetails(userId, route.getCountryFrom(), route.getCityFrom(),
                 route.getCountryTo(), route.getCityTo(), DELETED, DRIVER);
     }
 }

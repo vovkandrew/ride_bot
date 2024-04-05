@@ -30,7 +30,7 @@ public interface TripRepository extends JpaRepository<Trip, Long> {
 
     @Query(value = "select t from Trip t where t.status = 'CREATED' and t.route.countryFrom = ?1 " +
             "and t.route.cityFrom = ?2 and t.route.countryTo = ?3 and t.route.cityTo = ?4 " +
-            "and t.route.telegramUserId != ?5 order by t.departureDate ASC")
+            "and t.route.telegramUserId != ?5 and t.route.status = 'CREATED' order by t.departureDate ASC")
     Page<Trip> findAllCreatedNonDriverTripsByRouteDetails(Country countryFrom, City cityFrom, Country countryTo,
                                                           City cityTo, long driverId, Pageable pageable);
 
@@ -40,6 +40,6 @@ public interface TripRepository extends JpaRepository<Trip, Long> {
     void deleteAllTripsByRouteAndStatus(Route route, Status status);
 
     @Query ("select (count(t) > 0) from Trip t where t.route.id = ?1 and t.arrivalDate > ?2")
-    boolean isNonExpired(long routeId, LocalDate today);
+    boolean nonExpiredExist(long routeId, LocalDate today);
 
 }

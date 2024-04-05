@@ -12,7 +12,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -159,7 +158,7 @@ public class TripServiceImpl implements TripService {
 
     @Override
     public boolean isNonExpiredTripsExists(long routeId, LocalDate today) {
-        return tripRepository.isNonExpired(routeId, today);
+        return tripRepository.nonExpiredExist(routeId, today);
     }
 
 }
