@@ -7,6 +7,7 @@ import org.project.model.UserPhase;
 import org.project.service.CityService;
 import org.project.service.RouteService;
 import org.project.util.constants.Constants;
+import org.project.util.enums.Status;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -18,7 +19,6 @@ import static java.lang.String.format;
 import static org.project.util.Keyboards.getAvailableCitiesKeyboard;
 import static org.project.util.Keyboards.getDriverRouteMenuKeyboard;
 import static org.project.util.UpdateHelper.*;
-import static org.project.util.constants.Buttons.BACK_TO_CITIES;
 import static org.project.util.constants.Buttons.BACK_TO_COUNTRIES;
 import static org.project.util.constants.Messages.*;
 import static org.project.util.enums.HandlerName.*;
@@ -64,7 +64,21 @@ public class CreateRouteSetCityTo extends UpdateHandler {
         }
 
         route = routeService.updateRouteCityTo(route, getCallbackQueryIdParamFromUpdate(update));
-        routeService.createRoute(route);
+
+        Optional<Route> existingDeletedRoute = routeService.findDeletedDriverRoute(userId, route);
+
+        if (existingDeletedRoute.isPresent()){
+            routeService.deleteRoute(route);
+
+			route = existingDeletedRoute.get();
+
+            route.setStatus(Status.CREATED);
+
+            routeService.saveRoute(route);
+        } else {
+            routeService.createRoute(route);
+        }
+
         updateUserPhase(userPhase, ROUTES_MAIN_MENU);
 
         deleteRemovableMessagesAndEraseAllFromRepo(userId);

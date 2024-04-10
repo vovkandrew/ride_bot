@@ -15,9 +15,8 @@ import java.util.Optional;
 
 import static java.lang.String.format;
 import static org.project.util.Keyboards.getContinueCreateDriverTripKeyboard;
-import static org.project.util.Keyboards.getDriverRoutesKeyboard;
+import static org.project.util.Keyboards.getDriverRoutesMenuKeyboard;
 import static org.project.util.UpdateHelper.getUserIdFromUpdate;
-import static org.project.util.UpdateHelper.isUpdateContainsHandler;
 import static org.project.util.constants.Constants.*;
 import static org.project.util.constants.Messages.CONTINUE_CREATE_DRIVER_TRIP;
 import static org.project.util.constants.Messages.TRIP_CREATING_CHOOSE_ROUTE;
@@ -61,7 +60,7 @@ public class CreateTripStart extends UpdateHandler {
 
         PageRequest pageRequest = of(DEFAULT_OFFSET, DEFAULT_ROUTE_LIMIT, ASC, DEFAULT_ID_FIELD);
 
-        sendEditableMessage(userId, TRIP_CREATING_CHOOSE_ROUTE, getDriverRoutesKeyboard(
+        sendEditableMessage(userId, TRIP_CREATING_CHOOSE_ROUTE, getDriverRoutesMenuKeyboard(
                 routeService.getAllCreatedRoutes(pageRequest, userId), CREATE_TRIP_CHOOSE_ROUTE_NEXT, CREATE_TRIP_CHOOSE_ROUTE));
     }
 

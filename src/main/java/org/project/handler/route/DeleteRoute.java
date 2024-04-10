@@ -5,21 +5,25 @@ import org.project.model.Phase;
 import org.project.model.Route;
 import org.project.model.UserPhase;
 import org.project.service.RouteService;
+import org.project.service.TripService;
+import org.project.util.enums.Status;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
 import static java.lang.String.format;
+import static org.project.util.Keyboards.getDriverRouteMenuKeyboard;
 import static org.project.util.Keyboards.getDriverRoutesMenuKeyboard;
-import static org.project.util.UpdateHelper.getUserIdFromUpdate;
-import static org.project.util.UpdateHelper.isUpdateContainsHandler;
+import static org.project.util.UpdateHelper.*;
 import static org.project.util.constants.Constants.*;
-import static org.project.util.constants.Messages.NEW_ROUTE_CREATED;
-import static org.project.util.constants.Messages.ROUTES_MENU;
+import static org.project.util.constants.Messages.*;
 import static org.project.util.enums.HandlerName.*;
 import static org.springframework.data.domain.PageRequest.of;
 import static org.springframework.data.domain.Sort.Direction.ASC;
@@ -27,9 +31,11 @@ import static org.springframework.data.domain.Sort.Direction.ASC;
 @Component
 public class DeleteRoute extends UpdateHandler {
     private final RouteService routeService;
+    private final TripService tripService;
 
-    public DeleteRoute(RouteService routeService) {
+    public DeleteRoute(RouteService routeService, TripService tripService) {
         this.routeService = routeService;
+	    this.tripService = tripService;
     }
 
     @Override
@@ -42,15 +48,30 @@ public class DeleteRoute extends UpdateHandler {
         long userId = getUserIdFromUpdate(update);
         updateUserPhase(userPhase, handlerPhase);
 
-        Route route = routeService.getNewRoute(userId);
-        routeService.deleteRoute(route);
+        long routeId = getCallbackQueryIdParamFromUpdate(update);
+
+        Route route = routeService.getRoute(routeId);
+
+        if(tripService.isNonExpiredTripsExists(routeId, LocalDate.now())){
+            deleteRemovableMessagesAndEraseAllFromRepo(userId);
+
+            sendRemovableMessage(userId, format(RESTRICTED_ROUTE_DELETION, route.getSimplifiedRoute()));
+
+            sendRemovableMessage(userId, joinMessages(format(ROUTE_DATA, route.getFormattedData()), ROUTE_DATA_INFO),
+                    getDriverRouteMenuKeyboard(route.getId()));
+
+            updateUserPhase(userPhase, ROUTES_MAIN_MENU);
+
+            return;
+        }
+        route.setStatus(Status.DELETED);
 
         deleteRemovableMessagesAndEraseAllFromRepo(userId);
 
-        sendMessage(userId, format(NEW_ROUTE_CREATED, route.getFormattedData()));
+        sendMessage(userId, format(ROUTE_DELETED, route.getSimplifiedRoute()));
 
         PageRequest pageRequest = of(DEFAULT_OFFSET, DEFAULT_ROUTE_LIMIT, ASC, DEFAULT_ID_FIELD);
-        Page<Route> routes = routeService.getAllCreatedRoutes(pageRequest, userId);
+        Page<Route> routes = routeService.getAllCreatedDriverRoutes(pageRequest, userId);
 
         sendRemovableMessage(userId, format(ROUTES_MENU, routes.getSize()), getDriverRoutesMenuKeyboard(
                 routes, ROUTE_MENU_NEXT, ROUTES_MAIN_MENU));

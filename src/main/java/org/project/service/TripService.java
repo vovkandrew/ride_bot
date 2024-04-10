@@ -7,6 +7,7 @@ import org.project.util.enums.Status;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.time.LocalDate;
 import java.util.Optional;
 
 public interface TripService {
@@ -51,4 +52,6 @@ public interface TripService {
     Page<Trip> findAllCreatedNonDriverTrips(Route route, Pageable pageable);
 
     void deleteAllNewTrips(Route route);
+
+    public boolean isNonExpiredTripsExists(long routeId, LocalDate today);
 }

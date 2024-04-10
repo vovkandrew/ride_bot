@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface RouteService {
     Route saveRoute(Route route);
@@ -47,4 +48,6 @@ public interface RouteService {
     Route getNewDriverRoute(long userId);
 
     List<Long> getAllUsersWhoTrackRoute(Route route);
+
+    public Optional<Route> findDeletedDriverRoute(long userId, Route route);
 }

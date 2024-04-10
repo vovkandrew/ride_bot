@@ -14,6 +14,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 @Repository
@@ -48,4 +49,9 @@ public interface RouteRepository extends JpaRepository<Route, Long> {
                   "r.countryTo = ?4 and r.cityTo = ?5 and r.userType = ?6")
     List<Long> getAllTelegramUsersByStatusAndRouteInfoAndUserType(Status status, Country countryFrom, City cityFrom,
                                                                   Country countryTo, City cityTo, UserType userType);
+
+    @Query ("select r from Route r where r.telegramUserId = ?1 and r.countryFrom = ?2 and r.cityFrom = ?3 and " +
+                    "r.countryTo = ?4 and r.cityTo = ?5 and r.status = ?6 and r.userType = ?7")
+    Optional<Route> findRouteByDetails(long telegramUserId, Country countryFrom, City cityFrom, Country countryTo,
+                                       City cityTo, Status status, UserType userType);
 }

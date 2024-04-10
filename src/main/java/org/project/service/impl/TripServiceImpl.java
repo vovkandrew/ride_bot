@@ -37,6 +37,8 @@ public class TripServiceImpl implements TripService {
         return tripRepository.findNew(driverId);
     }
 
+
+
     @Override
     public Trip getNewTrip(long driverId) {
         return  tripRepository.findNew(driverId).orElse(new Trip());
@@ -153,4 +155,10 @@ public class TripServiceImpl implements TripService {
     public void deleteAllNewTrips(Route route) {
         tripRepository.deleteAllTripsByRouteAndStatus(route, Status.NEW);
     }
+
+    @Override
+    public boolean isNonExpiredTripsExists(long routeId, LocalDate today) {
+        return tripRepository.nonExpiredExist(routeId, today);
+    }
+
 }

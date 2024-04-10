@@ -133,4 +133,6 @@ public class Messages {
             " місць, які ви хочете забронювати: <b><i>%d</i></b>";
     public static final String PASSENGER_SEATS_FOUND = "Кількість доступних місць: <b><i>%d</i></b>";
     public static final String PASSENGER_SEATS_TOO_MUCH = "Кількість введених місць не має перевищувати кількість доступних!";
+    public static final String RESTRICTED_ROUTE_DELETION = "Ви маєте заплановані поїздки за маршрутом:\n<b><i>%s</i></b>.\nМи не можемо його видалити.";
+    public static final String ROUTE_DELETED = "Маршрут: <b><i>%s</i></b> видалено!";
 }

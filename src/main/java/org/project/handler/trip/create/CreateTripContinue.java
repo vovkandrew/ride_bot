@@ -39,7 +39,7 @@ public class CreateTripContinue extends UpdateHandler {
 
     @Override
     public boolean isApplicable(Optional<Phase> phaseOptional, Update update) {
-        return isUpdateContainsHandlerPhase(update);
+        return isUpdateContainsHandlerPhase(update) || isUpdateContainsHandler(update, START_TRIP_OVER_CREATION);
     }
 
     @Override
@@ -51,6 +51,17 @@ public class CreateTripContinue extends UpdateHandler {
         deleteRemovableMessagesAndEraseAllFromRepo(userId);
 
         Trip trip = tripService.getNewTrip(userId);
+
+        if(isUpdateContainsHandler(update, START_TRIP_OVER_CREATION)){
+            tripService.deleteTrip(trip.getId());
+
+            PageRequest pageRequest = of(DEFAULT_OFFSET, DEFAULT_ROUTE_LIMIT, ASC, DEFAULT_ID_FIELD);
+
+            sendEditableMessage(userId, TRIP_CREATING_CHOOSE_ROUTE, getDriverRoutesKeyboard(
+                    routeService.getAllCreatedRoutes(pageRequest, userId), CREATE_TRIP_CHOOSE_ROUTE_NEXT, CREATE_TRIP_CHOOSE_ROUTE));
+
+            return;
+        }
 
         if (isEmpty(trip.getRoute())) {
             PageRequest pageRequest = of(DEFAULT_OFFSET, DEFAULT_ROUTE_LIMIT, ASC, DEFAULT_ID_FIELD);
