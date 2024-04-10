@@ -19,6 +19,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
 import static java.lang.String.format;
+import static org.project.util.Keyboards.getDriverRouteMenuKeyboard;
 import static org.project.util.Keyboards.getDriverRoutesMenuKeyboard;
 import static org.project.util.UpdateHelper.*;
 import static org.project.util.constants.Constants.*;
@@ -56,10 +57,8 @@ public class DeleteRoute extends UpdateHandler {
 
             sendRemovableMessage(userId, format(RESTRICTED_ROUTE_DELETION, route.getSimplifiedRoute()));
 
-            PageRequest pageRequest = of(DEFAULT_OFFSET, DEFAULT_ROUTE_LIMIT, ASC, DEFAULT_ID_FIELD);
-            Page<Route> routes = routeService.getAllCreatedDriverRoutes(pageRequest, userId);
-
-            sendRemovableMessage(userId, ROUTES_MENU, getDriverRoutesMenuKeyboard(routes, ROUTE_MENU_NEXT, ROUTES_MAIN_MENU));
+            sendRemovableMessage(userId, joinMessages(format(ROUTE_DATA, route.getFormattedData()), ROUTE_DATA_INFO),
+                    getDriverRouteMenuKeyboard(route.getId()));
 
             updateUserPhase(userPhase, ROUTES_MAIN_MENU);
 
