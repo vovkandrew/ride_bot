@@ -33,7 +33,7 @@ public class EditTripSetBaggageInfo extends EditTripDetails {
 
     @Override
     public void handle(UserPhase userPhase, Update update) throws TelegramApiException {
-        long userId = getUserIdFromUpdate(update);
+        long telegramUserId = getTelegramUserIdFromUpdate(update);
         updateUserPhase(userPhase, DRIVER_TRIP_EDITING_BAGGAGE_INFO);
         Trip trip;
 
@@ -42,9 +42,9 @@ public class EditTripSetBaggageInfo extends EditTripDetails {
 
             getTripService().updateAllEditingTrips(trip);
 
-            deleteRemovableMessagesAndEraseAllFromRepo(userId);
+            deleteRemovableMessagesAndEraseAllFromRepo(telegramUserId);
 
-            sendEditableMessage(userId, DRIVER_TRIP_ENTER_BAGGAGE_INFO);
+            sendEditableMessage(telegramUserId, DRIVER_TRIP_ENTER_BAGGAGE_INFO);
 
             return;
         }
@@ -52,20 +52,20 @@ public class EditTripSetBaggageInfo extends EditTripDetails {
         String userInput = getUserInputFromUpdate(update);
 
         if (isUserInputMatchesPattern(userInput, GENERAL_MESSAGE_PATTERN)) {
-            trip = getTripService().getFirstEditingTrip(userId);
+            trip = getTripService().getFirstEditingTrip(telegramUserId);
 
             trip.setStatus(CREATED);
 
             getTripService().updateTripBaggageInfo(trip, userInput);
 
-            editMessage(userId, format(DRIVER_TRIP_BAGGAGE_INFO_PROVIDED, trip.getBaggageInfo()));
+            editMessage(telegramUserId, format(DRIVER_TRIP_BAGGAGE_INFO_PROVIDED, trip.getBaggageInfo()));
 
-            sendDriverTripDetailsAndUpdateUserPhase(userId, trip, userPhase);
+            sendDriverTripDetailsAndUpdateUserPhase(telegramUserId, trip, userPhase);
 
             return;
         }
 
-        sendRemovableMessage(userId, DRIVER_TRIP_WRONG_BAGGAGE_INFO);
+        sendRemovableMessage(telegramUserId, DRIVER_TRIP_WRONG_BAGGAGE_INFO);
     }
 
     @Override

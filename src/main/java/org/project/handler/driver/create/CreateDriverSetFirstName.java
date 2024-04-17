@@ -33,16 +33,16 @@ public class CreateDriverSetFirstName extends UpdateHandler {
 
     @Override
     public void handle(UserPhase userPhase, Update update) throws TelegramApiException {
-        long userId = getUserIdFromUpdate(update);
+        long telegramUserId = getTelegramUserIdFromUpdate(update);
 
         if (isUpdateContainsHandler(update, handlerPhase.getHandlerName())) {
-            driverService.deleteDriverByIdAndIsFinished(userId, false);
+            driverService.deleteDriverByIdAndIsFinished(telegramUserId, false);
 
             updateUserPhase(userPhase, handlerPhase);
 
-            deleteRemovableMessagesAndEraseAllFromRepo(userId);
+            deleteRemovableMessagesAndEraseAllFromRepo(telegramUserId);
 
-            sendEditableMessage(userId, PROVIDE_FIRST_NAME);
+            sendEditableMessage(telegramUserId, PROVIDE_FIRST_NAME);
 
             return;
         }
@@ -50,20 +50,20 @@ public class CreateDriverSetFirstName extends UpdateHandler {
         String userInput = getUserInputFromUpdate(update);
 
         if (isUserInputMatchesPattern(userInput, FIRST_NAME_PATTERN)) {
-            driverService.saveDriver(Driver.builder().id(userId).firstName(userInput).build());
+            driverService.saveDriver(Driver.builder().id(telegramUserId).firstName(userInput).build());
 
-            editMessage(userId, format(FIRST_NAME_PROVIDED, userInput));
+            editMessage(telegramUserId, format(FIRST_NAME_PROVIDED, userInput));
 
-            deleteRemovableMessagesAndEraseAllFromRepo(userId);
+            deleteRemovableMessagesAndEraseAllFromRepo(telegramUserId);
 
             updateUserPhase(userPhase, GET_LAST_NAME);
 
-            sendEditableMessage(userId, PROVIDE_LAST_NAME);
+            sendEditableMessage(telegramUserId, PROVIDE_LAST_NAME);
 
             return;
         }
 
-        sendRemovableMessage(userId, joinMessages(FIRST_NAME_INVALID, PROVIDE_FIRST_NAME));
+        sendRemovableMessage(telegramUserId, joinMessages(FIRST_NAME_INVALID, PROVIDE_FIRST_NAME));
     }
 
     @Override

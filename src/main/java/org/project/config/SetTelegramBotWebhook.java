@@ -10,7 +10,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
@@ -23,26 +22,29 @@ import static org.springframework.web.util.UriComponentsBuilder.fromUriString;
 public class SetTelegramBotWebhook implements ApplicationListener<ContextRefreshedEvent> {
     private final Environment environment;
     private final RestTemplate restTemplate = new RestTemplate();
-    private final static String SET_WEBHOOK_PATH = "/bot{bot-token}/setWebhook";
+    private final String setWebhookPath = "/bot{bot-token}/setWebhook";
     private final Pattern descriptionPattern = compile("Webhook (is already set|was set)");
 
     //this method binds app url with telegram to receive updates via webhook instead doing it manually on each app run
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event) {
         try {
-            URI uri = fromUriString(Objects.requireNonNull(environment.getProperty("telegram.api-url")))
-                    .path(SET_WEBHOOK_PATH).queryParam("url", environment.getProperty("bot.webhook-url"))
-                    .buildAndExpand(environment.getProperty("bot.token")).toUri();
+            URI uri = fromUriString("https://api.telegram.org/").path(setWebhookPath)
+                    .queryParam("url", System.getenv("serverAddress"))
+                    .buildAndExpand(System.getenv("telegramBotToken")).toUri();
 
             ResponseEntity<SetWebhookModel> exchangeResult = restTemplate
                     .exchange(uri.toString(), GET, null, SetWebhookModel.class);
 
             if (exchangeResult.getStatusCode().is2xxSuccessful()) {
                 SetWebhookModel model = exchangeResult.getBody();
+
                 if (Optional.ofNullable(model).isPresent() && (!model.isOk() || !model.isResult()
                         || !descriptionPattern.matcher(model.getDescription()).matches())) {
                     System.out.printf("Failed to set webhook. Response code %d. Response body %s",
                             exchangeResult.getStatusCode().value(), model);
+
+                    System.exit(exchangeResult.getStatusCode().value());
                 }
             }
         } catch (Exception e) {

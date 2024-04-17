@@ -38,9 +38,9 @@ public class FindTripMenu extends UpdateHandler {
 
     @Override
     public void handle(UserPhase userPhase, Update update) throws TelegramApiException {
-        long userId = getUserIdFromUpdate(update);
+        long telegramUserId = getTelegramUserIdFromUpdate(update);
         updateUserPhase(userPhase, handlerPhase);
-        Route route = routeService.getNewPassengerRoute(userId);
+        Route route = routeService.getNewPassengerRoute(telegramUserId);
 
         if (isMessageSentInsteadOfButtonClick(update)) {
             return;
@@ -50,21 +50,21 @@ public class FindTripMenu extends UpdateHandler {
             int page = getOffsetParamFromUpdateByHandler(update, FIND_TRIP_MENU_NEXT);
             PageRequest pageRequest = of(page, DEFAULT_TRIP_LIMIT);
 
-            deleteRemovableMessagesAndEraseAllFromRepo(userId);
+            deleteRemovableMessagesAndEraseAllFromRepo(telegramUserId);
 
             Page<Trip> trips = tripService.findAllCreatedNonDriverTrips(route, pageRequest);
 
-            sendRemovableMessage(userId, format(FIND_TRIP_CHOOSE_TRIPS, route.getFormattedData()),
+            sendRemovableMessage(telegramUserId, format(FIND_TRIP_CHOOSE_TRIPS, route.getFormattedData()),
                     getAvailableTripsForPassengerKeyboard(trips, FIND_TRIP_MENU_NEXT, FIND_TRIP_MENU_DETAILS,
                             FIND_TRIP_CITY_TO_NEXT, BACK_TO_CITIES));
 
             return;
         }
 
-        deleteRemovableMessagesAndEraseAllFromRepo(userId);
+        deleteRemovableMessagesAndEraseAllFromRepo(telegramUserId);
         Page<Trip> trips = tripService.findAllCreatedNonDriverTrips(route, of(DEFAULT_OFFSET, DEFAULT_TRIP_LIMIT));
 
-        sendRemovableMessage(userId, format(FIND_TRIP_CHOOSE_TRIPS, route.getFormattedData()),
+        sendRemovableMessage(telegramUserId, format(FIND_TRIP_CHOOSE_TRIPS, route.getFormattedData()),
                 getAvailableTripsForPassengerKeyboard(trips, FIND_TRIP_MENU_NEXT, FIND_TRIP_MENU_DETAILS,
                         FIND_TRIP_CITY_TO_NEXT, BACK_TO_CITIES));
     }

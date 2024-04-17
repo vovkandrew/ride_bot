@@ -41,7 +41,7 @@ public class EditRouteSetCityTo extends EditRoute {
 
     @Override
     public void handle(UserPhase userPhase, Update update) throws TelegramApiException {
-        long userId = getUserIdFromUpdate(update);
+        long userId = getTelegramUserIdFromUpdate(update);
         Route route;
 
         if (!userPhase.getPhase().equals(handlerPhase)) {

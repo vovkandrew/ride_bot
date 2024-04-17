@@ -12,7 +12,7 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import java.util.Optional;
 
 import static java.lang.String.format;
-import static org.project.util.UpdateHelper.getUserIdFromUpdate;
+import static org.project.util.UpdateHelper.getTelegramUserIdFromUpdate;
 import static org.project.util.UpdateHelper.isUpdateContainsHandler;
 import static org.project.util.constants.Messages.*;
 import static org.project.util.constants.Patterns.LAST_NAME_PATTERN;
@@ -31,7 +31,7 @@ public class EditDriverSetLastName extends EditDriverInfo {
 
     @Override
     public void handle(UserPhase userPhase, Update update) throws TelegramApiException {
-        long userId = getUserIdFromUpdate(update);
+        long userId = getTelegramUserIdFromUpdate(update);
 
         if (isUpdateContainsHandler(update, handlerPhase.getHandlerName())) {
             updateUserPhase(userPhase, handlerPhase);

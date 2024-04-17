@@ -1,6 +1,7 @@
 package org.project.service.impl;
 
 import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import org.project.model.TelegramUser;
 import org.project.repository.TelegramUserRepository;
 import org.project.service.TelegramUserService;

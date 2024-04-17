@@ -14,7 +14,7 @@ import java.util.Optional;
 import static java.lang.String.format;
 import static org.project.util.Keyboards.getDriverRouteMenuKeyboard;
 import static org.project.util.UpdateHelper.getCallbackQueryIdParamFromUpdate;
-import static org.project.util.UpdateHelper.getUserIdFromUpdate;
+import static org.project.util.UpdateHelper.getTelegramUserIdFromUpdate;
 import static org.project.util.constants.Messages.*;
 import static org.project.util.enums.HandlerName.ROUTES_MAIN_MENU;
 
@@ -34,9 +34,9 @@ public class DriverRouteMenu extends UpdateHandler {
 
     @Override
     public void handle(UserPhase userPhase, Update update) throws TelegramApiException {
-        long userId = getUserIdFromUpdate(update);
+        long telegramUserId = getTelegramUserIdFromUpdate(update);
 
-        deleteRemovableMessagesAndEraseAllFromRepo(userId);
+        deleteRemovableMessagesAndEraseAllFromRepo(telegramUserId);
 
         updateUserPhase(userPhase, ROUTES_MAIN_MENU);
 
@@ -44,7 +44,7 @@ public class DriverRouteMenu extends UpdateHandler {
 
         Route route = routeService.getRoute(dataParam);
 
-        sendRemovableMessage(userId, joinMessages(format(ROUTE_DATA, route.getFormattedData()), ROUTE_DATA_INFO),
+        sendRemovableMessage(telegramUserId, joinMessages(format(ROUTE_DATA, route.getFormattedData()), ROUTE_DATA_INFO),
                 getDriverRouteMenuKeyboard(route.getId()));
 
     }

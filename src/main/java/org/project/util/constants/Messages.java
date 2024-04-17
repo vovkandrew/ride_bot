@@ -130,9 +130,19 @@ public class Messages {
     public static final String PASSENGER_ENTER_SEATS = "Введіть кількість місць, які потрібно забронювати (В форматі: 2)";
     public static final String CHECK_AVAILABLE_SEATS = "Триває перевірка наявності вільних пасажирських місць";
     public static final String PASSENGER_ENTER_SEATS_PROVIDED = "Дякую за відповідь!\uD83D\uDE4C Кількість пасажирських" +
-            " місць, які ви хочете забронювати: <b><i>%d</i></b>";
+            " місць, які ви хочете забронювати: <b><i>%d</i></b>\nБудь-ласка, ознайомтесь з договором оферти перед тим" +
+            " як забронювати місця \uD83D\uDCC4. Натисніть \"Забронювати\" і перейдіть до сплати броні місць, в іншому" +
+            " випадку натисніть \"Відмовляюсь\"❌ щоб повернутись до пошуку маршрутів.";
     public static final String PASSENGER_SEATS_FOUND = "Кількість доступних місць: <b><i>%d</i></b>";
-    public static final String PASSENGER_SEATS_TOO_MUCH = "Кількість введених місць не має перевищувати кількість доступних!";
+    public static final String PASSENGER_SEATS_NUMBER_EXCEEDED = "Кількість введених місць не має перевищувати " +
+            "кількість доступних!";
+    public static final String BOOKING_PAYMENT_RECEIVED = "Дякуємо за оплату бронювання %d місць за маршрутом %s за" +
+            " датою: %s";
+    public static final String TRIP_SEATS_BOOKED = "Звертаємо вашу увагу за поїздкою %s на %s було заброньовано %d місць";
+    public static final String PAYMENT_LINK_EXPIRED = "Нажаль ми не отримали від вас платню за бронювання поїздки %s" +
+            " на %s тому вимушені зняти тимчасову бронь місць. Якщо бажаєте знов забронювати місця за цим або іншим" +
+            " маршрутом, скористайтеся кнопками навігації.";
     public static final String RESTRICTED_ROUTE_DELETION = "Ви маєте заплановані поїздки за маршрутом:\n<b><i>%s</i></b>.\nМи не можемо його видалити.";
     public static final String ROUTE_DELETED = "Маршрут: <b><i>%s</i></b> видалено!";
+    public static final String CANT_CREATE_PAYMENT_LINK = "Нажаль наразі неможливо забронювати місця для цієї поїздки! \uD83D\uDE23";
 }

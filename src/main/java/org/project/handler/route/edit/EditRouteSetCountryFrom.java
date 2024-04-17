@@ -45,7 +45,7 @@ public class EditRouteSetCountryFrom extends UpdateHandler {
 
     @Override
     public void handle(UserPhase userPhase, Update update) throws TelegramApiException {
-        long userId = UpdateHelper.getUserIdFromUpdate(update);
+        long userId = UpdateHelper.getTelegramUserIdFromUpdate(update);
         Route route;
 
         if (!userPhase.getPhase().equals(handlerPhase)) {

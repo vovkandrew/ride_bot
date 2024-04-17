@@ -41,9 +41,9 @@ public class CreateRouteSetCityTo extends UpdateHandler {
 
     @Override
     public void handle(UserPhase userPhase, Update update) throws TelegramApiException {
-        long userId = getUserIdFromUpdate(update);
+        long telegramUserId = getTelegramUserIdFromUpdate(update);
         updateUserPhase(userPhase, handlerPhase);
-        Route route = routeService.getNewDriverRoute(userId);
+        Route route = routeService.getNewDriverRoute(telegramUserId);
 
         if (isMessageSentInsteadOfButtonClick(update)) {
             return;
@@ -53,9 +53,9 @@ public class CreateRouteSetCityTo extends UpdateHandler {
             int page = getOffsetParamFromUpdateByHandler(update, SET_ROUTE_CITY_TO_NEXT);
             PageRequest pageRequest = of(page, Constants.DEFAULT_CITY_LIMIT);
 
-            deleteRemovableMessagesAndEraseAllFromRepo(userId);
+            deleteRemovableMessagesAndEraseAllFromRepo(telegramUserId);
 
-            sendRemovableMessage(userId, PROVIDE_CITY_TO,
+            sendRemovableMessage(telegramUserId, PROVIDE_CITY_TO,
                     getAvailableCitiesKeyboard(cityService.findAllUnusedCitiesTo(route, pageRequest),
                             SET_ROUTE_CITY_TO_NEXT, SET_ROUTE_CITY_TO, Optional.of(SET_ROUTE_COUNTRY_TO_NEXT),
                             Optional.of(BACK_TO_COUNTRIES)));
@@ -65,7 +65,7 @@ public class CreateRouteSetCityTo extends UpdateHandler {
 
         route = routeService.updateRouteCityTo(route, getCallbackQueryIdParamFromUpdate(update));
 
-        Optional<Route> existingDeletedRoute = routeService.findDeletedDriverRoute(userId, route);
+        Optional<Route> existingDeletedRoute = routeService.findDeletedDriverRoute(telegramUserId, route);
 
         if (existingDeletedRoute.isPresent()){
             routeService.deleteRoute(route);
@@ -81,13 +81,13 @@ public class CreateRouteSetCityTo extends UpdateHandler {
 
         updateUserPhase(userPhase, ROUTES_MAIN_MENU);
 
-        deleteRemovableMessagesAndEraseAllFromRepo(userId);
+        deleteRemovableMessagesAndEraseAllFromRepo(telegramUserId);
 
-        sendMessage(userId, format(CITY_TO_PROVIDED, route.getCityTo().getName()));
+        sendMessage(telegramUserId, format(CITY_TO_PROVIDED, route.getCityTo().getName()));
 
-        sendMessage(userId, format(NEW_ROUTE_CREATED, route.getCityFrom().getName(), route.getCityTo().getName()));
+        sendMessage(telegramUserId, format(NEW_ROUTE_CREATED, route.getCityFrom().getName(), route.getCityTo().getName()));
 
-        sendRemovableMessage(userId, joinMessages(format(ROUTE_DATA, route.getFormattedData()), ROUTE_DATA_INFO),
+        sendRemovableMessage(telegramUserId, joinMessages(format(ROUTE_DATA, route.getFormattedData()), ROUTE_DATA_INFO),
                 getDriverRouteMenuKeyboard(route.getId()));
     }
 

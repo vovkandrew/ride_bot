@@ -32,7 +32,7 @@ public class EditTripSetPrice extends EditTripDetails {
 
     @Override
     public void handle(UserPhase userPhase, Update update) throws TelegramApiException {
-        long userId = getUserIdFromUpdate(update);
+        long telegramUserId = getTelegramUserIdFromUpdate(update);
         updateUserPhase(userPhase, DRIVER_TRIP_EDITING_PRICE);
         Trip trip;
 
@@ -41,9 +41,9 @@ public class EditTripSetPrice extends EditTripDetails {
 
             getTripService().updateAllEditingTrips(trip);
 
-            deleteRemovableMessagesAndEraseAllFromRepo(userId);
+            deleteRemovableMessagesAndEraseAllFromRepo(telegramUserId);
 
-            sendEditableMessage(userId, format(DRIVER_TRIP_ENTER_PRICE, trip.getCurrency().name()));
+            sendEditableMessage(telegramUserId, format(DRIVER_TRIP_ENTER_PRICE, trip.getCurrency().name()));
 
             return;
         }
@@ -51,20 +51,20 @@ public class EditTripSetPrice extends EditTripDetails {
         String userInput = getUserInputFromUpdate(update);
 
         if (isUserInputMatchesPattern(userInput, PRICE_PATTERN)) {
-            trip = getTripService().getFirstEditingTrip(userId);
+            trip = getTripService().getFirstEditingTrip(telegramUserId);
 
             trip.setStatus(CREATED);
 
             getTripService().updateTripPrice(trip, userInput);
 
-            editMessage(userId, format(DRIVER_TRIP_PRICE_PROVIDED, trip.getPrice()));
+            editMessage(telegramUserId, format(DRIVER_TRIP_PRICE_PROVIDED, trip.getPrice()));
 
-            sendDriverTripDetailsAndUpdateUserPhase(userId, trip, userPhase);
+            sendDriverTripDetailsAndUpdateUserPhase(telegramUserId, trip, userPhase);
 
             return;
         }
 
-        sendRemovableMessage(userId, DRIVER_TRIP_WRONG_PRICE);
+        sendRemovableMessage(telegramUserId, DRIVER_TRIP_WRONG_PRICE);
     }
 
     @Override

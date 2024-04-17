@@ -8,7 +8,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import static java.lang.String.format;
-import static org.project.util.UpdateHelper.getUserIdFromUpdate;
+import static org.project.util.UpdateHelper.getTelegramUserIdFromUpdate;
 import static org.project.util.UpdateHelper.getUserInputFromUpdate;
 import static org.project.util.constants.Messages.*;
 import static org.project.util.constants.Patterns.CAR_PLATE_NUMBER_PATTERN;
@@ -25,24 +25,24 @@ public class CreateDriverSetPlateNumber extends UpdateHandler {
 
     @Override
     public void handle(UserPhase userPhase, Update update) throws TelegramApiException {
-        long userId = getUserIdFromUpdate(update);
+        long telegramUserId = getTelegramUserIdFromUpdate(update);
         String userInput = getUserInputFromUpdate(update);
 
         if (isUserInputMatchesPattern(userInput, CAR_PLATE_NUMBER_PATTERN)) {
-            driverService.updatePlateNumber(userId, userInput);
+            driverService.updatePlateNumber(telegramUserId, userInput);
 
-            editMessage(userId, format(PLATE_NUMBER_PROVIDED, userInput));
+            editMessage(telegramUserId, format(PLATE_NUMBER_PROVIDED, userInput));
 
-            deleteRemovableMessagesAndEraseAllFromRepo(userId);
+            deleteRemovableMessagesAndEraseAllFromRepo(telegramUserId);
 
             updateUserPhase(userPhase, GET_SEATS_NUMBER);
 
-            sendEditableMessage(userId, PROVIDE_SEATS_NUMBER);
+            sendEditableMessage(telegramUserId, PROVIDE_SEATS_NUMBER);
 
             return;
         }
 
-        sendRemovableMessage(userId, joinMessages(PLATE_NUMBER_INVALID, PROVIDE_CAR_MODEL));
+        sendRemovableMessage(telegramUserId, joinMessages(PLATE_NUMBER_INVALID, PROVIDE_CAR_MODEL));
     }
 
     @Override

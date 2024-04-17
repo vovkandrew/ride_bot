@@ -7,15 +7,15 @@ import org.project.model.Trip;
 import org.project.repository.BookingRepository;
 import org.project.repository.DriverRepository;
 import org.project.service.BookingService;
+import org.project.service.TelegramUserService;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 @Service
 @AllArgsConstructor
 public class BookingServiceImpl implements BookingService {
 	private final BookingRepository bookingRepository;
 	private final DriverRepository driverRepository;
+	private final TelegramUserService telegramUserService;
 
 	@Override
 	public int getNumberOfBookedSeats(Trip trip) {
@@ -24,13 +24,8 @@ public class BookingServiceImpl implements BookingService {
 	}
 
 	@Override
-	public Optional<Booking> findNewBooking(long passengerId) {
-		return bookingRepository.findNewBookingByUserId(passengerId);
-	}
-
-	@Override
-	public Booking getNewBooking(long passengerId) {
-		return bookingRepository.findNewBookingByUserId(passengerId).orElse(new Booking());
+	public Booking getNewBooking(long telegramUserId) {
+		return bookingRepository.findNewBookingByUserId(telegramUserId).orElse(new Booking());
 	}
 
 	@Override
@@ -56,4 +51,23 @@ public class BookingServiceImpl implements BookingService {
 				- getNumberOfBookedSeats(trip);
 	}
 
+	@Override
+	public Booking getBooking(long bookingId) {
+		return bookingRepository.getById(bookingId);
+	}
+
+	@Override
+	public Booking update(Booking booking) {
+		return bookingRepository.save(booking);
+	}
+
+	@Override
+	public void deleteAllNewPassengerBookings(long telegramUserId) {
+		bookingRepository.deleteByStatusAndTelegramUser(telegramUserService.getTelegramUser(telegramUserId));
+	}
+
+	@Override
+	public void deleteBooking(Booking booking) {
+		bookingRepository.delete(booking);
+	}
 }

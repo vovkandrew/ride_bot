@@ -18,11 +18,9 @@ import static org.project.util.enums.HandlerName.*;
 
 @Component
 public class FindTripDetailsMenu extends UpdateHandler {
-
     private final TripService tripService;
     private final BookingService bookingService;
     private final DriverService driverService;
-
 
     public FindTripDetailsMenu(TripService tripService, BookingService bookingService, DriverService driverService) {
         this.tripService = tripService;
@@ -37,8 +35,8 @@ public class FindTripDetailsMenu extends UpdateHandler {
 
     @Override
     public void handle(UserPhase userPhase, Update update) throws TelegramApiException {
-        long userId = getUserIdFromUpdate(update);
-        deleteRemovableMessagesAndEraseAllFromRepo(userId);
+        long telegramUserId = getTelegramUserIdFromUpdate(update);
+        deleteRemovableMessagesAndEraseAllFromRepo(telegramUserId);
         updateUserPhase(userPhase, handlerPhase);
 
         if (isMessageSentInsteadOfButtonClick(update)) {
@@ -52,13 +50,13 @@ public class FindTripDetailsMenu extends UpdateHandler {
                 bookingService.getNumberOfBookedSeats(trip);
         Route route = trip.getRoute();
 
-        String msg = format(FIND_TRIP_DETAILS_DESCRIPTION, route.getCountryFrom().getName(),
+        String message = format(FIND_TRIP_DETAILS_DESCRIPTION, route.getCountryFrom().getName(),
                 route.getCityFrom().getName(), trip.getPickupPoint(), trip.getFormattedDepartureDate(),
                 trip.getFormattedDepartureTime(), route.getCountryTo().getName(), route.getCityTo().getName(),
                 trip.getDropOffPoint(), trip.getFormattedArrivalDate(), trip.getFormattedArrivalTime(),
                 trip.getBaggageInfo(), trip.getOtherInfo(), trip.getPrice(),trip.getCurrency(), availableSeats);
 
-        sendRemovableMessage(userId, msg, getPassengerChosenTripDetailsKeyboard(tripId, FIND_TRIP_MENU));
+        sendRemovableMessage(telegramUserId, message, getPassengerChosenTripDetailsKeyboard(tripId, FIND_TRIP_MENU));
     }
 
     @Override

@@ -32,26 +32,26 @@ public class UserAgreement extends UpdateHandler {
 
     @Override
     public void handle(UserPhase userPhase, Update update) throws TelegramApiException {
-        long userId = getUserIdFromUpdate(update);
+        long telegramUserId = getTelegramUserIdFromUpdate(update);
 
-        deleteRemovableMessagesAndEraseAllFromRepo(userId);
+        deleteRemovableMessagesAndEraseAllFromRepo(telegramUserId);
 
         if (isUpdateContainsHandler(update, CONFIRM_USER_AGREEMENT)) {
-            driverService.updateFinished(userId, true);
+            driverService.updateFinished(telegramUserId, true);
 
             updateUserPhase(userPhase, DRIVER_MAIN_MENU);
 
-            sendRemovableMessage(userId, USER_AGREEMENT_CONFIRMED, getDriverMainMenuKeyboard());
+            sendRemovableMessage(telegramUserId, USER_AGREEMENT_CONFIRMED, getDriverMainMenuKeyboard());
 
             return;
         }
 
         if (isUpdateContainsHandler(update, DECLINE_USER_AGREEMENT)) {
-            driverService.deleteDriverById(userId);
+            driverService.deleteDriverById(telegramUserId);
 
             deleteUserPhase(userPhase);
 
-            sendRemovableMessage(userId, USER_AGREEMENT_DECLINED, getMainMenuKeyboard());
+            sendRemovableMessage(telegramUserId, USER_AGREEMENT_DECLINED, getMainMenuKeyboard());
         }
     }
 

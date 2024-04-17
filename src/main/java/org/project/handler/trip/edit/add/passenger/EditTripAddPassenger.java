@@ -33,22 +33,22 @@ public class EditTripAddPassenger extends EditTripDetails {
 
     @Override
     public void handle(UserPhase userPhase, Update update) throws TelegramApiException {
-        long userId = getUserIdFromUpdate(update);
+        long telegramUserId = getTelegramUserIdFromUpdate(update);
 
         updateUserPhase(userPhase, DRIVER_TRIP_ADDING_PASSENGER);
 
         Trip trip = getTripService().getTrip(getCallbackQueryIdParamFromUpdate(update));
 
-        Driver driver = getDriverService().getDriver(userId);
+        Driver driver = getDriverService().getDriver(telegramUserId);
 
         if (driver.getSeatsNumber() - getBookingService().getNumberOfBookedSeats(trip) > 0) {
-            sendMessage(userId, EDIT_TRIP_ADD_PASSENGER_SET_NAME);
+            sendMessage(telegramUserId, EDIT_TRIP_ADD_PASSENGER_SET_NAME);
 
             updateUserPhase(userPhase, DRIVER_TRIP_ADDING_PASSENGER_NAME);
         } else {
-            sendMessage(userId, NO_EMPTY_SEATS_LEFT);
+            sendMessage(telegramUserId, NO_EMPTY_SEATS_LEFT);
 
-            sendDriverTripDetailsAndUpdateUserPhase(userId, trip, userPhase);
+            sendDriverTripDetailsAndUpdateUserPhase(telegramUserId, trip, userPhase);
         }
     }
 

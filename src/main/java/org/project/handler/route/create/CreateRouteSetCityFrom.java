@@ -45,23 +45,23 @@ public class CreateRouteSetCityFrom extends UpdateHandler {
 
 	@Override
 	public void handle(UserPhase userPhase, Update update) throws TelegramApiException {
-		long userId = getUserIdFromUpdate(update);
+		long telegramUserId = getTelegramUserIdFromUpdate(update);
 		updateUserPhase(userPhase, handlerPhase);
 
 		if (isMessageSentInsteadOfButtonClick(update)) {
 			return;
 		}
 
-		Route route = routeService.getNewDriverRoute(userId);
+		Route route = routeService.getNewDriverRoute(telegramUserId);
 
 		if (isUpdateContainsHandler(update, SET_ROUTE_CITY_FROM_NEXT)) {
 			int page = getOffsetParamFromUpdateByHandler(update, SET_ROUTE_CITY_FROM_NEXT);
 
 			PageRequest pageRequest = of(page, DEFAULT_CITY_LIMIT, ASC, DEFAULT_NAME_FIELD);
 
-			deleteRemovableMessagesAndEraseAllFromRepo(userId);
+			deleteRemovableMessagesAndEraseAllFromRepo(telegramUserId);
 
-			sendRemovableMessage(userId, PROVIDE_CITY_FROM,
+			sendRemovableMessage(telegramUserId, PROVIDE_CITY_FROM,
 					getAvailableCitiesKeyboard(cityService.findAllCities(pageRequest, route.getCountryFrom()),
 							SET_ROUTE_CITY_FROM_NEXT, SET_ROUTE_CITY_FROM, Optional.of(SET_ROUTE_COUNTRY_FROM_NEXT),
 							Optional.of(BACK_TO_COUNTRIES)));
@@ -74,11 +74,11 @@ public class CreateRouteSetCityFrom extends UpdateHandler {
 
 		PageRequest pageRequest = of(DEFAULT_OFFSET, DEFAULT_CITY_LIMIT, ASC, DEFAULT_NAME_FIELD);
 
-		deleteRemovableMessagesAndEraseAllFromRepo(userId);
+		deleteRemovableMessagesAndEraseAllFromRepo(telegramUserId);
 
-		sendMessage(userId, format(CITY_FROM_PROVIDED, route.getCityFrom().getName()));
+		sendMessage(telegramUserId, format(CITY_FROM_PROVIDED, route.getCityFrom().getName()));
 
-		sendRemovableMessage(userId, PROVIDE_COUNTY_TO,
+		sendRemovableMessage(telegramUserId, PROVIDE_COUNTY_TO,
 				getAvailableCountriesKeyboard(countryService.findAllCountriesExcept(pageRequest, route.getCountryFrom()),
 						SET_ROUTE_COUNTRY_TO_NEXT, SET_ROUTE_COUNTRY_TO, Optional.of(SET_ROUTE_CITY_FROM_NEXT),
 						Optional.of(BACK_TO_CITIES)));

@@ -11,7 +11,7 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import java.util.Optional;
 
 import static org.project.util.Keyboards.getMainMenuKeyboard;
-import static org.project.util.UpdateHelper.getUserIdFromUpdate;
+import static org.project.util.UpdateHelper.getTelegramUserIdFromUpdate;
 import static org.project.util.UpdateHelper.isUpdateCallbackEqualsString;
 import static org.project.util.constants.Constants.START_GLOBAL_COMMAND;
 import static org.project.util.constants.Messages.GENERAL_GREETING;
@@ -33,17 +33,17 @@ public class MainMenu extends UpdateHandler {
 
     @Override
     public void handle(UserPhase userPhase, Update update) throws TelegramApiException {
-        long userId = getUserIdFromUpdate(update);
+        long telegramUserId = getTelegramUserIdFromUpdate(update);
 
-        if (!telegramUserService.isTelegramUserExist(userId)) {
-            telegramUserService.createTelegramUser(TelegramUser.builder().telegramId(userId).build());
+        if (!telegramUserService.isTelegramUserExist(telegramUserId)) {
+            telegramUserService.createTelegramUser(TelegramUser.builder().telegramId(telegramUserId).build());
         }
 
         deleteUserPhase(userPhase);
 
-        deleteRemovableMessagesAndEraseAllFromRepo(userId);
+        deleteRemovableMessagesAndEraseAllFromRepo(telegramUserId);
 
-        sendRemovableMessage(userId, GENERAL_GREETING, getMainMenuKeyboard());
+        sendRemovableMessage(telegramUserId, GENERAL_GREETING, getMainMenuKeyboard());
     }
 
     @Override

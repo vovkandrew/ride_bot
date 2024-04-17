@@ -17,7 +17,6 @@ import static java.lang.String.format;
 import static org.project.util.Keyboards.getCurrenciesKeyboard;
 import static org.project.util.UpdateHelper.*;
 import static org.project.util.constants.Messages.*;
-import static org.project.util.enums.HandlerName.DRIVER_TRIP_DETAILS;
 import static org.project.util.enums.HandlerName.DRIVER_TRIP_EDITING_CURRENCY;
 import static org.project.util.enums.Status.CREATED;
 
@@ -35,7 +34,7 @@ public class EditTripSetCurrency extends EditTripDetails {
 
     @Override
     public void handle(UserPhase userPhase, Update update) throws TelegramApiException {
-        long userId = getUserIdFromUpdate(update);
+        long telegramUserId = getTelegramUserIdFromUpdate(update);
         updateUserPhase(userPhase, DRIVER_TRIP_EDITING_CURRENCY);
         Trip trip;
 
@@ -44,28 +43,28 @@ public class EditTripSetCurrency extends EditTripDetails {
 
             getTripService().updateAllEditingTrips(trip);
 
-            deleteRemovableMessagesAndEraseAllFromRepo(userId);
+            deleteRemovableMessagesAndEraseAllFromRepo(telegramUserId);
 
-            sendEditableMessage(userId, DRIVER_TRIP_CHOOSE_CURRENCY, getCurrenciesKeyboard());
+            sendEditableMessage(telegramUserId, DRIVER_TRIP_CHOOSE_CURRENCY, getCurrenciesKeyboard());
 
             return;
         }
 
         if (!isUserInputPresented(update)) {
-            trip = getTripService().getFirstEditingTrip(userId);
+            trip = getTripService().getFirstEditingTrip(telegramUserId);
 
             trip.setStatus(CREATED);
 
             getTripService().updateTripCurrency(trip, Currency.valueOf(getCallbackQueryStringParamFromUpdate(update)));
 
-            editMessage(userId, format(DRIVER_TRIP_CURRENCY_PROVIDED, trip.getCurrency()));
+            editMessage(telegramUserId, format(DRIVER_TRIP_CURRENCY_PROVIDED, trip.getCurrency()));
 
-            sendDriverTripDetailsAndUpdateUserPhase(userId, trip, userPhase);
+            sendDriverTripDetailsAndUpdateUserPhase(telegramUserId, trip, userPhase);
 
             return;
         }
 
-        sendRemovableMessage(userId, USER_INPUT_INSTEAD_BUTTON_CLICK_PROVIDED);
+        sendRemovableMessage(telegramUserId, USER_INPUT_INSTEAD_BUTTON_CLICK_PROVIDED);
     }
 
     @Override

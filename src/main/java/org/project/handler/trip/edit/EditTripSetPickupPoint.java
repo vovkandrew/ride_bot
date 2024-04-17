@@ -33,7 +33,7 @@ public class EditTripSetPickupPoint extends EditTripDetails {
 
     @Override
     public void handle(UserPhase userPhase, Update update) throws TelegramApiException {
-        long userId = getUserIdFromUpdate(update);
+        long telegramUserId = getTelegramUserIdFromUpdate(update);
         updateUserPhase(userPhase, DRIVER_TRIP_EDITING_PICKUP_POINT);
         Trip trip;
 
@@ -42,9 +42,9 @@ public class EditTripSetPickupPoint extends EditTripDetails {
 
             getTripService().updateAllEditingTrips(trip);
 
-            deleteRemovableMessagesAndEraseAllFromRepo(userId);
+            deleteRemovableMessagesAndEraseAllFromRepo(telegramUserId);
 
-            sendEditableMessage(userId, format(DRIVER_TRIP_ENTER_PICKUP_POINT, trip.getRoute().getCityFrom()));
+            sendEditableMessage(telegramUserId, format(DRIVER_TRIP_ENTER_PICKUP_POINT, trip.getRoute().getCityFrom()));
 
             return;
         }
@@ -52,20 +52,20 @@ public class EditTripSetPickupPoint extends EditTripDetails {
         String userInput = getUserInputFromUpdate(update);
 
         if (isUserInputMatchesPattern(userInput, getGeneralMessagePatternWithParameterizedStartLimit(10))) {
-            trip = getTripService().getFirstEditingTrip(userId);
+            trip = getTripService().getFirstEditingTrip(telegramUserId);
 
             trip.setStatus(CREATED);
 
             getTripService().updateTripPickupPoint(trip, userInput);
 
-            editMessage(userId, format(DRIVER_TRIP_PICKUP_POINT_PROVIDED, trip.getPickupPoint()));
+            editMessage(telegramUserId, format(DRIVER_TRIP_PICKUP_POINT_PROVIDED, trip.getPickupPoint()));
 
-            sendDriverTripDetailsAndUpdateUserPhase(userId, trip, userPhase);
+            sendDriverTripDetailsAndUpdateUserPhase(telegramUserId, trip, userPhase);
 
             return;
         }
 
-        sendRemovableMessage(userId, DRIVER_TRIP_WRONG_PICKUP_POINT);
+        sendRemovableMessage(telegramUserId, DRIVER_TRIP_WRONG_PICKUP_POINT);
     }
 
     @Override

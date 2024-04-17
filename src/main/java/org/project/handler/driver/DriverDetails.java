@@ -12,7 +12,7 @@ import java.util.Optional;
 
 import static java.lang.String.format;
 import static org.project.util.Keyboards.getEditDriverDetailsKeyboard;
-import static org.project.util.UpdateHelper.getUserIdFromUpdate;
+import static org.project.util.UpdateHelper.getTelegramUserIdFromUpdate;
 import static org.project.util.UpdateHelper.isUpdateContainsHandler;
 import static org.project.util.constants.Messages.*;
 import static org.project.util.enums.HandlerName.DRIVER_INFO;
@@ -32,14 +32,14 @@ public class DriverDetails extends UpdateHandler {
 
     @Override
     public void handle(UserPhase userPhase, Update update) throws TelegramApiException {
-        long userId = getUserIdFromUpdate(update);
+        long telegramUserId = getTelegramUserIdFromUpdate(update);
 
-        deleteRemovableMessagesAndEraseAllFromRepo(userId);
+        deleteRemovableMessagesAndEraseAllFromRepo(telegramUserId);
 
         updateUserPhase(userPhase, DRIVER_INFO);
 
-        sendRemovableMessage(userId, format(joinMessages(DRIVER_DETAILS, EDIT_INFO),
-                driverService.getDriver(userId).getFormattedData()), getEditDriverDetailsKeyboard());
+        sendRemovableMessage(telegramUserId, format(joinMessages(DRIVER_DETAILS, EDIT_INFO),
+                driverService.getDriver(telegramUserId).getFormattedData()), getEditDriverDetailsKeyboard());
     }
 
     @Override

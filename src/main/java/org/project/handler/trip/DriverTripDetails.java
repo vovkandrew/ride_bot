@@ -43,9 +43,9 @@ public class DriverTripDetails extends UpdateHandler {
 
     @Override
     public void handle(UserPhase userPhase, Update update) throws TelegramApiException {
-        long userId = getUserIdFromUpdate(update);
+        long telegramUserId = getTelegramUserIdFromUpdate(update);
 
-        deleteRemovableMessagesAndEraseAllFromRepo(userId);
+        deleteRemovableMessagesAndEraseAllFromRepo(telegramUserId);
 
         updateUserPhase(userPhase, DRIVER_TRIP_DETAILS);
 
@@ -56,7 +56,7 @@ public class DriverTripDetails extends UpdateHandler {
 
         Trip trip = tripService.getTrip(dataParam);
 
-        Driver driver = driverService.getDriver(userId);
+        Driver driver = driverService.getDriver(telegramUserId);
 
         int numberOfBookedSeats = bookingService.getNumberOfBookedSeats(trip);
 
@@ -64,7 +64,7 @@ public class DriverTripDetails extends UpdateHandler {
         collect.add(driver.getSeatsNumber());
         collect.add(numberOfBookedSeats);
 
-        sendRemovableMessage(userId, format(TRIP_DETAILS, collect.toArray()),
+        sendRemovableMessage(telegramUserId, format(TRIP_DETAILS, collect.toArray()),
                 getDriverTripDetailsKeyboard(trip.getId(), handlerName));
     }
 

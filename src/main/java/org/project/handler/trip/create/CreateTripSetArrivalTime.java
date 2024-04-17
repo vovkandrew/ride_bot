@@ -10,7 +10,7 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import static java.lang.String.format;
 import static java.time.format.DateTimeFormatter.ofPattern;
-import static org.project.util.UpdateHelper.getUserIdFromUpdate;
+import static org.project.util.UpdateHelper.getTelegramUserIdFromUpdate;
 import static org.project.util.UpdateHelper.getUserInputFromUpdate;
 import static org.project.util.constants.Constants.TIME_FORMAT;
 import static org.project.util.constants.Messages.*;
@@ -28,27 +28,27 @@ public class CreateTripSetArrivalTime extends UpdateHandler {
 
     @Override
     public void handle(UserPhase userPhase, Update update) throws TelegramApiException {
-        long userId = getUserIdFromUpdate(update);
+        long telegramUserId = getTelegramUserIdFromUpdate(update);
 
-        Trip trip = tripService.getNewTrip(userId);
+        Trip trip = tripService.getNewTrip(telegramUserId);
 
         String userInput = getUserInputFromUpdate(update);
 
         if (isUserInputMatchesPattern(userInput, TIME_PATTERN) && trip.verifyArrivalTime(userInput)) {
             trip = tripService.updateTripArrivalTime(trip, userInput);
 
-            editMessage(userId, format(DRIVER_TRIP_ARRIVAL_TIME_PROVIDED, trip.getArrivalTime().format(ofPattern(TIME_FORMAT))));
+            editMessage(telegramUserId, format(DRIVER_TRIP_ARRIVAL_TIME_PROVIDED, trip.getArrivalTime().format(ofPattern(TIME_FORMAT))));
 
-            deleteRemovableMessagesAndEraseAllFromRepo(userId);
+            deleteRemovableMessagesAndEraseAllFromRepo(telegramUserId);
 
-            sendEditableMessage(userId, format(DRIVER_TRIP_ENTER_PICKUP_POINT, trip.getRoute().getCityFrom().getName()));
+            sendEditableMessage(telegramUserId, format(DRIVER_TRIP_ENTER_PICKUP_POINT, trip.getRoute().getCityFrom().getName()));
 
             updateUserPhase(userPhase, CREATE_TRIP_PROVIDE_PICKUP_POINT);
 
             return;
         }
 
-        sendRemovableMessage(userId, DRIVER_TRIP_WRONG_ARRIVAL_TIME );
+        sendRemovableMessage(telegramUserId, DRIVER_TRIP_WRONG_ARRIVAL_TIME );
     }
 
     @Override

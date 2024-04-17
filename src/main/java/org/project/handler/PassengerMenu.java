@@ -9,9 +9,9 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import java.util.Optional;
 
 import static org.project.util.Keyboards.getPassengerMainMenuKeyboard;
-import static org.project.util.UpdateHelper.getUserIdFromUpdate;
-import static org.project.util.UpdateHelper.isUpdateCallbackEqualsHandler;
+import static org.project.util.UpdateHelper.*;
 import static org.project.util.constants.Messages.GREETING_PASSENGER;
+import static org.project.util.enums.HandlerName.DECLINE_BOOKING_SEATS;
 import static org.project.util.enums.HandlerName.PASSENGER_MENU;
 
 @Component
@@ -19,18 +19,18 @@ public class PassengerMenu extends UpdateHandler {
 
     @Override
     public boolean isApplicable(Optional<Phase> phaseOptional, Update update) {
-        return isUpdateCallbackEqualsHandler(update, handlerPhase.getHandlerName());
+        return isUpdateContainsAnyHandler(update, handlerPhase.getHandlerName(), DECLINE_BOOKING_SEATS);
     }
 
     @Override
     public void handle(UserPhase userPhase, Update update) throws TelegramApiException {
-        long userId = getUserIdFromUpdate(update);
+        long telegramUserId = getTelegramUserIdFromUpdate(update);
 
         updateUserPhase(userPhase, handlerPhase);
 
-        deleteRemovableMessagesAndEraseAllFromRepo(userId);
+        deleteRemovableMessagesAndEraseAllFromRepo(telegramUserId);
 
-        sendRemovableMessage(userId, GREETING_PASSENGER, getPassengerMainMenuKeyboard());
+        sendRemovableMessage(telegramUserId, GREETING_PASSENGER, getPassengerMainMenuKeyboard());
     }
 
     @Override

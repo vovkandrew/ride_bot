@@ -10,7 +10,7 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import static java.lang.String.format;
 import static org.project.util.Keyboards.getRemoveKeyboard;
 import static org.project.util.Keyboards.getShareContactKeyboard;
-import static org.project.util.UpdateHelper.getUserIdFromUpdate;
+import static org.project.util.UpdateHelper.getTelegramUserIdFromUpdate;
 import static org.project.util.constants.Messages.*;
 import static org.project.util.enums.HandlerName.GET_CAR_MODEL;
 import static org.project.util.enums.HandlerName.GET_PHONE_NUMBER;
@@ -25,25 +25,25 @@ public class CreateDriverSetPhoneNumber extends UpdateHandler {
 
     @Override
     public void handle(UserPhase userPhase, Update update) throws TelegramApiException {
-        long userId = getUserIdFromUpdate(update);
+        long telegramUserId = getTelegramUserIdFromUpdate(update);
 
         if (update.hasMessage() && update.getMessage().hasContact()) {
             String phoneNumber = update.getMessage().getContact().getPhoneNumber();
 
-            driverService.updatePhoneNumber(userId, phoneNumber);
+            driverService.updatePhoneNumber(telegramUserId, phoneNumber);
 
-            sendMessage(userId, format(PHONE_NUMBER_PROVIDED, phoneNumber), getRemoveKeyboard());
+            sendMessage(telegramUserId, format(PHONE_NUMBER_PROVIDED, phoneNumber), getRemoveKeyboard());
 
-            deleteRemovableMessagesAndEraseAllFromRepo(userId);
+            deleteRemovableMessagesAndEraseAllFromRepo(telegramUserId);
 
             updateUserPhase(userPhase, GET_CAR_MODEL);
 
-            sendEditableMessage(userId, PROVIDE_CAR_MODEL);
+            sendEditableMessage(telegramUserId, PROVIDE_CAR_MODEL);
 
             return;
         }
 
-        sendRemovableMessage(userId, USER_INPUT_INSTEAD_BUTTON_CLICK_PROVIDED, getShareContactKeyboard());
+        sendRemovableMessage(telegramUserId, USER_INPUT_INSTEAD_BUTTON_CLICK_PROVIDED, getShareContactKeyboard());
     }
 
     @Override

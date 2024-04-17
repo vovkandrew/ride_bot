@@ -10,7 +10,7 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import static java.lang.String.format;
 import static java.time.format.DateTimeFormatter.ofPattern;
-import static org.project.util.UpdateHelper.getUserIdFromUpdate;
+import static org.project.util.UpdateHelper.getTelegramUserIdFromUpdate;
 import static org.project.util.UpdateHelper.getUserInputFromUpdate;
 import static org.project.util.constants.Constants.DATE_FORMAT;
 import static org.project.util.constants.Messages.*;
@@ -28,28 +28,28 @@ public class CreateTripSetDepartureDate extends UpdateHandler {
 
     @Override
     public void handle(UserPhase userPhase, Update update) throws TelegramApiException {
-        long userId = getUserIdFromUpdate(update);
+        long telegramUserId = getTelegramUserIdFromUpdate(update);
 
-        Trip trip = tripService.getNewTrip(userId);
+        Trip trip = tripService.getNewTrip(telegramUserId);
 
         String userInput = getUserInputFromUpdate(update);
 
         if (isUserInputMatchesPattern(userInput, DATE_PATTERN) && trip.verifyDepartureDate(userInput)) {
             trip = tripService.updateTripDepartureDate(trip, userInput);
 
-            editMessage(userId, format(DRIVER_TRIP_DEPARTURE_DATE_PROVIDED,
+            editMessage(telegramUserId, format(DRIVER_TRIP_DEPARTURE_DATE_PROVIDED,
                     trip.getDepartureDate().format(ofPattern(DATE_FORMAT))));
 
-            deleteRemovableMessagesAndEraseAllFromRepo(userId);
+            deleteRemovableMessagesAndEraseAllFromRepo(telegramUserId);
 
-            sendEditableMessage(userId, DRIVER_TRIP_ENTER_DEPARTURE_TIME);
+            sendEditableMessage(telegramUserId, DRIVER_TRIP_ENTER_DEPARTURE_TIME);
 
             updateUserPhase(userPhase, CREATE_TRIP_PROVIDE_DEPARTURE_TIME);
 
             return;
         }
 
-        sendRemovableMessage(userId, DRIVER_TRIP_WRONG_DEPARTURE_DATE);
+        sendRemovableMessage(telegramUserId, DRIVER_TRIP_WRONG_DEPARTURE_DATE);
     }
 
     @Override

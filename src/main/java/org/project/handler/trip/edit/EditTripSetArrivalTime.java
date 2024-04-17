@@ -35,7 +35,7 @@ public class EditTripSetArrivalTime extends EditTripDetails {
 
     @Override
     public void handle(UserPhase userPhase, Update update) throws TelegramApiException {
-        long userId = getUserIdFromUpdate(update);
+        long telegramUserId = getTelegramUserIdFromUpdate(update);
         updateUserPhase(userPhase, DRIVER_TRIP_EDITING_ARRIVAL_TIME);
         Trip trip;
 
@@ -44,14 +44,14 @@ public class EditTripSetArrivalTime extends EditTripDetails {
 
             getTripService().updateAllEditingTrips(trip);
 
-            deleteRemovableMessagesAndEraseAllFromRepo(userId);
+            deleteRemovableMessagesAndEraseAllFromRepo(telegramUserId);
 
-            sendEditableMessage(userId, DRIVER_TRIP_ENTER_ARRIVAL_TIME);
+            sendEditableMessage(telegramUserId, DRIVER_TRIP_ENTER_ARRIVAL_TIME);
 
             return;
         }
 
-        trip = getTripService().getFirstEditingTrip(userId);
+        trip = getTripService().getFirstEditingTrip(telegramUserId);
 
         String userInput = getUserInputFromUpdate(update);
 
@@ -59,14 +59,14 @@ public class EditTripSetArrivalTime extends EditTripDetails {
             trip.setStatus(CREATED);
             getTripService().updateTripArrivalTime(trip, userInput);
 
-            editMessage(userId, format(DRIVER_TRIP_ARRIVAL_TIME_PROVIDED, trip.getArrivalTime().format(ofPattern(TIME_FORMAT))));
+            editMessage(telegramUserId, format(DRIVER_TRIP_ARRIVAL_TIME_PROVIDED, trip.getArrivalTime().format(ofPattern(TIME_FORMAT))));
 
-            sendDriverTripDetailsAndUpdateUserPhase(userId, trip, userPhase);
+            sendDriverTripDetailsAndUpdateUserPhase(telegramUserId, trip, userPhase);
 
             return;
         }
 
-        sendRemovableMessage(userId, DRIVER_TRIP_WRONG_ARRIVAL_TIME);
+        sendRemovableMessage(telegramUserId, DRIVER_TRIP_WRONG_ARRIVAL_TIME);
     }
 
     @Override

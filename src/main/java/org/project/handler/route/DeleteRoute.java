@@ -14,8 +14,6 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
 import static java.lang.String.format;
@@ -45,7 +43,7 @@ public class DeleteRoute extends UpdateHandler {
 
     @Override
     public void handle(UserPhase userPhase, Update update) throws TelegramApiException {
-        long userId = getUserIdFromUpdate(update);
+        long telegramUserId = getTelegramUserIdFromUpdate(update);
         updateUserPhase(userPhase, handlerPhase);
 
         long routeId = getCallbackQueryIdParamFromUpdate(update);
@@ -53,11 +51,11 @@ public class DeleteRoute extends UpdateHandler {
         Route route = routeService.getRoute(routeId);
 
         if(tripService.isNonExpiredTripsExists(routeId, LocalDate.now())){
-            deleteRemovableMessagesAndEraseAllFromRepo(userId);
+            deleteRemovableMessagesAndEraseAllFromRepo(telegramUserId);
 
-            sendRemovableMessage(userId, format(RESTRICTED_ROUTE_DELETION, route.getSimplifiedRoute()));
+            sendRemovableMessage(telegramUserId, format(RESTRICTED_ROUTE_DELETION, route.getSimplifiedRoute()));
 
-            sendRemovableMessage(userId, joinMessages(format(ROUTE_DATA, route.getFormattedData()), ROUTE_DATA_INFO),
+            sendRemovableMessage(telegramUserId, joinMessages(format(ROUTE_DATA, route.getFormattedData()), ROUTE_DATA_INFO),
                     getDriverRouteMenuKeyboard(route.getId()));
 
             updateUserPhase(userPhase, ROUTES_MAIN_MENU);
@@ -66,14 +64,14 @@ public class DeleteRoute extends UpdateHandler {
         }
         route.setStatus(Status.DELETED);
 
-        deleteRemovableMessagesAndEraseAllFromRepo(userId);
+        deleteRemovableMessagesAndEraseAllFromRepo(telegramUserId);
 
-        sendMessage(userId, format(ROUTE_DELETED, route.getSimplifiedRoute()));
+        sendMessage(telegramUserId, format(ROUTE_DELETED, route.getSimplifiedRoute()));
 
         PageRequest pageRequest = of(DEFAULT_OFFSET, DEFAULT_ROUTE_LIMIT, ASC, DEFAULT_ID_FIELD);
-        Page<Route> routes = routeService.getAllCreatedDriverRoutes(pageRequest, userId);
+        Page<Route> routes = routeService.getAllCreatedDriverRoutes(pageRequest, telegramUserId);
 
-        sendRemovableMessage(userId, format(ROUTES_MENU, routes.getSize()), getDriverRoutesMenuKeyboard(
+        sendRemovableMessage(telegramUserId, format(ROUTES_MENU, routes.getSize()), getDriverRoutesMenuKeyboard(
                 routes, ROUTE_MENU_NEXT, ROUTES_MAIN_MENU));
 
         updateUserPhase(userPhase, ROUTES_MAIN_MENU);

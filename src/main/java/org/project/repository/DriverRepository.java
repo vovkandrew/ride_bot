@@ -12,18 +12,15 @@ import java.util.Optional;
 @Repository
 public interface DriverRepository extends JpaRepository<Driver, Long> {
     @Query("select d from Driver d where d.id = ?1 and d.finished = ?2")
-    Optional<Driver> findByIdAndFinishedIs(long id, boolean finished);
-
-    @Query("select d from Driver d where d.id = ?1")
-    Optional<Driver> findDriverById(long id);
+    Optional<Driver> findByIdAndFinishedIs(long telegramUserId, boolean finished);
 
     @Transactional
     @Modifying
     @Query("delete from Driver d where d.id = ?1")
-    void deleteById(long id);
+    void deleteById(long telegramUserId);
 
     @Transactional
     @Modifying
     @Query("delete from Driver d where d.id = ?1 and d.finished = ?2")
-    void deleteByIdAndFinished(long id, boolean finished);
+    void deleteByIdAndFinished(long telegramUserId, boolean finished);
 }

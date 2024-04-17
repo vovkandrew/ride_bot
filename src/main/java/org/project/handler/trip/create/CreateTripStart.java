@@ -16,7 +16,7 @@ import java.util.Optional;
 import static java.lang.String.format;
 import static org.project.util.Keyboards.getContinueCreateDriverTripKeyboard;
 import static org.project.util.Keyboards.getDriverRoutesMenuKeyboard;
-import static org.project.util.UpdateHelper.getUserIdFromUpdate;
+import static org.project.util.UpdateHelper.getTelegramUserIdFromUpdate;
 import static org.project.util.constants.Constants.*;
 import static org.project.util.constants.Messages.CONTINUE_CREATE_DRIVER_TRIP;
 import static org.project.util.constants.Messages.TRIP_CREATING_CHOOSE_ROUTE;
@@ -41,18 +41,18 @@ public class CreateTripStart extends UpdateHandler {
 
     @Override
     public void handle(UserPhase userPhase, Update update) throws TelegramApiException {
-        long userId = getUserIdFromUpdate(update);
+        long telegramUserId = getTelegramUserIdFromUpdate(update);
 
         updateUserPhase(userPhase, handlerPhase);
 
-        Optional<Trip> unfinished = tripService.findNewTrip(userId);
+        Optional<Trip> unfinished = tripService.findNewTrip(telegramUserId);
 
-        deleteRemovableMessagesAndEraseAllFromRepo(userId);
+        deleteRemovableMessagesAndEraseAllFromRepo(telegramUserId);
 
         if (unfinished.isPresent()) {
             Trip trip = unfinished.get();
 
-            sendRemovableMessage(userId, format(CONTINUE_CREATE_DRIVER_TRIP, trip.getFormattedData()),
+            sendRemovableMessage(telegramUserId, format(CONTINUE_CREATE_DRIVER_TRIP, trip.getFormattedData()),
                     getContinueCreateDriverTripKeyboard());
 
             return;
@@ -60,8 +60,8 @@ public class CreateTripStart extends UpdateHandler {
 
         PageRequest pageRequest = of(DEFAULT_OFFSET, DEFAULT_ROUTE_LIMIT, ASC, DEFAULT_ID_FIELD);
 
-        sendEditableMessage(userId, TRIP_CREATING_CHOOSE_ROUTE, getDriverRoutesMenuKeyboard(
-                routeService.getAllCreatedRoutes(pageRequest, userId), CREATE_TRIP_CHOOSE_ROUTE_NEXT, CREATE_TRIP_CHOOSE_ROUTE));
+        sendEditableMessage(telegramUserId, TRIP_CREATING_CHOOSE_ROUTE, getDriverRoutesMenuKeyboard(
+                routeService.getAllCreatedRoutes(pageRequest, telegramUserId), CREATE_TRIP_CHOOSE_ROUTE_NEXT, CREATE_TRIP_CHOOSE_ROUTE));
     }
 
     @Override

@@ -10,7 +10,7 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import static java.lang.String.format;
 import static org.project.util.Keyboards.getCurrenciesKeyboard;
-import static org.project.util.UpdateHelper.getUserIdFromUpdate;
+import static org.project.util.UpdateHelper.getTelegramUserIdFromUpdate;
 import static org.project.util.UpdateHelper.getUserInputFromUpdate;
 import static org.project.util.constants.Messages.*;
 import static org.project.util.constants.Patterns.getGeneralMessagePatternWithParameterizedStartLimit;
@@ -27,27 +27,27 @@ public class CreateTripSetDropOffPoint extends UpdateHandler {
 
     @Override
     public void handle(UserPhase userPhase, Update update) throws TelegramApiException {
-        long userId = getUserIdFromUpdate(update);
+        long telegramUserId = getTelegramUserIdFromUpdate(update);
 
-        Trip trip = tripService.getNewTrip(userId);
+        Trip trip = tripService.getNewTrip(telegramUserId);
 
         String userInput = getUserInputFromUpdate(update);
 
         if (isUserInputMatchesPattern(userInput, getGeneralMessagePatternWithParameterizedStartLimit(10))) {
             trip = tripService.updateTripDropOffPoint(trip, userInput);
 
-            editMessage(userId, format(DRIVER_TRIP_DROPOFF_POINT_PROVIDED, trip.getDropOffPoint()));
+            editMessage(telegramUserId, format(DRIVER_TRIP_DROPOFF_POINT_PROVIDED, trip.getDropOffPoint()));
 
-            deleteRemovableMessagesAndEraseAllFromRepo(userId);
+            deleteRemovableMessagesAndEraseAllFromRepo(telegramUserId);
 
-            sendEditableMessage(userId, DRIVER_TRIP_CHOOSE_CURRENCY, getCurrenciesKeyboard());
+            sendEditableMessage(telegramUserId, DRIVER_TRIP_CHOOSE_CURRENCY, getCurrenciesKeyboard());
 
             updateUserPhase(userPhase, CREATE_TRIP_CHOOSE_CURRENCY);
 
             return;
         }
 
-        sendRemovableMessage(userId, DRIVER_TRIP_WRONG_DROPOFF_POINT);
+        sendRemovableMessage(telegramUserId, DRIVER_TRIP_WRONG_DROPOFF_POINT);
     }
 
     @Override

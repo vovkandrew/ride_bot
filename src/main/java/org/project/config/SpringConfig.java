@@ -20,16 +20,16 @@ public class SpringConfig {
 
     @Bean
     public SetWebhook setWebhookInstance() {
-        return SetWebhook.builder().url(Objects.requireNonNull(environment.getProperty("bot.webhook-url"))).build();
+        return SetWebhook.builder().url(Objects.requireNonNull(System.getenv("serverAddress"))).build();
     }
 
     @Bean
     public TelegramWebhookBot springWebhookBot(SetWebhook setWebhook) {
         TelegramWebhookBot bot = new TelegramWebhookBot(setWebhook);
 
-        bot.setBotPath(environment.getProperty("bot.webhook-url"));
-        bot.setBotUsername(environment.getProperty("bot.username"));
-        bot.setBotToken(environment.getProperty("bot.token"));
+        bot.setBotPath(System.getenv("serverAddress"));
+        bot.setBotUsername(System.getenv("telegramBotUsername"));
+        bot.setBotToken(System.getenv("telegramBotToken"));
 
         return bot;
     }
@@ -40,7 +40,8 @@ public class SpringConfig {
         driverManagerDataSource.setUrl(environment.getProperty("spring.datasource.url"));
         driverManagerDataSource.setUsername(environment.getProperty("spring.datasource.username"));
         driverManagerDataSource.setPassword(environment.getProperty("spring.datasource.password"));
-        driverManagerDataSource.setDriverClassName(environment.getProperty("spring.datasource.driver-class-name"));
+        driverManagerDataSource.setDriverClassName(
+                Objects.requireNonNull(environment.getProperty("spring.datasource.driver-class-name")));
         return new JdbcTemplate(driverManagerDataSource);
     }
 }

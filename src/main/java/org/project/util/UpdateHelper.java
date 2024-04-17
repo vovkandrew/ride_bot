@@ -9,7 +9,7 @@ import static org.project.util.constants.Constants.*;
 import static org.project.util.constants.Patterns.SPLITERATOR_PATTERN;
 
 public class UpdateHelper {
-    public static long getUserIdFromUpdate(Update update) {
+    public static long getTelegramUserIdFromUpdate(Update update) {
         return ofNullable(update.getMessage()).isPresent() ? update.getMessage().getFrom().getId()
                 : ofNullable(update.getCallbackQuery()).isPresent() ? update.getCallbackQuery().getFrom().getId()
                 : ofNullable(update.getMyChatMember()).isPresent() ? update.getMyChatMember().getFrom().getId()

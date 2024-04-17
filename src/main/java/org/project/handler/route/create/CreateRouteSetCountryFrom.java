@@ -48,10 +48,10 @@ public class CreateRouteSetCountryFrom extends UpdateHandler {
 
 	@Override
 	public void handle(UserPhase userPhase, Update update) throws TelegramApiException {
-		long userId = getUserIdFromUpdate(update);
+		long telegramUserId = getTelegramUserIdFromUpdate(update);
 		updateUserPhase(userPhase, handlerPhase);
 
-		routeService.deleteAllNewDriversRoutes(userId);
+		routeService.deleteAllNewDriversRoutes(telegramUserId);
 
 		if (isMessageSentInsteadOfButtonClick(update)) {
 			return;
@@ -61,9 +61,9 @@ public class CreateRouteSetCountryFrom extends UpdateHandler {
 			int page = getOffsetParamFromUpdateByHandler(update, SET_ROUTE_COUNTRY_FROM_NEXT);
 			PageRequest pageRequest = of(page, DEFAULT_COUNTRY_LIMIT, ASC, DEFAULT_NAME_FIELD);
 
-			deleteRemovableMessagesAndEraseAllFromRepo(userId);
+			deleteRemovableMessagesAndEraseAllFromRepo(telegramUserId);
 
-			sendRemovableMessage(userId, PROVIDE_COUNTY_FROM,
+			sendRemovableMessage(telegramUserId, PROVIDE_COUNTY_FROM,
 					getAvailableCountriesKeyboard(countryService.findAllCountries(pageRequest),
 							SET_ROUTE_COUNTRY_FROM_NEXT, SET_ROUTE_COUNTRY_FROM, Optional.of(DRIVER_ROUTES),
 							Optional.of(BACK_TO_DRIVER_ROUTES)));
@@ -72,18 +72,18 @@ public class CreateRouteSetCountryFrom extends UpdateHandler {
 		}
 
 		Route route = routeService.updateRouteCountryFrom(
-				Route.builder().telegramUserId(userId).status(NEW).userType(DRIVER).build(),
+				Route.builder().telegramUserId(telegramUserId).status(NEW).userType(DRIVER).build(),
 				getCallbackQueryIdParamFromUpdate(update));
 
 		PageRequest pageRequest = of(DEFAULT_OFFSET, DEFAULT_COUNTRY_LIMIT, ASC, DEFAULT_NAME_FIELD);
 
 		updateUserPhase(userPhase, SET_ROUTE_CITY_FROM);
 
-		deleteRemovableMessagesAndEraseAllFromRepo(userId);
+		deleteRemovableMessagesAndEraseAllFromRepo(telegramUserId);
 
-		sendMessage(userId, format(COUNTRY_FROM_PROVIDED, route.getCountryFrom().getName()));
+		sendMessage(telegramUserId, format(COUNTRY_FROM_PROVIDED, route.getCountryFrom().getName()));
 
-		sendRemovableMessage(userId, PROVIDE_CITY_FROM,
+		sendRemovableMessage(telegramUserId, PROVIDE_CITY_FROM,
 				getAvailableCitiesKeyboard(cityService.findAllCities(pageRequest, route.getCountryFrom()),
 						SET_ROUTE_CITY_FROM_NEXT, SET_ROUTE_CITY_FROM, Optional.of(SET_ROUTE_COUNTRY_FROM_NEXT),
 						Optional.of(BACK_TO_COUNTRIES)));

@@ -38,34 +38,35 @@ public class DeleteDriverTrip extends UpdateHandler {
 
     @Override
     public void handle(UserPhase userPhase, Update update) throws TelegramApiException {
-        long userId = getUserIdFromUpdate(update);
+        long telegramUserId = getTelegramUserIdFromUpdate(update);
         int tripId = getCallbackQueryIdParamFromUpdate(update);
         Trip trip = tripService.getTrip(tripId);
 
-        deleteRemovableMessagesAndEraseAllFromRepo(userId);
+        deleteRemovableMessagesAndEraseAllFromRepo(telegramUserId);
 
         if (isUpdateCallbackEqualsHandler(update, DELETE_DRIVER_TRIP_CONFIRMED)) {
             tripService.deleteTrip(tripId);
 
-            sendMessage(userId, DRIVER_TRIP_DELETED);
+            sendMessage(telegramUserId, DRIVER_TRIP_DELETED);
 
             PageRequest pageRequest = of(0, DEFAULT_TRIP_LIMIT, ASC, DEFAULT_ID_FIELD);
 
-            sendRemovableMessage(userId, DRIVER_TRIPS_MENU, getDriverTripsMenuKeyboard(
-                    tripService.findAllCreatedNonDriverTrips(userId, pageRequest), DRIVER_TRIPS_NEXT, DRIVER_TRIP_DETAILS));
+            sendRemovableMessage(telegramUserId, DRIVER_TRIPS_MENU, getDriverTripsMenuKeyboard(
+                    tripService.findAllCreatedNonDriverTrips(telegramUserId, pageRequest),
+                    DRIVER_TRIPS_NEXT, DRIVER_TRIP_DETAILS));
 
             return;
         }
 
         if (isUpdateCallbackEqualsHandler(update, DRIVER_TRIP_DELETION)) {
-            sendRemovableMessage(userId, format(DELETE_DRIVER_TRIP, trip.getRoute().getSimplifiedRoute()),
+            sendRemovableMessage(telegramUserId, format(DELETE_DRIVER_TRIP, trip.getRoute().getSimplifiedRoute()),
                     getConfirmationKeyboard(joinHandlerAndParam(DELETE_DRIVER_TRIP_CONFIRMED, tripId),
                     joinHandlerAndParam(DELETE_DRIVER_TRIP_DECLINED, tripId)));
 
             return;
         }
 
-        sendRemovableMessage(userId, format(TRIP_DETAILS, trip.getFormattedData()),
+        sendRemovableMessage(telegramUserId, format(TRIP_DETAILS, trip.getFormattedData()),
                 getDriverTripDetailsKeyboard(trip.getId(), DRIVER_TRIP_DETAILS_LESS));
     }
 

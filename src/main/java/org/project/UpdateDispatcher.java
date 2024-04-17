@@ -2,7 +2,6 @@ package org.project;
 
 import org.project.handler.UpdateHandler;
 import org.project.handler.trip.DefaultUpdateHandler;
-import org.project.model.Phase;
 import org.project.model.UserPhase;
 import org.project.service.UserPhaseService;
 import org.springframework.stereotype.Service;
@@ -11,11 +10,10 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.util.List;
-import java.util.Optional;
 
 import static java.lang.String.format;
 import static java.util.Optional.ofNullable;
-import static org.project.util.UpdateHelper.getUserIdFromUpdate;
+import static org.project.util.UpdateHelper.getTelegramUserIdFromUpdate;
 import static org.project.util.constants.Messages.EXCEPTION_MESSAGE;
 
 @Service
@@ -32,7 +30,7 @@ public class UpdateDispatcher {
     }
 
     public BotApiMethod<?> handle(Update update) throws TelegramApiException {
-        long userId = getUserIdFromUpdate(update);
+        long userId = getTelegramUserIdFromUpdate(update);
 
         try {
             UserPhase userPhase = userPhaseService.findUserPhaseByUserId(userId)

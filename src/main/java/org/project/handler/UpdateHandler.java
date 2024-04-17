@@ -11,6 +11,7 @@ import org.project.service.UserPhaseService;
 import org.project.util.enums.HandlerName;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
@@ -24,7 +25,7 @@ import java.util.Optional;
 
 import static java.sql.Timestamp.valueOf;
 import static java.time.LocalDateTime.now;
-import static org.project.util.UpdateHelper.getUserIdFromUpdate;
+import static org.project.util.UpdateHelper.getTelegramUserIdFromUpdate;
 import static org.project.util.UpdateHelper.isUpdateContainsHandler;
 import static org.project.util.constants.Messages.WRONG_ROUTE_DATA_PROVIDED;
 import static org.project.util.enums.UserMessageType.EDITABLE;
@@ -84,6 +85,7 @@ public abstract class UpdateHandler {
         return isUpdateContainsHandler(update, handlerPhase.getHandlerName());
     }
 
+    @Transactional
     public abstract void handle(UserPhase userPhase, Update update) throws TelegramApiException;
 
     @PostConstruct
@@ -95,12 +97,12 @@ public abstract class UpdateHandler {
         return update.hasMessage() && update.getMessage().isCommand() && update.getMessage().getText().equals(command);
     }
 
-    public void deleteRemovableMessagesBy(long userId) throws TelegramApiException {
+    public void deleteRemovableMessagesBy(long telegramUserId) throws TelegramApiException {
         //forEach instead of stream in order to just throw exception further
-        for (UserMessage userMessage : userMessageService.getAllUserMessagesByUserIdAndType(userId, REMOVABLE)) {
+        for (UserMessage userMessage : userMessageService.getAllUserMessagesByUserIdAndType(telegramUserId, REMOVABLE)) {
             if (stillValid(userMessage))
-                webhookBot.execute(DeleteMessage.builder().chatId(userId).messageId((int) userMessage.getMessageId())
-                        .build());
+                webhookBot.execute(DeleteMessage.builder().chatId(telegramUserId)
+                        .messageId((int) userMessage.getMessageId()).build());
         }
     }
 
@@ -108,58 +110,58 @@ public abstract class UpdateHandler {
         return (valueOf(now()).getTime() - userMessage.getCreatedAt().getTime()) < EXPIRATION_PERIOD;
     }
 
-    public void deleteRemovableMessagesAndEraseAllFromRepo(long userId) throws TelegramApiException {
-        deleteRemovableMessagesBy(userId);
-        getUserMessageService().deleteAllMessagesByUserId(userId);
+    public void deleteRemovableMessagesAndEraseAllFromRepo(long telegramUserId) throws TelegramApiException {
+        deleteRemovableMessagesBy(telegramUserId);
+        getUserMessageService().deleteAllMessagesByUserId(telegramUserId);
     }
 
-    public void deleteRemovableMessagesAndEraseRemovableFromRepo(long userId) throws TelegramApiException {
-        deleteRemovableMessagesBy(userId);
-        getUserMessageService().deleteAllMessagesByUserIdAndType(userId, REMOVABLE);
+    public void deleteRemovableMessagesAndEraseRemovableFromRepo(long telegramUserId) throws TelegramApiException {
+        deleteRemovableMessagesBy(telegramUserId);
+        getUserMessageService().deleteAllMessagesByUserIdAndType(telegramUserId, REMOVABLE);
     }
 
-    public void deleteRemovableMessagesAndEraseEditFromRepo(long userId) throws TelegramApiException {
-        deleteRemovableMessagesBy(userId);
-        getUserMessageService().deleteAllMessagesByUserIdAndType(userId, EDITABLE);
+    public void deleteRemovableMessagesAndEraseEditFromRepo(long telegramUserId) throws TelegramApiException {
+        deleteRemovableMessagesBy(telegramUserId);
+        getUserMessageService().deleteAllMessagesByUserIdAndType(telegramUserId, EDITABLE);
     }
 
-    public Message sendMessage(long chatId, String text, ReplyKeyboard replyKeyboard) throws TelegramApiException {
-        return webhookBot.execute(SendMessage.builder().chatId(chatId).text(text).parseMode(HTML)
+    public Message sendMessage(long telegramUserId, String text, ReplyKeyboard replyKeyboard) throws TelegramApiException {
+        return webhookBot.execute(SendMessage.builder().chatId(telegramUserId).text(text).parseMode(HTML)
                 .replyMarkup(replyKeyboard).build());
     }
 
-    public Message sendMessage(long chatId, String text) throws TelegramApiException {
-        return webhookBot.execute(SendMessage.builder().chatId(chatId).text(text).parseMode(HTML).build());
+    public Message sendMessage(long telegramUserId, String text) throws TelegramApiException {
+        return webhookBot.execute(SendMessage.builder().chatId(telegramUserId).text(text).parseMode(HTML).build());
     }
 
-    public void editMessage(long chatId, String text) throws TelegramApiException {
-        UserMessage userMessage = getUserMessageService().getUserMessageByUserIdAndType(chatId, EDITABLE);
-        getWebhookBot().execute(EditMessageText.builder().chatId(chatId).messageId((int) userMessage.getMessageId())
-                .parseMode(HTML).text(text).build());
-        getUserMessageService().deleteAllMessagesByUserIdAndType(chatId, EDITABLE);
+    public void editMessage(long telegramUserId, String text) throws TelegramApiException {
+        UserMessage userMessage = getUserMessageService().getUserMessageByUserIdAndType(telegramUserId, EDITABLE);
+        getWebhookBot().execute(EditMessageText.builder().chatId(telegramUserId)
+                .messageId((int) userMessage.getMessageId()).parseMode(HTML).text(text).build());
+        getUserMessageService().deleteAllMessagesByUserIdAndType(telegramUserId, EDITABLE);
 
     }
 
-    public void sendRemovableMessage(long chatId, String text) throws TelegramApiException {
-        Message removable = sendMessage(chatId, text);
-        getUserMessageService().createRemovableMessage(chatId, removable.getMessageId());
+    public void sendRemovableMessage(long telegramUserId, String text) throws TelegramApiException {
+        Message removable = sendMessage(telegramUserId, text);
+        getUserMessageService().createRemovableMessage(telegramUserId, removable.getMessageId());
     }
 
-    public void sendRemovableMessage(long chatId, String text, ReplyKeyboard replyKeyboard)
+    public void sendRemovableMessage(long telegramUserId, String text, ReplyKeyboard replyKeyboard)
             throws TelegramApiException {
-        Message removable = sendMessage(chatId, text, replyKeyboard);
-        getUserMessageService().createRemovableMessage(chatId, removable.getMessageId());
+        Message removable = sendMessage(telegramUserId, text, replyKeyboard);
+        getUserMessageService().createRemovableMessage(telegramUserId, removable.getMessageId());
     }
 
-    public void sendEditableMessage(long chatId, String text) throws TelegramApiException {
-        Message removable = sendMessage(chatId, text);
-        getUserMessageService().createEditableMessage(chatId, removable.getMessageId());
+    public void sendEditableMessage(long telegramUserId, String text) throws TelegramApiException {
+        Message removable = sendMessage(telegramUserId, text);
+        getUserMessageService().createEditableMessage(telegramUserId, removable.getMessageId());
     }
 
-    public void sendEditableMessage(long chatId, String text, ReplyKeyboard replyKeyboard)
+    public void sendEditableMessage(long telegramUserId, String text, ReplyKeyboard replyKeyboard)
             throws TelegramApiException {
-        Message removable = sendMessage(chatId, text, replyKeyboard);
-        getUserMessageService().createEditableMessage(chatId, removable.getMessageId());
+        Message removable = sendMessage(telegramUserId, text, replyKeyboard);
+        getUserMessageService().createEditableMessage(telegramUserId, removable.getMessageId());
     }
 
     public void updateUserPhase(UserPhase userPhase, Phase phase) {
@@ -184,7 +186,7 @@ public abstract class UpdateHandler {
 
     public boolean isMessageSentInsteadOfButtonClick(Update update) throws TelegramApiException {
         if (update.hasMessage()) {
-            sendRemovableMessage(getUserIdFromUpdate(update), WRONG_ROUTE_DATA_PROVIDED);
+            sendRemovableMessage(getTelegramUserIdFromUpdate(update), WRONG_ROUTE_DATA_PROVIDED);
 
             return true;
         }

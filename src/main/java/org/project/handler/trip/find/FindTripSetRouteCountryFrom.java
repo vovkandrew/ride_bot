@@ -5,6 +5,7 @@ import org.project.model.Country;
 import org.project.model.Phase;
 import org.project.model.Route;
 import org.project.model.UserPhase;
+import org.project.service.BookingService;
 import org.project.service.CityService;
 import org.project.service.CountryService;
 import org.project.service.RouteService;
@@ -35,12 +36,14 @@ public class FindTripSetRouteCountryFrom extends UpdateHandler {
 	private final CountryService countryService;
 	private final CityService cityService;
 	private final RouteService routeService;
+	private final BookingService bookingService;
 
 	public FindTripSetRouteCountryFrom(CountryService countryService, CityService cityService,
-	                                   RouteService routeService) {
+									   RouteService routeService, BookingService bookingService) {
 		this.countryService = countryService;
 		this.cityService = cityService;
 		this.routeService = routeService;
+		this.bookingService = bookingService;
 	}
 
 	@Override
@@ -51,17 +54,18 @@ public class FindTripSetRouteCountryFrom extends UpdateHandler {
 
 	@Override
 	public void handle(UserPhase userPhase, Update update) throws TelegramApiException {
-		long userId = getUserIdFromUpdate(update);
+		long telegramUserId = getTelegramUserIdFromUpdate(update);
 		updateUserPhase(userPhase, handlerPhase);
 
-		routeService.deleteAllNewPassengersRoutes(userId);
+		bookingService.deleteAllNewPassengerBookings(telegramUserId);
+		routeService.deleteAllNewPassengersRoutes(telegramUserId);
 
 		if (isMessageSentInsteadOfButtonClick(update)) {
 			return;
 		}
 
 		if (isUpdateCallbackEqualsHandler(update, FINDING_TRIP)) {
-			sendMessage(userId, FIND_TRIP);
+			sendMessage(telegramUserId, FIND_TRIP);
 		}
 
 		PageRequest pageRequest;
@@ -70,28 +74,28 @@ public class FindTripSetRouteCountryFrom extends UpdateHandler {
 			int page = getOffsetParamFromUpdateByHandler(update, FIND_TRIP_COUNTRY_FROM_NEXT);
 			pageRequest = of(page, DEFAULT_COUNTRY_LIMIT, ASC, DEFAULT_NAME_FIELD);
 
-			deleteRemovableMessagesAndEraseAllFromRepo(userId);
+			deleteRemovableMessagesAndEraseAllFromRepo(telegramUserId);
 
 			Page<Country> countries = countryService.findAllCountries(pageRequest);
 
-			sendRemovableMessage(userId, PROVIDE_COUNTY_FROM,
+			sendRemovableMessage(telegramUserId, PROVIDE_COUNTY_FROM,
 					getAvailableCountriesKeyboard(countries, FIND_TRIP_COUNTRY_FROM_NEXT,
 							FIND_TRIP_COUNTRY_FROM, Optional.of(PASSENGER_MENU), Optional.of(BACK_TO_PASSENGER_MENU)));
 
 			return;
 		}
 
-		Route route = Route.builder().telegramUserId(userId).status(NEW).userType(PASSENGER).build();
+		Route route = Route.builder().telegramUserId(telegramUserId).status(NEW).userType(PASSENGER).build();
 		route = routeService.updateRouteCountryFrom(route, getCallbackQueryIdParamFromUpdate(update));
 		pageRequest = of(DEFAULT_OFFSET, DEFAULT_COUNTRY_LIMIT, ASC, DEFAULT_NAME_FIELD);
 
 		updateUserPhase(userPhase, FIND_TRIP_CITY_FROM);
 
-		deleteRemovableMessagesAndEraseAllFromRepo(userId);
+		deleteRemovableMessagesAndEraseAllFromRepo(telegramUserId);
 
-		sendMessage(userId, format(COUNTRY_FROM_PROVIDED, route.getCountryFrom().getName()));
+		sendMessage(telegramUserId, format(COUNTRY_FROM_PROVIDED, route.getCountryFrom().getName()));
 
-		sendRemovableMessage(userId, PROVIDE_CITY_FROM, getAvailableCitiesKeyboard(
+		sendRemovableMessage(telegramUserId, PROVIDE_CITY_FROM, getAvailableCitiesKeyboard(
 				cityService.findAllCities(pageRequest, route.getCountryFrom()), FIND_TRIP_CITY_FROM_NEXT,
 				FIND_TRIP_CITY_FROM, Optional.of(FIND_TRIP_COUNTRY_FROM_NEXT), Optional.of(BACK_TO_COUNTRIES)));
 	}

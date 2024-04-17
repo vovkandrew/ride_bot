@@ -12,7 +12,7 @@ import java.util.Optional;
 
 import static org.project.util.Keyboards.getAvailableServicesKeyboard;
 import static org.project.util.Keyboards.getDriverMainMenuKeyboard;
-import static org.project.util.UpdateHelper.getUserIdFromUpdate;
+import static org.project.util.UpdateHelper.getTelegramUserIdFromUpdate;
 import static org.project.util.constants.Messages.GREETING_DRIVER;
 import static org.project.util.constants.Messages.OFFER_REGISTRATION;
 import static org.project.util.enums.HandlerName.DRIVER_MAIN_MENU;
@@ -33,18 +33,18 @@ public class OfferingRide extends UpdateHandler {
 
     @Override
     public void handle(UserPhase userPhase, Update update) throws TelegramApiException {
-        long userId = getUserIdFromUpdate(update);
-        Optional<Driver> driverOptional = driverService.findDriver(userId);
-        deleteRemovableMessagesAndEraseAllFromRepo(userId);
+        long telegramUserId = getTelegramUserIdFromUpdate(update);
+        Optional<Driver> driverOptional = driverService.findDriver(telegramUserId);
+        deleteRemovableMessagesAndEraseAllFromRepo(telegramUserId);
 
         if (driverOptional.isEmpty() || !driverOptional.get().isFinished()) {
             updateUserPhase(userPhase, handlerPhase);
 
-            sendRemovableMessage(userId, OFFER_REGISTRATION, getAvailableServicesKeyboard());
+            sendRemovableMessage(telegramUserId, OFFER_REGISTRATION, getAvailableServicesKeyboard());
         } else {
             updateUserPhase(userPhase, DRIVER_MAIN_MENU);
 
-            sendRemovableMessage(userId, GREETING_DRIVER, getDriverMainMenuKeyboard());
+            sendRemovableMessage(telegramUserId, GREETING_DRIVER, getDriverMainMenuKeyboard());
         }
     }
 

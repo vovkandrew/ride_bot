@@ -9,10 +9,10 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 @RestController
-public class WebHookEndpoint {
+public class UpdateController {
     private final UpdateDispatcher updateDispatcher;
 
-    public WebHookEndpoint(UpdateDispatcher updateDispatcher) {
+    public UpdateController(UpdateDispatcher updateDispatcher) {
         this.updateDispatcher = updateDispatcher;
     }
 

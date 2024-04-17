@@ -42,7 +42,7 @@ public class CreateTripSetRoute extends UpdateHandler {
 
     @Override
     public void handle(UserPhase userPhase, Update update) throws TelegramApiException {
-        long userId = getUserIdFromUpdate(update);
+        long telegramUserId = getTelegramUserIdFromUpdate(update);
 
         updateUserPhase(userPhase, handlerPhase);
 
@@ -53,11 +53,11 @@ public class CreateTripSetRoute extends UpdateHandler {
             tripService.deleteAllNewTrips(route);
             Trip trip = tripService.updateTripRoute(Trip.builder().status(NEW).build(), route);
 
-            deleteRemovableMessagesAndEraseAllFromRepo(userId);
+            deleteRemovableMessagesAndEraseAllFromRepo(telegramUserId);
 
-            sendMessage(userId, format(TRIP_CREATING_ROUTE_CHOSEN, trip.getRoute().getSimplifiedRoute()));
+            sendMessage(telegramUserId, format(TRIP_CREATING_ROUTE_CHOSEN, trip.getRoute().getSimplifiedRoute()));
 
-            sendEditableMessage(userId, DRIVER_TRIP_ENTER_DEPARTURE_DATE);
+            sendEditableMessage(telegramUserId, DRIVER_TRIP_ENTER_DEPARTURE_DATE);
 
             updateUserPhase(userPhase, CREATE_TRIP_PROVIDE_DEPARTURE_DATE);
 
@@ -66,10 +66,10 @@ public class CreateTripSetRoute extends UpdateHandler {
 
         PageRequest pageRequest = of(callbackParam, DEFAULT_ROUTE_LIMIT, ASC, DEFAULT_ID_FIELD);
 
-        deleteRemovableMessagesAndEraseAllFromRepo(userId);
+        deleteRemovableMessagesAndEraseAllFromRepo(telegramUserId);
 
-        sendEditableMessage(userId, TRIP_CREATING_CHOOSE_ROUTE, getDriverRoutesKeyboard(
-                routeService.getAllCreatedRoutes(pageRequest, userId), CREATE_TRIP_CHOOSE_ROUTE_NEXT, CREATE_TRIP_CHOOSE_ROUTE));
+        sendEditableMessage(telegramUserId, TRIP_CREATING_CHOOSE_ROUTE, getDriverRoutesKeyboard(
+                routeService.getAllCreatedRoutes(pageRequest, telegramUserId), CREATE_TRIP_CHOOSE_ROUTE_NEXT, CREATE_TRIP_CHOOSE_ROUTE));
     }
 
     @Override

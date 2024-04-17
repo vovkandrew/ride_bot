@@ -29,7 +29,7 @@ public class EditDriverSetPlateNumber extends EditDriverInfo {
 
     @Override
     public void handle(UserPhase userPhase, Update update) throws TelegramApiException {
-        long userId = getUserIdFromUpdate(update);
+        long userId = getTelegramUserIdFromUpdate(update);
 
         if (isUpdateContainsHandler(update, handlerPhase.getHandlerName())) {
             updateUserPhase(userPhase, handlerPhase);

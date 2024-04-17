@@ -46,29 +46,29 @@ public class PassengerReserveSeats extends UpdateHandler {
 
 	@Override
 	public void handle(UserPhase userPhase, Update update) throws TelegramApiException {
-		long userId = getUserIdFromUpdate(update);
+		long telegramUserId = getTelegramUserIdFromUpdate(update);
 
 		long tripId = getCallbackQueryIdParamFromUpdate(update);
 
-		TelegramUser telegramUser = telegramUserService.getTelegramUser(userId);
+		TelegramUser telegramUser = telegramUserService.getTelegramUser(telegramUserId);
 
 		Trip trip = tripService.getTrip(tripId);
 
-		deleteRemovableMessagesAndEraseAllFromRepo(userId);
+		deleteRemovableMessagesAndEraseAllFromRepo(telegramUserId);
 
 		if (bookingService.hasNewBooking(telegramUser)) {
-			sendEditableMessage(userId, CHECK_AVAILABLE_SEATS);
+			sendEditableMessage(telegramUserId, CHECK_AVAILABLE_SEATS);
 
 			int availableSeats = bookingService.getAvailableSeats(trip);
 
 			if (availableSeats == 0) {
-				sendRemovableMessage(userId, NO_EMPTY_SEATS_LEFT);
+				sendRemovableMessage(telegramUserId, NO_EMPTY_SEATS_LEFT);
 
-				Route route = routeService.getNewPassengerRoute(userId);
+				Route route = routeService.getNewPassengerRoute(telegramUserId);
 				Page<Trip> trips = tripService.findAllCreatedNonDriverTrips(route,
 						of(DEFAULT_OFFSET, DEFAULT_TRIP_LIMIT));
 
-				sendRemovableMessage(userId, format(FIND_TRIP_CHOOSE_TRIPS, route.getFormattedData()),
+				sendRemovableMessage(telegramUserId, format(FIND_TRIP_CHOOSE_TRIPS, route.getFormattedData()),
 						getAvailableTripsForPassengerKeyboard(trips, FIND_TRIP_MENU_NEXT, FIND_TRIP_MENU_DETAILS,
 								FIND_TRIP_CITY_TO, BACK_BUTTON));
 
@@ -77,23 +77,23 @@ public class PassengerReserveSeats extends UpdateHandler {
 
 			updateUserPhase(userPhase, PASSENGER_SEATS_CONFIRM);
 
-			bookingService.updateBookingTrip(bookingService.getNewBooking(telegramUser.getId()), trip);
+			bookingService.updateBookingTrip(bookingService.getNewBooking(telegramUserId), trip);
 
-			sendRemovableMessage(userId,
+			sendRemovableMessage(telegramUserId,
 					joinMessages(format(PASSENGER_SEATS_FOUND, availableSeats), PASSENGER_ENTER_SEATS));
 		} else {
-			sendEditableMessage(userId, CHECK_AVAILABLE_SEATS);
+			sendEditableMessage(telegramUserId, CHECK_AVAILABLE_SEATS);
 
 			int availableSeats = bookingService.getAvailableSeats(trip);
 
 			if (availableSeats == 0) {
-				sendRemovableMessage(userId, NO_EMPTY_SEATS_LEFT);
+				sendRemovableMessage(telegramUserId, NO_EMPTY_SEATS_LEFT);
 
-				Route route = routeService.getNewPassengerRoute(userId);
+				Route route = routeService.getNewPassengerRoute(telegramUserId);
 				Page<Trip> trips = tripService.findAllCreatedNonDriverTrips(route,
 						of(DEFAULT_OFFSET, DEFAULT_TRIP_LIMIT));
 
-				sendRemovableMessage(userId, format(FIND_TRIP_CHOOSE_TRIPS, route.getFormattedData()),
+				sendRemovableMessage(telegramUserId, format(FIND_TRIP_CHOOSE_TRIPS, route.getFormattedData()),
 						getAvailableTripsForPassengerKeyboard(trips, FIND_TRIP_MENU_NEXT, FIND_TRIP_MENU_DETAILS,
 								FIND_TRIP_CITY_TO, BACK_BUTTON));
 
@@ -104,7 +104,7 @@ public class PassengerReserveSeats extends UpdateHandler {
 
 			bookingService.updateBookingTrip(Booking.builder().telegramUser(telegramUser).status(NEW).build(), trip);
 
-			sendRemovableMessage(userId,
+			sendRemovableMessage(telegramUserId,
 					joinMessages(format(PASSENGER_SEATS_FOUND, availableSeats), PASSENGER_ENTER_SEATS));
 		}
 	}

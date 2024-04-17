@@ -46,22 +46,22 @@ public class FindTripSetRouteCityFrom extends UpdateHandler {
 
 	@Override
 	public void handle(UserPhase userPhase, Update update) throws TelegramApiException {
-		long userId = getUserIdFromUpdate(update);
+		long telegramUserId = getTelegramUserIdFromUpdate(update);
 		updateUserPhase(userPhase, handlerPhase);
 
 		if (isMessageSentInsteadOfButtonClick(update)) {
 			return;
 		}
 
-		Route route = routeService.getNewPassengerRoute(userId);
+		Route route = routeService.getNewPassengerRoute(telegramUserId);
 
 		if (isUpdateContainsHandler(update, FIND_TRIP_CITY_FROM_NEXT)) {
 			int page = getOffsetParamFromUpdateByHandler(update, FIND_TRIP_CITY_FROM_NEXT);
 			PageRequest pageRequest = of(page, DEFAULT_CITY_LIMIT, ASC, DEFAULT_NAME_FIELD);
 
-			deleteRemovableMessagesAndEraseAllFromRepo(userId);
+			deleteRemovableMessagesAndEraseAllFromRepo(telegramUserId);
 
-			sendRemovableMessage(userId, PROVIDE_CITY_FROM,
+			sendRemovableMessage(telegramUserId, PROVIDE_CITY_FROM,
 					getAvailableCitiesKeyboard(cityService.findAllCities(pageRequest, route.getCountryFrom()),
 							FIND_TRIP_CITY_FROM_NEXT, FIND_TRIP_CITY_FROM, Optional.of(FIND_TRIP_COUNTRY_FROM_NEXT),
 							Optional.of(BACK_TO_COUNTRIES)));
@@ -75,11 +75,11 @@ public class FindTripSetRouteCityFrom extends UpdateHandler {
 
 		PageRequest pageRequest = of(DEFAULT_OFFSET, DEFAULT_CITY_LIMIT, ASC, DEFAULT_NAME_FIELD);
 
-		deleteRemovableMessagesAndEraseAllFromRepo(userId);
+		deleteRemovableMessagesAndEraseAllFromRepo(telegramUserId);
 
-		sendMessage(userId, String.format(CITY_FROM_PROVIDED, route.getCityFrom().getName()));
+		sendMessage(telegramUserId, String.format(CITY_FROM_PROVIDED, route.getCityFrom().getName()));
 
-		sendRemovableMessage(userId, PROVIDE_COUNTY_TO,
+		sendRemovableMessage(telegramUserId, PROVIDE_COUNTY_TO,
 				getAvailableCountriesKeyboard(countryService.findAllCountriesExcept(pageRequest, route.getCountryFrom()),
 						FIND_TRIP_COUNTRY_TO_NEXT, FIND_TRIP_COUNTRY_TO, Optional.of(FIND_TRIP_CITY_FROM_NEXT),
 						Optional.of(BACK_TO_CITIES)));

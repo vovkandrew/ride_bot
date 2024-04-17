@@ -16,12 +16,12 @@ public interface CityRepository extends JpaRepository<City, Long> {
     @Query(value = "select c from City c where c.country = ?1 and c.id not in (select r.cityTo.id from Route r " +
             "where r.telegramUserId = ?2 and r.countryFrom = ?3 and r.cityFrom = ?4 and r.countryTo = ?5 " +
             "and r.status = 'CREATED') order by c.name asc")
-    Page<City> findUnusedCitiesTo(Country country, long telegramUserId, Country countryFrom, City cityFrom, Country countryTo,
-                                  Pageable pageable);
+    Page<City> findUnusedCitiesTo(Country country, long telegramUserId, Country countryFrom, City cityFrom,
+                                  Country countryTo, Pageable pageable);
 
     @Query(value = "select c from City c where c.country = ?1 and c.id not in (select r.cityFrom.id from Route r " +
             "where r.telegramUserId = ?2 and r.countryFrom = ?3 and r.countryTo = ?4 and r.cityTo = ?5 " +
             "and r.status = 'CREATED') order by c.name asc")
-    Page<City> findUnusedCitiesFrom(Country country, long telegramUserId, Country countryFrom, Country countryTo, City cityTo,
-                                    Pageable pageable);
+    Page<City> findUnusedCitiesFrom(Country country, long telegramUserId, Country countryFrom, Country countryTo,
+                                    City cityTo, Pageable pageable);
 }

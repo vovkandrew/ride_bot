@@ -13,7 +13,7 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import java.util.Optional;
 
 import static org.project.util.Keyboards.getDriverTripsMenuKeyboard;
-import static org.project.util.UpdateHelper.getUserIdFromUpdate;
+import static org.project.util.UpdateHelper.getTelegramUserIdFromUpdate;
 import static org.project.util.constants.Constants.DEFAULT_ID_FIELD;
 import static org.project.util.constants.Constants.DEFAULT_TRIP_LIMIT;
 import static org.project.util.constants.Messages.DRIVER_TRIPS_MENU;
@@ -36,7 +36,7 @@ public class DriverTrips extends UpdateHandler {
 
     @Override
     public void handle(UserPhase userPhase, Update update) throws TelegramApiException {
-        long userId = getUserIdFromUpdate(update);
+        long telegramUserId = getTelegramUserIdFromUpdate(update);
 
         updateUserPhase(userPhase, handlerPhase);
 
@@ -44,10 +44,11 @@ public class DriverTrips extends UpdateHandler {
 
         PageRequest pageRequest = of(page, DEFAULT_TRIP_LIMIT, ASC, DEFAULT_ID_FIELD);
 
-        deleteRemovableMessagesAndEraseAllFromRepo(userId);
+        deleteRemovableMessagesAndEraseAllFromRepo(telegramUserId);
 
-        sendRemovableMessage(userId, DRIVER_TRIPS_MENU, getDriverTripsMenuKeyboard(
-                tripService.findAllCreatedNonDriverTrips(userId, pageRequest), DRIVER_TRIPS_NEXT, DRIVER_TRIP_DETAILS));
+        sendRemovableMessage(telegramUserId, DRIVER_TRIPS_MENU, getDriverTripsMenuKeyboard(
+                tripService.findAllCreatedNonDriverTrips(telegramUserId, pageRequest),
+                DRIVER_TRIPS_NEXT, DRIVER_TRIP_DETAILS));
     }
 
     @Override

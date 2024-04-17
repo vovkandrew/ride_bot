@@ -14,8 +14,9 @@ import java.util.List;
 
 import static java.lang.String.format;
 import static java.util.concurrent.Executors.newSingleThreadExecutor;
+import static java.util.concurrent.Executors.newSingleThreadScheduledExecutor;
 import static org.project.util.Keyboards.getDriverTripMenuKeyboard;
-import static org.project.util.UpdateHelper.getUserIdFromUpdate;
+import static org.project.util.UpdateHelper.getTelegramUserIdFromUpdate;
 import static org.project.util.UpdateHelper.getUserInputFromUpdate;
 import static org.project.util.constants.Messages.*;
 import static org.project.util.constants.Patterns.GENERAL_MESSAGE_PATTERN;
@@ -38,36 +39,37 @@ public class CreateTripSetOtherInfo extends UpdateHandler {
 
     @Override
     public void handle(UserPhase userPhase, Update update) throws TelegramApiException {
-        long userId = getUserIdFromUpdate(update);
+        long telegramUserId = getTelegramUserIdFromUpdate(update);
 
-        Trip trip = tripService.getNewTrip(userId);
+        Trip trip = tripService.getNewTrip(telegramUserId);
 
         String userInput = getUserInputFromUpdate(update);
 
         if (isUserInputMatchesPattern(userInput, GENERAL_MESSAGE_PATTERN)) {
             trip = tripService.updateTripOtherInfo(trip, userInput);
 
-            editMessage(userId, format(DRIVER_TRIP_OTHER_INFO_PROVIDED, trip.getOtherInfo()));
-            deleteRemovableMessagesAndEraseAllFromRepo(userId);
+            editMessage(telegramUserId, format(DRIVER_TRIP_OTHER_INFO_PROVIDED, trip.getOtherInfo()));
+            deleteRemovableMessagesAndEraseAllFromRepo(telegramUserId);
 
             trip = tripService.updateTripStatus(trip, CREATED);
 
             List<Object> tripDataList = trip.getFormattedDataAsList();
-            tripDataList.add(driverService.getDriver(userId).getSeatsNumber());
+            tripDataList.add(driverService.getDriver(telegramUserId).getSeatsNumber());
             tripDataList.add(0);
 
-            sendRemovableMessage(userId, joinMessages(TRIP_CREATED, format(TRIP_DETAILS, tripDataList.toArray())),
+            sendRemovableMessage(telegramUserId, joinMessages(TRIP_CREATED, format(TRIP_DETAILS, tripDataList.toArray())),
                     getDriverTripMenuKeyboard(trip.getId()));
 
             updateUserPhase(userPhase, CREATE_TRIP_REVIEW_DETAILS);
 
             Trip finalTrip = trip;
-            newSingleThreadExecutor().execute(() -> notificationService.notifyAboutNewTrip(finalTrip));
+            newSingleThreadExecutor().execute(() -> notificationService.notifyPassengersAboutNewCreatedTrip(finalTrip));
+            //newSingleThreadScheduledExecutor().schedule()
 
             return;
         }
 
-        sendRemovableMessage(userId, DRIVER_TRIP_WRONG_OTHER_INFO);
+        sendRemovableMessage(telegramUserId, DRIVER_TRIP_WRONG_OTHER_INFO);
     }
 
     @Override

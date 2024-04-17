@@ -8,7 +8,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import static java.lang.String.format;
-import static org.project.util.UpdateHelper.getUserIdFromUpdate;
+import static org.project.util.UpdateHelper.getTelegramUserIdFromUpdate;
 import static org.project.util.UpdateHelper.getUserInputFromUpdate;
 import static org.project.util.constants.Messages.*;
 import static org.project.util.constants.Patterns.CAR_COLOR_PATTERN;
@@ -26,25 +26,25 @@ public class CreateDriverSetCarColor extends UpdateHandler {
 
     @Override
     public void handle(UserPhase userPhase, Update update) throws TelegramApiException {
-        long userId = getUserIdFromUpdate(update);
+        long telegramUserId = getTelegramUserIdFromUpdate(update);
 
         String userInput = getUserInputFromUpdate(update);
 
         if (hasText(userInput) && userInput.matches(CAR_COLOR_PATTERN)) {
-            driverService.updateCarColor(userId, userInput);
+            driverService.updateCarColor(telegramUserId, userInput);
 
-            editMessage(userId, format(CAR_COLOR_PROVIDED, userInput));
+            editMessage(telegramUserId, format(CAR_COLOR_PROVIDED, userInput));
 
-            deleteRemovableMessagesAndEraseAllFromRepo(userId);
+            deleteRemovableMessagesAndEraseAllFromRepo(telegramUserId);
 
             updateUserPhase(userPhase, GET_PLATE_NUMBER);
 
-            sendEditableMessage(userId, PROVIDE_PLATE_NUMBER);
+            sendEditableMessage(telegramUserId, PROVIDE_PLATE_NUMBER);
 
             return;
         }
 
-        sendRemovableMessage(userId, joinMessages(CAR_COLOR_INVALID, PROVIDE_CAR_COLOR));
+        sendRemovableMessage(telegramUserId, joinMessages(CAR_COLOR_INVALID, PROVIDE_CAR_COLOR));
     }
 
     @Override

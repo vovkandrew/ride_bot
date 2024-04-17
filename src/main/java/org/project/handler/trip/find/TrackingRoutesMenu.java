@@ -35,7 +35,7 @@ public class TrackingRoutesMenu extends UpdateHandler {
     }
     @Override
     public void handle(UserPhase userPhase, Update update) throws TelegramApiException {
-        long userId = getUserIdFromUpdate(update);
+        long telegramUserId = getTelegramUserIdFromUpdate(update);
         updateUserPhase(userPhase, handlerPhase);
 
         if (isMessageSentInsteadOfButtonClick(update)) {
@@ -45,10 +45,10 @@ public class TrackingRoutesMenu extends UpdateHandler {
         int page = getOffsetParamFromUpdateByHandler(update, TRACKING_ROUTES_NEXT);
         PageRequest pageRequest = of(page, DEFAULT_ROUTE_LIMIT, ASC, DEFAULT_ID_FIELD);
 
-        deleteRemovableMessagesAndEraseAllFromRepo(userId);
+        deleteRemovableMessagesAndEraseAllFromRepo(telegramUserId);
 
-        sendRemovableMessage(userId, TRACKING_ROUTES_MENU, getAvailablePassengerTrackingRoutesKeyboard(
-                routeService.getAllCreatedPassengerRoutes(pageRequest, userId),
+        sendRemovableMessage(telegramUserId, TRACKING_ROUTES_MENU, getAvailablePassengerTrackingRoutesKeyboard(
+                routeService.getAllCreatedPassengerRoutes(pageRequest, telegramUserId),
                 TRACKING_ROUTES_NEXT, TRACKING_ROUTES));
     }
 

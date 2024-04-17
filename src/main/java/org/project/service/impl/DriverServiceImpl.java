@@ -14,13 +14,13 @@ public class DriverServiceImpl implements DriverService {
     private final DriverRepository driverRepository;
 
     @Override
-    public void deleteDriverById(long userId) {
-        driverRepository.deleteById(userId);
+    public void deleteDriverById(long telegramUserId) {
+        driverRepository.deleteById(telegramUserId);
     }
 
     @Override
-    public void deleteDriverByIdAndIsFinished(long userId, boolean finished) {
-        driverRepository.deleteByIdAndFinished(userId, finished);
+    public void deleteDriverByIdAndIsFinished(long telegramUserId, boolean finished) {
+        driverRepository.deleteByIdAndFinished(telegramUserId, finished);
     }
 
     @Override
@@ -29,86 +29,86 @@ public class DriverServiceImpl implements DriverService {
     }
 
     @Override
-    public Driver getDriver(long userId) {
-        return driverRepository.getById(userId);
+    public Driver getDriver(long telegramUserId) {
+        return driverRepository.getById(telegramUserId);
     }
 
     @Override
-    public Driver updateLastName(long userId, String lastName) {
-        Driver driver = getDriver(userId);
+    public Driver updateLastName(long telegramUserId, String lastName) {
+        Driver driver = getDriver(telegramUserId);
         driver.setLastName(lastName);
         saveDriver(driver);
         return driver;
     }
 
     @Override
-    public Driver updatePhoneNumber(long userId, String phoneNumber) {
-        Driver driver = getDriver(userId);
+    public Driver updatePhoneNumber(long telegramUserId, String phoneNumber) {
+        Driver driver = getDriver(telegramUserId);
         driver.setPhoneNumber(phoneNumber);
         saveDriver(driver);
         return driver;
     }
 
     @Override
-    public Driver updateCarModel(long userId, String carModel) {
-        Driver driver = getDriver(userId);
+    public Driver updateCarModel(long telegramUserId, String carModel) {
+        Driver driver = getDriver(telegramUserId);
         driver.setCarModel(carModel);
         saveDriver(driver);
         return driver;
     }
 
     @Override
-    public Driver updateCarColor(long userId, String carColor) {
-        Driver driver = getDriver(userId);
+    public Driver updateCarColor(long telegramUserId, String carColor) {
+        Driver driver = getDriver(telegramUserId);
         driver.setCarColor(carColor);
         saveDriver(driver);
         return driver;
     }
 
     @Override
-    public Driver updatePlateNumber(long userId, String plateNumber) {
-        Driver driver = getDriver(userId);
+    public Driver updatePlateNumber(long telegramUserId, String plateNumber) {
+        Driver driver = getDriver(telegramUserId);
         driver.setPlateNumber(plateNumber);
         saveDriver(driver);
         return driver;
     }
 
     @Override
-    public Driver updateSeatsNumber(long userId, String seatsNumber) {
-        Driver driver = getDriver(userId);
+    public Driver updateSeatsNumber(long telegramUserId, String seatsNumber) {
+        Driver driver = getDriver(telegramUserId);
         driver.setSeatsNumber(Integer.parseInt(seatsNumber));
         saveDriver(driver);
         return driver;
     }
 
     @Override
-    public Driver updateFirstName(long userId, String firstName) {
-        Driver driver = getDriver(userId);
+    public Driver updateFirstName(long telegramUserId, String firstName) {
+        Driver driver = getDriver(telegramUserId);
         driver.setFirstName(firstName);
         saveDriver(driver);
         return driver;
     }
 
     @Override
-    public Driver updateFinished(long userId, boolean finished) {
-        Driver driver = driverRepository.getById(userId);
+    public Driver updateFinished(long telegramUserId, boolean finished) {
+        Driver driver = driverRepository.getById(telegramUserId);
         driver.setFinished(finished);
         saveDriver(driver);
         return driver;
     }
 
     @Override
-    public Optional<Driver> findFinishedDriver(long userId) {
-        return driverRepository.findByIdAndFinishedIs(userId, true);
+    public Optional<Driver> findFinishedDriver(long telegramUserId) {
+        return driverRepository.findByIdAndFinishedIs(telegramUserId, true);
     }
 
     @Override
-    public Optional<Driver> findUnfinishedDriver(long userId) {
-        return driverRepository.findByIdAndFinishedIs(userId, false);
+    public Optional<Driver> findUnfinishedDriver(long telegramUserId) {
+        return driverRepository.findByIdAndFinishedIs(telegramUserId, false);
     }
 
     @Override
-    public Optional<Driver> findDriver(long userId) {
-        return driverRepository.findById(userId);
+    public Optional<Driver> findDriver(long telegramUserId) {
+        return driverRepository.findById(telegramUserId);
     }
 }

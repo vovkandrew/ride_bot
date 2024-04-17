@@ -9,7 +9,7 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import static java.lang.String.format;
 import static org.project.util.Keyboards.getShareContactKeyboard;
-import static org.project.util.UpdateHelper.getUserIdFromUpdate;
+import static org.project.util.UpdateHelper.getTelegramUserIdFromUpdate;
 import static org.project.util.UpdateHelper.getUserInputFromUpdate;
 import static org.project.util.constants.Messages.*;
 import static org.project.util.constants.Patterns.LAST_NAME_PATTERN;
@@ -26,24 +26,24 @@ public class CreateDriverSetLastName extends UpdateHandler {
 
     @Override
     public void handle(UserPhase userPhase, Update update) throws TelegramApiException {
-        long userId = getUserIdFromUpdate(update);
+        long telegramUserId = getTelegramUserIdFromUpdate(update);
         String userInput = getUserInputFromUpdate(update);
 
         if (isUserInputMatchesPattern(userInput, LAST_NAME_PATTERN)) {
-            driverService.updateLastName(userId, userInput);
+            driverService.updateLastName(telegramUserId, userInput);
 
-            editMessage(userId, format(LAST_NAME_PROVIDED, userInput));
+            editMessage(telegramUserId, format(LAST_NAME_PROVIDED, userInput));
 
-            deleteRemovableMessagesAndEraseAllFromRepo(userId);
+            deleteRemovableMessagesAndEraseAllFromRepo(telegramUserId);
 
             updateUserPhase(userPhase, GET_PHONE_NUMBER);
 
-            sendEditableMessage(userId, PROVIDE_PHONE_NUMBER, getShareContactKeyboard());
+            sendEditableMessage(telegramUserId, PROVIDE_PHONE_NUMBER, getShareContactKeyboard());
 
             return;
         }
 
-        sendRemovableMessage(userId, joinMessages(LAST_NAME_INVALID, PROVIDE_LAST_NAME));
+        sendRemovableMessage(telegramUserId, joinMessages(LAST_NAME_INVALID, PROVIDE_LAST_NAME));
     }
 
     @Override

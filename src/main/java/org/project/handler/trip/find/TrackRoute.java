@@ -13,7 +13,7 @@ import java.util.Optional;
 
 import static java.lang.String.format;
 import static org.project.util.Keyboards.getPassengerMainMenuKeyboard;
-import static org.project.util.UpdateHelper.getUserIdFromUpdate;
+import static org.project.util.UpdateHelper.getTelegramUserIdFromUpdate;
 import static org.project.util.constants.Messages.GREETING_PASSENGER;
 import static org.project.util.constants.Messages.START_TRACKING_ROUTE;
 import static org.project.util.enums.HandlerName.PASSENGER_MENU;
@@ -34,18 +34,18 @@ public class TrackRoute extends UpdateHandler {
     }
     @Override
     public void handle(UserPhase userPhase, Update update) throws TelegramApiException {
-        long userId = getUserIdFromUpdate(update);
+        long telegramUserId = getTelegramUserIdFromUpdate(update);
 
-        Route route = routeService.getNewRoute(userId);
+        Route route = routeService.getNewRoute(telegramUserId);
         route = routeService.updateRouteStatus(route, CREATED);
 
-        deleteRemovableMessagesAndEraseAllFromRepo(userId);
+        deleteRemovableMessagesAndEraseAllFromRepo(telegramUserId);
 
-        sendMessage(userId, format(START_TRACKING_ROUTE, route.getSimplifiedRoute()));
+        sendMessage(telegramUserId, format(START_TRACKING_ROUTE, route.getSimplifiedRoute()));
 
         updateUserPhase(userPhase, PASSENGER_MENU);
 
-        sendRemovableMessage(userId, GREETING_PASSENGER, getPassengerMainMenuKeyboard());
+        sendRemovableMessage(telegramUserId, GREETING_PASSENGER, getPassengerMainMenuKeyboard());
     }
 
     @Override

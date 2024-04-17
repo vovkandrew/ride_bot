@@ -31,23 +31,23 @@ public class RouteServiceImpl implements RouteService {
     }
 
     @Override
-    public void deleteAllNewDriversRoutes(long userId) {
-        routeRepository.deleteAllByTelegramUserIdAndStatusAndAndUserType(userId, NEW, DRIVER);
+    public void deleteAllNewDriversRoutes(long telegramUserId) {
+        routeRepository.deleteAllByTelegramUserIdAndStatusAndAndUserType(telegramUserId, NEW, DRIVER);
     }
 
     @Override
-    public void deleteAllNewPassengersRoutes(long userId) {
-        routeRepository.deleteAllByTelegramUserIdAndStatusAndAndUserType(userId, NEW, PASSENGER);
+    public void deleteAllNewPassengersRoutes(long telegramUserId) {
+        routeRepository.deleteAllByTelegramUserIdAndStatusAndAndUserType(telegramUserId, NEW, PASSENGER);
     }
 
     @Override
-    public Route getNewRoute(long userId) {
-        return routeRepository.getRouteByTelegramUserIdAndStatus(userId, NEW);
+    public Route getNewRoute(long telegramUserId) {
+        return routeRepository.getRouteByTelegramUserIdAndStatus(telegramUserId, NEW);
     }
 
     @Override
-    public Route getEditingRoute(long userId) {
-        return routeRepository.getRouteByTelegramUserIdAndStatus(userId, EDITING);
+    public Route getEditingRoute(long telegramUserId) {
+        return routeRepository.getRouteByTelegramUserIdAndStatus(telegramUserId, EDITING);
     }
 
     @Override
@@ -81,18 +81,18 @@ public class RouteServiceImpl implements RouteService {
     }
 
     @Override
-    public Page<Route> getAllCreatedRoutes(Pageable pageable, long userId) {
-        return routeRepository.findAllByTelegramUserIdAndStatus(userId, CREATED, pageable);
+    public Page<Route> getAllCreatedRoutes(Pageable pageable, long telegramUserId) {
+        return routeRepository.findAllByTelegramUserIdAndStatus(telegramUserId, CREATED, pageable);
     }
 
     @Override
-    public Page<Route> getAllCreatedPassengerRoutes(Pageable pageable, long userId) {
-        return routeRepository.findAllByTelegramUserIdAndStatusAndUserType(userId, CREATED, PASSENGER, pageable);
+    public Page<Route> getAllCreatedPassengerRoutes(Pageable pageable, long telegramUserId) {
+        return routeRepository.findAllByTelegramUserIdAndStatusAndUserType(telegramUserId, CREATED, PASSENGER, pageable);
     }
 
     @Override
-    public Page<Route> getAllCreatedDriverRoutes(Pageable pageable, long userId) {
-        return routeRepository.findAllByTelegramUserIdAndStatusAndUserType(userId, CREATED, DRIVER, pageable);
+    public Page<Route> getAllCreatedDriverRoutes(Pageable pageable, long telegramUserId) {
+        return routeRepository.findAllByTelegramUserIdAndStatusAndUserType(telegramUserId, CREATED, DRIVER, pageable);
     }
 
     @Override
@@ -112,21 +112,21 @@ public class RouteServiceImpl implements RouteService {
     }
 
     @Override
-    public void updateAllEditing(long userId) {
-        for (Route route : routeRepository.getAllByTelegramUserIdAndStatus(userId, EDITING)) {
+    public void updateAllEditing(long telegramUserId) {
+        for (Route route : routeRepository.getAllByTelegramUserIdAndStatus(telegramUserId, EDITING)) {
             route.setStatus(CREATED);
             routeRepository.save(route);
         }
     }
 
     @Override
-    public Route getNewPassengerRoute(long userId) {
-        return routeRepository.getRouteByTelegramUserIdAndStatusAndUserType(userId, NEW, PASSENGER);
+    public Route getNewPassengerRoute(long telegramUserId) {
+        return routeRepository.getRouteByTelegramUserIdAndStatusAndUserType(telegramUserId, NEW, PASSENGER);
     }
 
     @Override
-    public Route getNewDriverRoute(long userId) {
-        return routeRepository.getRouteByTelegramUserIdAndStatusAndUserType(userId, NEW, DRIVER);
+    public Route getNewDriverRoute(long telegramUserId) {
+        return routeRepository.getRouteByTelegramUserIdAndStatusAndUserType(telegramUserId, NEW, DRIVER);
     }
 
     @Override
@@ -136,8 +136,8 @@ public class RouteServiceImpl implements RouteService {
     }
 
     @Override
-    public Optional<Route> findDeletedDriverRoute(long userId, Route route) {
-        return routeRepository.findRouteByDetails(userId, route.getCountryFrom(), route.getCityFrom(),
+    public Optional<Route> findDeletedDriverRoute(long telegramUserId, Route route) {
+        return routeRepository.findRouteByDetails(telegramUserId, route.getCountryFrom(), route.getCityFrom(),
                 route.getCountryTo(), route.getCityTo(), DELETED, DRIVER);
     }
 }

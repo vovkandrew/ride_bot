@@ -28,20 +28,20 @@ public class TripServiceImpl implements TripService {
     private final TripRepository tripRepository;
 
     @Override
-    public Page<Trip> findAllCreatedNonDriverTrips(long driverId, Pageable pageable) {
-        return tripRepository.findAllCreated(driverId, pageable);
+    public Page<Trip> findAllCreatedNonDriverTrips(long telegramUserId, Pageable pageable) {
+        return tripRepository.findAllCreated(telegramUserId, pageable);
     }
 
     @Override
-    public Optional<Trip> findNewTrip(long driverId) {
-        return tripRepository.findNew(driverId);
+    public Optional<Trip> findNewTrip(long telegramUserId) {
+        return tripRepository.findNew(telegramUserId);
     }
 
 
 
     @Override
-    public Trip getNewTrip(long driverId) {
-        return  tripRepository.findNew(driverId).orElse(new Trip());
+    public Trip getNewTrip(long telegramUserId) {
+        return  tripRepository.findNew(telegramUserId).orElse(new Trip());
     }
 
     @Override
@@ -136,8 +136,8 @@ public class TripServiceImpl implements TripService {
     }
 
     @Override
-    public Trip getFirstEditingTrip(long userId) {
-        return tripRepository.findAllEditing(userId).get(0);
+    public Trip getFirstEditingTrip(long telegramUserId) {
+        return tripRepository.findAllEditing(telegramUserId).get(0);
     }
 
     @Override
@@ -147,8 +147,8 @@ public class TripServiceImpl implements TripService {
 
     @Override
     public Page<Trip> findAllCreatedNonDriverTrips(Route route, Pageable pageable) {
-        return tripRepository.findAllCreatedNonDriverTripsByRouteDetails(route.getCountryFrom(), route.getCityFrom(), route.getCountryTo(),
-                route.getCityTo(), route.getTelegramUserId(), pageable);
+        return tripRepository.findAllCreatedNonDriverTripsByRouteDetails(route.getCountryFrom(), route.getCityFrom(),
+                route.getCountryTo(), route.getCityTo(), route.getTelegramUserId(), pageable);
     }
 
     @Override

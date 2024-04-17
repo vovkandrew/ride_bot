@@ -31,7 +31,7 @@ public class EditDriverSetPhoneNumber extends EditDriverInfo {
 
     @Override
     public void handle(UserPhase userPhase, Update update) throws TelegramApiException {
-        long userId = UpdateHelper.getUserIdFromUpdate(update);
+        long userId = UpdateHelper.getTelegramUserIdFromUpdate(update);
 
         if (isUpdateContainsHandler(update, handlerPhase.getHandlerName())) {
             updateUserPhase(userPhase, handlerPhase);

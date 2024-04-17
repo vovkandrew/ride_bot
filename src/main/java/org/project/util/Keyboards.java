@@ -171,10 +171,8 @@ public class Keyboards {
                     .callbackData(buildCallbackFromHandlerAndIdParam(navigationCallback, countries.getNumber() + 1)).build()));
         }
 
-        if(previousMenuCallback.isPresent()){
-            rows.add(of(InlineKeyboardButton.builder().text(backButtonName.get())
-                    .callbackData(previousMenuCallback.get().name()).build()));
-        }
+        previousMenuCallback.ifPresent(handlerName -> rows.add(of(InlineKeyboardButton.builder().text(backButtonName.get())
+                .callbackData(handlerName.name()).build())));
 
         return new InlineKeyboardMarkup(rows);
     }
@@ -400,7 +398,7 @@ public class Keyboards {
 
     public static InlineKeyboardMarkup getPassengerMainMenuKeyboard() {
         List<InlineKeyboardButton> first =
-                of(InlineKeyboardButton.builder().text(FIND_TRIP).callbackData(FINDING_TRIP.name()).build());
+                of(InlineKeyboardButton.builder().text(FIND_TRIP).callbackData(FIND_TRIP_COUNTRY_FROM.name()).build());
         List<InlineKeyboardButton> second =
                 of(InlineKeyboardButton.builder().text(TRACKING_ROUTES_MENU).callbackData(TRACKING_ROUTES.name()).build());
         return new InlineKeyboardMarkup(of(first, second));
@@ -497,9 +495,10 @@ public class Keyboards {
                         .callbackData(buildCallbackFromHandlerAndIdParam(TRACKING_ROUTE_TRIP_DETAILS, trip.getId()))
                         .build())).build();
     }
+
     public static InlineKeyboardMarkup getPassengerChosenTripDetailsKeyboard(long tripId,
                                                                              HandlerName navigationCallback){
-        InlineKeyboardButton purchaseTicket = InlineKeyboardButton.builder().text(PURCHASE_TICKET)
+        InlineKeyboardButton purchaseTicket = InlineKeyboardButton.builder().text(BOOK_SEATS)
                 .callbackData(buildCallbackFromHandlerAndIdParam(PASSENGER_RESERVE_SEATS, tripId)).build();
         InlineKeyboardButton backToPassengerMenu = InlineKeyboardButton.builder().text(BACK_TO_PASSENGER_MENU)
                 .callbackData(PASSENGER_MENU.name()).build();
@@ -507,9 +506,13 @@ public class Keyboards {
                 .callbackData(navigationCallback.name()).build();
         return new InlineKeyboardMarkup(of(of(purchaseTicket),of(backToPassengerMenu,back)));
     }
-    public static InlineKeyboardMarkup getBackButton(HandlerName backCallback){
-        InlineKeyboardButton back = InlineKeyboardButton.builder().text(BACK_BUTTON)
-                .callbackData(backCallback.name()).build();
-        return new InlineKeyboardMarkup(of(of(back)));
+
+    public static InlineKeyboardMarkup getPaymentConfirmationKeyboard(HandlerName decline, String url) {
+        List<InlineKeyboardButton> firstRow = new ArrayList<>();
+
+        firstRow.add(InlineKeyboardButton.builder().text(DECLINE).callbackData(decline.name()).build());
+        firstRow.add(InlineKeyboardButton.builder().text(BOOK).url(url).build());
+
+        return new InlineKeyboardMarkup(of(firstRow));
     }
 }

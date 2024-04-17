@@ -43,9 +43,9 @@ public class FindTripSetRouteCityTo extends UpdateHandler {
 
 	@Override
 	public void handle(UserPhase userPhase, Update update) throws TelegramApiException {
-		long userId = getUserIdFromUpdate(update);
+		long telegramUserId = getTelegramUserIdFromUpdate(update);
 		updateUserPhase(userPhase, handlerPhase);
-		Route route = routeService.getNewPassengerRoute(userId);
+		Route route = routeService.getNewPassengerRoute(telegramUserId);
 
 		if (isMessageSentInsteadOfButtonClick(update)) {
 			return;
@@ -55,11 +55,11 @@ public class FindTripSetRouteCityTo extends UpdateHandler {
 			int page = getOffsetParamFromUpdateByHandler(update, FIND_TRIP_CITY_TO_NEXT);
 			PageRequest pageRequest = of(page, DEFAULT_CITY_LIMIT);
 
-			deleteRemovableMessagesAndEraseAllFromRepo(userId);
+			deleteRemovableMessagesAndEraseAllFromRepo(telegramUserId);
 
 			Page<City> cities = cityService.findAllCities(pageRequest, route.getCountryTo());
 
-			sendRemovableMessage(userId, PROVIDE_CITY_TO,
+			sendRemovableMessage(telegramUserId, PROVIDE_CITY_TO,
 					getAvailableCitiesKeyboard(cities, FIND_TRIP_CITY_TO_NEXT, FIND_TRIP_CITY_TO,
 							Optional.of(FIND_TRIP_COUNTRY_TO_NEXT), Optional.of(BACK_TO_COUNTRIES)));
 
@@ -70,21 +70,21 @@ public class FindTripSetRouteCityTo extends UpdateHandler {
 
 		updateUserPhase(userPhase, FIND_TRIP_MENU);
 
-		deleteRemovableMessagesAndEraseAllFromRepo(userId);
+		deleteRemovableMessagesAndEraseAllFromRepo(telegramUserId);
 
-		sendMessage(userId, format(CITY_TO_PROVIDED, route.getCityTo().getName()));
+		sendMessage(telegramUserId, format(CITY_TO_PROVIDED, route.getCityTo().getName()));
 
-		sendRemovableMessage(userId, format(FIND_TRIP_LOOKING_FOR_TRIPS, route.getSimplifiedRoute()));
+		sendRemovableMessage(telegramUserId, format(FIND_TRIP_LOOKING_FOR_TRIPS, route.getSimplifiedRoute()));
 
 		Page<Trip> trips = tripService.findAllCreatedNonDriverTrips(route, of(DEFAULT_OFFSET, DEFAULT_TRIP_LIMIT));
 
 		if (trips.isEmpty()) {
-			sendRemovableMessage(userId, FIND_TRIP_NO_TRIPS, getNoTripsKeyboard(route.getId(), FIND_TRIP_CITY_TO_NEXT));
+			sendRemovableMessage(telegramUserId, FIND_TRIP_NO_TRIPS, getNoTripsKeyboard(route.getId(), FIND_TRIP_CITY_TO_NEXT));
 
 			return;
 		}
 
-		sendRemovableMessage(userId, format(FIND_TRIP_CHOOSE_TRIPS, route.getFormattedData()),
+		sendRemovableMessage(telegramUserId, format(FIND_TRIP_CHOOSE_TRIPS, route.getFormattedData()),
 				getAvailableTripsForPassengerKeyboard(trips, FIND_TRIP_MENU_NEXT, FIND_TRIP_MENU_DETAILS,
 						FIND_TRIP_CITY_TO_NEXT, BACK_TO_CITIES));
 	}
