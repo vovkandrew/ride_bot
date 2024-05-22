@@ -28,11 +28,13 @@ public interface TripRepository extends JpaRepository<Trip, Long> {
     @Query(value = "select t from Trip t where t.status = 'EDITING' and t.route.telegramUserId = ?1")
     List<Trip> findAllEditing(long telegramUserId);
 
-    @Query(value = "select t from Trip t where t.status = 'CREATED' and t.route.countryFrom = ?1 " +
+    @Query(value = "select t from Trip t where (t.status = 'CREATED' or t.status = 'PICKED') and t.route.countryFrom = ?1 " +
             "and t.route.cityFrom = ?2 and t.route.countryTo = ?3 and t.route.cityTo = ?4 " +
-            "and t.route.telegramUserId != ?5 and t.route.status = 'CREATED' order by t.departureDate ASC")
-    Page<Trip> findAllCreatedNonDriverTripsByRouteDetails(Country countryFrom, City cityFrom, Country countryTo,
-                                                          City cityTo, long driverId, Pageable pageable);
+            "and t.route.telegramUserId != ?5 and t.route.status = 'CREATED' " +
+            "and (t.departureDate > CURRENT_DATE or (t.departureDate = CURRENT_DATE and t.departureTime > CURRENT_TIME)) " +
+            "order by t.departureDate ASC, t.departureTime ASC")
+    Page<Trip> findAllCreatedNonDriverNonExpiredTripsByRouteDetails(Country countryFrom, City cityFrom, Country countryTo,
+                                                                    City cityTo, long driverId, Pageable pageable);
 
     @Transactional
     @Modifying

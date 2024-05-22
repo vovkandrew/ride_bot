@@ -31,7 +31,7 @@ public interface RouteService {
 
     Page<Route> getAllCreatedRoutes(Pageable pageable, long userId);
 
-    Page<Route> getAllCreatedPassengerRoutes(Pageable pageable, long userId);
+    Page<Route> getAllCreatedPickedPassengerRoutes(Pageable pageable, long userId);
 
     Page<Route> getAllCreatedDriverRoutes(Pageable pageable, long userId);
 
@@ -44,10 +44,14 @@ public interface RouteService {
     void updateAllEditing(long userId);
 
     Route getNewPassengerRoute(long userId);
+    Route getPickedPassengerRoute(long userId);
 
     Route getNewDriverRoute(long userId);
 
     List<Long> getAllUsersWhoTrackRoute(Route route);
 
     public Optional<Route> findDeletedDriverRoute(long userId, Route route);
+
+    void unpickAllRoutes(long userId);
+
 }

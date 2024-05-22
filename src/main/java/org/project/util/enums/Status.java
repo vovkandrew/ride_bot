@@ -4,5 +4,6 @@ public enum Status {
     NEW,
     CREATED,
     EDITING,
-    DELETED
+    DELETED,
+    PICKED
 }

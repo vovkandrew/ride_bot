@@ -46,10 +46,11 @@ public class TrackingRoutesMenu extends UpdateHandler {
         PageRequest pageRequest = of(page, DEFAULT_ROUTE_LIMIT, ASC, DEFAULT_ID_FIELD);
 
         deleteRemovableMessagesAndEraseAllFromRepo(userId);
+        updateUserPhase(userPhase, TRACK_ROUTE_FIND_TRIP);
 
         sendRemovableMessage(userId, TRACKING_ROUTES_MENU, getAvailablePassengerTrackingRoutesKeyboard(
-                routeService.getAllCreatedPassengerRoutes(pageRequest, userId),
-                TRACKING_ROUTES_NEXT, TRACKING_ROUTES));
+                routeService.getAllCreatedPickedPassengerRoutes(pageRequest, userId),
+                TRACKING_ROUTES_NEXT, TRACK_ROUTE_FIND_TRIP_FIRST));
     }
 
     @Override

@@ -39,6 +39,9 @@ public interface RouteRepository extends JpaRepository<Route, Long> {
     Page<Route> findAllByTelegramUserIdAndStatusAndUserType(long telegramUserId, Status status, UserType userType,
                                                             Pageable pageable);
 
+    @Query("select r from Route r where r.telegramUserId = ?1 and r.status in (?2, ?3) and r.userType = ?4")
+    Page<Route> findAllByTelegramUserIdAndStatusesAndUserType(long telegramUserId, Status status1, Status status2, UserType userType, Pageable pageable);
+
     @Query("select r from Route r where r.telegramUserId = ?1 and r.status = ?2")
     Set<Route> getAllByTelegramUserIdAndStatus(long telegramUserId, Status status);
 

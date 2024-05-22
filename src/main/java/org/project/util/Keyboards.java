@@ -26,6 +26,7 @@ import static org.project.util.constants.Buttons.MAIN_MENU;
 import static org.project.util.constants.Buttons.TRACKING_ROUTES_MENU;
 import static org.project.util.constants.Buttons.*;
 import static org.project.util.constants.Constants.*;
+import static org.project.util.constants.Messages.BACK_TO_ROUTES;
 import static org.project.util.enums.Currency.EUR;
 import static org.project.util.enums.Currency.UA;
 import static org.project.util.enums.HandlerName.*;
@@ -416,6 +417,15 @@ public class Keyboards {
         List<InlineKeyboardButton> fourthRow = of(InlineKeyboardButton.builder().text(BACK_TO_CITIES)
                 .callbackData(backCallback.name()).build());
         return new InlineKeyboardMarkup(of(firstRow, secondRow, thirdRow, fourthRow));
+    }
+
+    public static InlineKeyboardMarkup getNoTrackTripsKeyboard(HandlerName backCallback) {
+        List<InlineKeyboardButton> firstRow = of(InlineKeyboardButton.builder()
+                .text(BACK_TO_ROUTES).callbackData(backCallback.name()).build());
+        List<InlineKeyboardButton> secondRow = of(InlineKeyboardButton.builder()
+                .text(BACK_TO_PASSENGER_MENU).callbackData(PASSENGER_MENU.name()).build());
+
+        return new InlineKeyboardMarkup(of(firstRow, secondRow));
     }
 
     public static InlineKeyboardMarkup getAvailableTripsForPassengerKeyboard(Page<Trip> trips, HandlerName navigationCallback,

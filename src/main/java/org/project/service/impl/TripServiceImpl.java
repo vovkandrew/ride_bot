@@ -147,7 +147,7 @@ public class TripServiceImpl implements TripService {
 
     @Override
     public Page<Trip> findAllCreatedNonDriverTrips(Route route, Pageable pageable) {
-        return tripRepository.findAllCreatedNonDriverTripsByRouteDetails(route.getCountryFrom(), route.getCityFrom(), route.getCountryTo(),
+        return tripRepository.findAllCreatedNonDriverNonExpiredTripsByRouteDetails(route.getCountryFrom(), route.getCityFrom(), route.getCountryTo(),
                 route.getCityTo(), route.getTelegramUserId(), pageable);
     }
 
