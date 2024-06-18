@@ -61,6 +61,6 @@ public interface RouteRepository extends JpaRepository<Route, Long> {
     @Transactional
     @Modifying
     @Query ("update Route r set r.status = ?1 where r.telegramUserId = ?2 and r.status = ?3")
-    void updateStatusByTelegramUserIdAndStatus(Status status, long telegramUserId, Status status1);
+    void updateStatusByTelegramUserIdAndStatus(Status toStatus, long telegramUserId, Status fromStatus);
 
 }
