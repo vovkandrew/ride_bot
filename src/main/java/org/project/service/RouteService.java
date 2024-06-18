@@ -44,6 +44,7 @@ public interface RouteService {
     void updateAllEditing(long userId);
 
     Route getNewPassengerRoute(long userId);
+
     Route getPickedPassengerRoute(long userId);
 
     Route getNewDriverRoute(long userId);

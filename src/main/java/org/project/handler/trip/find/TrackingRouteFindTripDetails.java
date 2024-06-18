@@ -23,7 +23,6 @@ public class TrackingRouteFindTripDetails extends UpdateHandler {
 	private final BookingService bookingService;
 	private final DriverService driverService;
 
-
 	public TrackingRouteFindTripDetails(TripService tripService, BookingService bookingService, DriverService driverService) {
 		this.tripService = tripService;
 		this.bookingService = bookingService;

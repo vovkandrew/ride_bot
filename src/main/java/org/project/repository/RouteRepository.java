@@ -39,8 +39,8 @@ public interface RouteRepository extends JpaRepository<Route, Long> {
     Page<Route> findAllByTelegramUserIdAndStatusAndUserType(long telegramUserId, Status status, UserType userType,
                                                             Pageable pageable);
 
-    @Query("select r from Route r where r.telegramUserId = ?1 and r.status in (?2, ?3) and r.userType = ?4")
-    Page<Route> findAllByTelegramUserIdAndStatusesAndUserType(long telegramUserId, Status status1, Status status2, UserType userType, Pageable pageable);
+    @Query("select r from Route r where r.telegramUserId = ?1 and r.status in ?2 and r.userType = ?3")
+    Page<Route> findAllByTelegramUserIdAndStatusesAndUserType(long telegramUserId, Status[] statuses, UserType userType, Pageable pageable);
 
     @Query("select r from Route r where r.telegramUserId = ?1 and r.status = ?2")
     Set<Route> getAllByTelegramUserIdAndStatus(long telegramUserId, Status status);
@@ -57,4 +57,10 @@ public interface RouteRepository extends JpaRepository<Route, Long> {
                     "r.countryTo = ?4 and r.cityTo = ?5 and r.status = ?6 and r.userType = ?7")
     Optional<Route> findRouteByDetails(long telegramUserId, Country countryFrom, City cityFrom, Country countryTo,
                                        City cityTo, Status status, UserType userType);
+
+    @Transactional
+    @Modifying
+    @Query ("update Route r set r.status = ?1 where r.telegramUserId = ?2 and r.status = ?3")
+    void updateStatusByTelegramUserIdAndStatus(Status status, long telegramUserId, Status status1);
+
 }

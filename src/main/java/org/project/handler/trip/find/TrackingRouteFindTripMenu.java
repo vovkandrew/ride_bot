@@ -28,6 +28,7 @@ import static org.springframework.data.domain.PageRequest.of;
 public class TrackingRouteFindTripMenu extends UpdateHandler {
 	private final RouteService routeService;
 	private final TripService tripService;
+
 	public TrackingRouteFindTripMenu(RouteService routeService, TripService tripService) {
 		this.routeService = routeService;
 		this.tripService = tripService;
@@ -44,13 +45,13 @@ public class TrackingRouteFindTripMenu extends UpdateHandler {
 		updateUserPhase(userPhase, handlerPhase);
 		Route route;
 
-		if(isUpdateCallbackEqualsHandler(update, TRACK_ROUTE_FIND_TRIP_FIRST)){
+		if (isUpdateCallbackEqualsHandler(update, TRACK_ROUTE_FIND_TRIP_FIRST)){
 			routeService.unpickAllRoutes(userId);
 
 			route = routeService.getRoute(getCallbackQueryIdParamFromUpdate(update));
 
 			route.setStatus(Status.PICKED);
-		}else {
+		} else {
 			route = routeService.getPickedPassengerRoute(userId);
 		}
 
@@ -66,7 +67,7 @@ public class TrackingRouteFindTripMenu extends UpdateHandler {
 
 			Page<Trip> trips = tripService.findAllCreatedNonDriverTrips(route, pageRequest);
 
-			sendRemovableMessage(userId, format(FIND_TRIP_CHOOSE_TRIPS, route.getFormattedData()),
+			sendRemovableMessage(userId, format(FIND_TRIP_CHOOSE_TRIPS, route.getSimplifiedRoute()),
 					getAvailableTripsForPassengerKeyboard(trips, TRACK_ROUTE_FIND_TRIP_NEXT, TRACK_ROUTE_TRIP_DETAILS,
 							TRACKING_ROUTES, BACK_BUTTON));
 
@@ -83,7 +84,7 @@ public class TrackingRouteFindTripMenu extends UpdateHandler {
 			return;
 		}
 
-		sendRemovableMessage(userId, format(FIND_TRIP_CHOOSE_TRIPS, route.getFormattedData()),
+		sendRemovableMessage(userId, format(FIND_TRIP_CHOOSE_TRIPS, route.getSimplifiedRoute()),
 				getAvailableTripsForPassengerKeyboard(trips, TRACK_ROUTE_FIND_TRIP_NEXT, TRACK_ROUTE_TRIP_DETAILS,
 						TRACKING_ROUTES, BACK_TO_ROUTES));
 	}
