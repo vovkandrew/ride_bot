@@ -61,7 +61,8 @@ public class CreateTripStart extends UpdateHandler {
         PageRequest pageRequest = of(DEFAULT_OFFSET, DEFAULT_ROUTE_LIMIT, ASC, DEFAULT_ID_FIELD);
 
         sendEditableMessage(userId, TRIP_CREATING_CHOOSE_ROUTE, getDriverRoutesMenuKeyboard(
-                routeService.getAllCreatedRoutes(pageRequest, userId), CREATE_TRIP_CHOOSE_ROUTE_NEXT, CREATE_TRIP_CHOOSE_ROUTE));
+                routeService.getAllCreatedDriverRoutes(pageRequest, userId), CREATE_TRIP_CHOOSE_ROUTE_NEXT,
+                    CREATE_TRIP_CHOOSE_ROUTE));
     }
 
     @Override

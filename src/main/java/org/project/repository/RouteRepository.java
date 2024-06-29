@@ -62,4 +62,9 @@ public interface RouteRepository extends JpaRepository<Route, Long> {
 
     @Query ("select r from Route r where r.telegramUserId = ?1 and r.picked = ?2 and r.userType = ?3")
     Route getByTelegramUserIdAndPickedAndUserType(long telegramUserId, boolean picked, UserType userType);
+
+    @Query ("select (count(r) > 0) from Route r " +
+            "where r.countryFrom = ?1 and r.cityFrom = ?2 and r.countryTo = ?3 and r.cityTo = ?4 and r.userType = ?5")
+    boolean existsByRouteDetailsAndUserType(Country countryFrom, City cityFrom,
+                                            Country countryTo, City cityTo, UserType userType);
 }
