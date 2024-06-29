@@ -57,7 +57,7 @@ public class TrackingRouteFindTripDetails extends UpdateHandler {
 				trip.getDropOffPoint(), trip.getFormattedArrivalDate(), trip.getFormattedArrivalTime(),
 				trip.getBaggageInfo(), trip.getOtherInfo(), trip.getPrice(),trip.getCurrency(), availableSeats);
 
-		sendRemovableMessage(userId, msg, getPassengerChosenTripDetailsKeyboard(tripId, TRACK_ROUTE_FIND_TRIP));
+		sendRemovableMessage(userId, msg, getPassengerChosenTripDetailsKeyboard(tripId, TRACK_ROUTE_FIND_TRIP_NEXT));
 	}
 
 	@Override

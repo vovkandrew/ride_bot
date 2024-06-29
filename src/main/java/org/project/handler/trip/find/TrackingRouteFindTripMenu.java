@@ -45,12 +45,12 @@ public class TrackingRouteFindTripMenu extends UpdateHandler {
 		updateUserPhase(userPhase, handlerPhase);
 		Route route;
 
-		if (isUpdateCallbackEqualsHandler(update, TRACK_ROUTE_FIND_TRIP_FIRST)){
+		if (isUpdateCallbackEqualsHandler(update, TRACK_ROUTE_FIND_TRIP)){
 			routeService.unpickAllRoutes(userId);
 
 			route = routeService.getRoute(getCallbackQueryIdParamFromUpdate(update));
 
-			route.setStatus(Status.PICKED);
+			route.setPicked(true);
 		} else {
 			route = routeService.getPickedPassengerRoute(userId);
 		}

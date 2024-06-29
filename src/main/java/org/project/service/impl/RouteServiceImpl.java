@@ -86,8 +86,8 @@ public class RouteServiceImpl implements RouteService {
     }
 
     @Override
-    public Page<Route> getAllCreatedPickedPassengerRoutes(Pageable pageable, long userId) {
-        return routeRepository.findAllByTelegramUserIdAndStatusesAndUserType(userId, new Status[]{CREATED, PICKED}, PASSENGER, pageable);
+    public Page<Route> getAllCreatedPassengerRoutes(Pageable pageable, long userId) {
+        return routeRepository.findAllByTelegramUserIdAndStatusAndUserType(userId, CREATED, PASSENGER, pageable);
     }
 
     @Override
@@ -126,12 +126,12 @@ public class RouteServiceImpl implements RouteService {
 
     @Override
     public Route getPickedPassengerRoute(long userId) {
-        return routeRepository.getRouteByTelegramUserIdAndStatusAndUserType(userId, PICKED, PASSENGER);
+        return routeRepository.getByTelegramUserIdAndPickedAndUserType(userId, true, PASSENGER);
     }
 
     @Override
     public void unpickAllRoutes(long userId) {
-        routeRepository.updateStatusByTelegramUserIdAndStatus(CREATED, userId, PICKED);
+        routeRepository.updateToFalsePickedByTelegramUserId(userId);
     }
 
     @Override

@@ -1,6 +1,7 @@
 package org.project.model;
 
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 import org.project.util.enums.Status;
 import org.project.util.enums.UserType;
 
@@ -43,6 +44,9 @@ public class Route implements Formatter {
     @Column(name = "user_type", nullable = false)
     @Enumerated(value = STRING)
     private UserType userType;
+    @Column(name = "picked")
+    @ColumnDefault (value = "false")
+    private boolean picked;
 
     @Override
     public Object[] getFormattedData() {

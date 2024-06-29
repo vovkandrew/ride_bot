@@ -49,8 +49,8 @@ public class TrackingRoutesMenu extends UpdateHandler {
         updateUserPhase(userPhase, TRACK_ROUTE_FIND_TRIP);
 
         sendRemovableMessage(userId, TRACKING_ROUTES_MENU, getAvailablePassengerTrackingRoutesKeyboard(
-                routeService.getAllCreatedPickedPassengerRoutes(pageRequest, userId),
-                TRACKING_ROUTES_NEXT, TRACK_ROUTE_FIND_TRIP_FIRST));
+                routeService.getAllCreatedPassengerRoutes(pageRequest, userId),
+                TRACKING_ROUTES_NEXT, TRACK_ROUTE_FIND_TRIP));
     }
 
     @Override

@@ -58,7 +58,8 @@ create table if not exists route (
 	city_to_id BIGINT,
 	FOREIGN KEY (city_to_id) REFERENCES city (id),
 	status varchar(250) NOT NULL,
-	user_type varchar(250) NOT NULL
+	user_type varchar(250) NOT NULL,
+	picked BOOLEAN NOT NULL DEFAULT false
 );
 
 create table if not exists trip (
