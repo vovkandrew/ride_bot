@@ -125,6 +125,16 @@ public class RouteServiceImpl implements RouteService {
     }
 
     @Override
+    public Route getPickedPassengerRoute(long userId) {
+        return routeRepository.getByTelegramUserIdAndPickedAndUserType(userId, true, PASSENGER);
+    }
+
+    @Override
+    public void unpickAllRoutes(long userId) {
+        routeRepository.updateToFalsePickedByTelegramUserId(userId);
+    }
+
+    @Override
     public Route getNewDriverRoute(long userId) {
         return routeRepository.getRouteByTelegramUserIdAndStatusAndUserType(userId, NEW, DRIVER);
     }

@@ -54,4 +54,12 @@ public interface RouteRepository extends JpaRepository<Route, Long> {
                     "r.countryTo = ?4 and r.cityTo = ?5 and r.status = ?6 and r.userType = ?7")
     Optional<Route> findRouteByDetails(long telegramUserId, Country countryFrom, City cityFrom, Country countryTo,
                                        City cityTo, Status status, UserType userType);
+
+	@Transactional
+	@Modifying
+	@Query ("update Route r set r.picked = false where r.telegramUserId = ?1 and r.picked = true")
+    void updateToFalsePickedByTelegramUserId(long telegramUserId);
+
+    @Query ("select r from Route r where r.telegramUserId = ?1 and r.picked = ?2 and r.userType = ?3")
+    Route getByTelegramUserIdAndPickedAndUserType(long telegramUserId, boolean picked, UserType userType);
 }

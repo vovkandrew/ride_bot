@@ -45,9 +45,14 @@ public interface RouteService {
 
     Route getNewPassengerRoute(long userId);
 
+    Route getPickedPassengerRoute(long userId);
+
     Route getNewDriverRoute(long userId);
 
     List<Long> getAllUsersWhoTrackRoute(Route route);
 
     public Optional<Route> findDeletedDriverRoute(long userId, Route route);
+
+    void unpickAllRoutes(long userId);
+
 }
