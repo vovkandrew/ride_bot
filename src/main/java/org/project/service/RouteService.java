@@ -55,4 +55,5 @@ public interface RouteService {
 
     void unpickAllRoutes(long userId);
 
+	boolean isPassengerRouteExist(Route route);
 }

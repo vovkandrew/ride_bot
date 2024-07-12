@@ -150,4 +150,10 @@ public class RouteServiceImpl implements RouteService {
         return routeRepository.findRouteByDetails(userId, route.getCountryFrom(), route.getCityFrom(),
                 route.getCountryTo(), route.getCityTo(), DELETED, DRIVER);
     }
+
+    @Override
+    public boolean isPassengerRouteExist(Route route) {
+        return routeRepository.existsByRouteDetailsAndUserType(route.getCountryFrom(),
+                route.getCityFrom(), route.getCountryTo(), route.getCityTo(), PASSENGER);
+    }
 }

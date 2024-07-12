@@ -104,6 +104,11 @@ public class Trip implements Formatter {
         return !departureDate.isEqual(arrivalDate) || departureTime.isBefore(LocalTime.parse(userInput, ofPattern(TIME_FORMAT)));
     }
 
+    public boolean verifyArrivalDateTime(String userInput){
+        return verifyArrivalDate(userInput) &&
+               (!departureDate.isEqual(LocalDate.parse(userInput, ofPattern(DATE_FORMAT))) || departureTime.isBefore(arrivalTime));
+    }
+
     public boolean verifyDepartureTime(String userInput) {
         LocalTime userInputTime = LocalTime.parse(userInput, ofPattern(TIME_FORMAT));
         LocalDate today = LocalDate.now();

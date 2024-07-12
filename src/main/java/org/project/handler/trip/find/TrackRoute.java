@@ -14,8 +14,7 @@ import java.util.Optional;
 import static java.lang.String.format;
 import static org.project.util.Keyboards.getPassengerMainMenuKeyboard;
 import static org.project.util.UpdateHelper.getUserIdFromUpdate;
-import static org.project.util.constants.Messages.GREETING_PASSENGER;
-import static org.project.util.constants.Messages.START_TRACKING_ROUTE;
+import static org.project.util.constants.Messages.*;
 import static org.project.util.enums.HandlerName.PASSENGER_MENU;
 import static org.project.util.enums.HandlerName.TRACK_TRIP;
 import static org.project.util.enums.Status.CREATED;
@@ -37,11 +36,16 @@ public class TrackRoute extends UpdateHandler {
         long userId = getUserIdFromUpdate(update);
 
         Route route = routeService.getNewRoute(userId);
-        route = routeService.updateRouteStatus(route, CREATED);
 
-        deleteRemovableMessagesAndEraseAllFromRepo(userId);
+        if (routeService.isPassengerRouteExist(route)){
+            sendMessage(userId, format(TRACKING_ROUTE_ALREADY_EXISTS, route.getSimplifiedRoute()));
+        } else {
+            route = routeService.updateRouteStatus(route, CREATED);
 
-        sendMessage(userId, format(START_TRACKING_ROUTE, route.getSimplifiedRoute()));
+            deleteRemovableMessagesAndEraseAllFromRepo(userId);
+
+            sendMessage(userId, format(START_TRACKING_ROUTE, route.getSimplifiedRoute()));
+        }
 
         updateUserPhase(userPhase, PASSENGER_MENU);
 

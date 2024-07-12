@@ -120,6 +120,7 @@ public class Messages {
             "\nІнше: <b><i>%s</i></b>\nЦіна: <b><i>%s</i></b> <b><i>%s</i></b>\nВільних місць: <b><i>%s</i></b>\n";
     public static String START_TRACKING_ROUTE = "Тепер ви відслідковуєте маршрут %s \uD83D\uDEE3\uFE0F. Коли хтось створить " +
             "поїздку за цим маршрутом, ми вас сповістимо!";
+    public static String TRACKING_ROUTE_ALREADY_EXISTS = "Маршрут %s \uD83D\uDEE3\uFE0F вже відслідковується!";
     public static String TRACKING_ROUTES_MENU = "Тут ви можете подивитись список маршрутів котрі ви відслідковуєте " +
             "\uD83D\uDEE3\uFE0F";
     public static String NEW_TRACKING_TRIP_CREATED = "\uD83D\uDCE2 Увага! \uD83C\uDD95 З'явилась нова доступна поїздка" +
