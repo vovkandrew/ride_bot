@@ -55,7 +55,7 @@ public class EditTripSetArrivalDate extends EditTripDetails {
 
         String userInput = getUserInputFromUpdate(update);
 
-        if (isUserInputMatchesPattern(userInput, DATE_PATTERN) && trip.verifyArrivalDate(userInput)) {
+        if (isUserInputMatchesPattern(userInput, DATE_PATTERN) && trip.verifyArrivalDateTime(userInput)) {
             trip.setStatus(CREATED);
 
             getTripService().updateTripArrivalDate(trip, userInput);
